@@ -27,7 +27,7 @@ namespace AIProgrammer
         private static bool bestnoerrors = false; // Indicator if the program had errors or not.
         private static DateTime bestlastchangedate = DateTime.Now; // Time of last improved evolution.
         private static int maxIterationCount = 2500; // Max iterations a program may run before being killed (prevents infinite loops).
-        private static string targetString = "reddit"; // Target string to generate a program to print.
+        private static string targetString = "Hi!"; // Target string to generate a program to print.
 
         /// <summary>
         /// Event handler that is called upon each generation. We use this opportunity to display some status info and save the current genetic algorithm in case of crashes etc.
@@ -120,6 +120,10 @@ namespace AIProgrammer
             return result;
         }
 
+        /// <summary>
+        /// Setup the genetic algorithm and run it.
+        /// </summary>
+        /// <returns>Array of double, the best brain's output</returns>
         private static double[] Setup()
         {
             // Genetic algorithm setup.
@@ -149,11 +153,15 @@ namespace AIProgrammer
             return weights;
         }
 
+        /// <summary>
+        /// Main program.
+        /// </summary>
         static void Main(string[] args)
         {
-            // Run the neural network and get the best brain.
+            // Run the genetic algorithm and get the best brain.
             double[] output = Setup();
 
+            // Convert the best brain's output into a program.
             string program = ConvertDoubleArrayToBF(output);
             Console.WriteLine(program);
             Console.WriteLine("------");
@@ -175,36 +183,6 @@ namespace AIProgrammer
 
             
             Console.ReadKey();
-
-            #region Optimize Program
-
-            /*// Now try and trim the output to just the target characters.
-            double[] output2 = Cleaner.Trim(_ga, targetString);
-
-            string program2 = ConvertDoubleArrayToAIProgrammer(output2);
-            program2 = program2.Replace("#", "");
-
-            Console.WriteLine(program2);
-            Console.WriteLine("------");
-
-            try
-            {
-                // Run the program.
-                Interpreter bf = new Interpreter(program2, null, (b) =>
-                {
-                    Console.Write((char)b);
-                });
-
-                bf.Run(maxIterationCount);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-
-            Console.ReadKey();*/
-
-            #endregion
         }
     }
 }
