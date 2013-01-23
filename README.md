@@ -50,7 +50,9 @@ fitness += 256 - Math.Abs(console[i] - targetString[i]);
 
 Keep in mind, this is a proof of concept. So far, the program has successfully written a program in its target programming language to output "hi" after 5,700 generations in about 1 minute on an Intel Core 2 Quad 2.5GHz.
 
-The AI produced the following code:
+## hi
+
+The AI produced "hi" with the following code:
 
 ```
 +[+++++-+>++>++-++++++<<]>++.[+.]-.,-#>>]<]
@@ -60,11 +62,13 @@ While the above code contains parsing errors, such as non-matching brackets, our
 
 You can try pasting the above code into a Brainf*** [interpreter](http://www.iamcal.com/misc/bf_debug/). Click "Start Debugger", ignore the warnings, then click Run To Breakpoint. Note the output displays the word "hi".
 
-If we trim off the excess code, we get the following syntactically-valid code:
+If we trim off the excess code, we see the following syntactically-valid code:
 
 ```
 +[+++++-+>++>++-++++++<<]>++.[+.]
 ```
+
+## Hi!
 
 The AI successfully wrote a program to output "Hi!" after 4,559,681 generations in about 4 hours. More complex programs could likely be generated while using faster PCs.
 
