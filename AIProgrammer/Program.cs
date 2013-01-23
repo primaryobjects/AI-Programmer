@@ -128,9 +128,9 @@ namespace AIProgrammer
             // Start a new genetic algorithm.
             _ga.GAParams.Elitism = true;
             _ga.GAParams.targetFitness = targetString.Length * 256;
+            _ga.GAParams.HistoryPath = System.IO.Directory.GetCurrentDirectory() + "\\history.txt";
             _ga.FitnessFunction = new GAFunction(fitnessFunction);
             _ga.OnGenerationFunction = new OnGeneration(OnGeneration);
-            _ga.HistoryPath = System.IO.Directory.GetCurrentDirectory() + "\\history.txt";
             _ga.Go();
 
             // Load a saved genetic algorithm.

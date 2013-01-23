@@ -112,5 +112,7 @@ namespace AIProgrammer.Types
                 m_elitism = value;
             }
         }
+
+        public string HistoryPath { get; set; }
     }
 }
