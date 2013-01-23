@@ -42,7 +42,7 @@ namespace AIProgrammer.GeneticAlgorithm
 	public class GA
 	{
         public GAParams GAParams { get; set; }
-        private string _historyPath = Directory.GetCurrentDirectory() + "\\history.txt";
+        public string HistoryPath = "";
 
 		/// <summary>
 		/// Default constructor sets mutation rate to 5%, crossover to 80%, population to 100,
@@ -121,8 +121,11 @@ namespace AIProgrammer.GeneticAlgorithm
                 {
                     Console.WriteLine("Generation " + GAParams.CurrentGeneration + ", Best Fitness: " + fitness);
 
-                    // Record history timeline.
-                    File.AppendAllText(_historyPath, DateTime.Now.ToString() + "," + fitness + "," + GAParams.targetFitness + "," + GAParams.CurrentGeneration + "\r\n");
+                    if (HistoryPath != "")
+                    {
+                        // Record history timeline.
+                        File.AppendAllText(HistoryPath, DateTime.Now.ToString() + "," + fitness + "," + GAParams.targetFitness + "," + GAParams.CurrentGeneration + "\r\n");
+                    }
                 }
 
                 if (GAParams.targetFitness > 0 && fitness >= GAParams.targetFitness)
