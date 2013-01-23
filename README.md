@@ -58,6 +58,14 @@ The AI produced the following code:
 
 While the above code contains parsing errors, such as non-matching brackets, our simulation interpreter computes the result up until the program fails, so in the above case, the syntax error (which is later on in the code, after a solution is found) doesn't impact the fitness.
 
+You can try pasting the above code into a Brainf*** [interpreter](http://www.iamcal.com/misc/bf_debug/). Click "Start Debugger", ignore the warnings, then click Run To Breakpoint. Note the output displays the word "hi".
+
+If we trim off the excess code, we get the following syntactically-valid code:
+
+```
++[+++++-+>++>++-++++++<<]>++.[+.]
+```
+
 The AI successfully wrote a program to output "Hi!" after 4,559,681 generations in about 4 hours. More complex programs could likely be generated while using faster PCs.
 
 ## Author
