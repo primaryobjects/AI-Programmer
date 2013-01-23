@@ -1,7 +1,7 @@
 AI-Programmer
 =========
 
-AI-Programmer is an experiment with using artificial intelligence and genetic algorithms to automatically generate a program, in the Brainf*** programming language, that writes a specific phrase to the console.
+AI-Programmer is an experiment with using artificial intelligence and genetic algorithms to automatically generate a program, in the Brainf*** programming language, that writes a specific phrase to the console. In short, it's an AI genetic algorithm implementation with self modifying code.
 
 ## Motivation
 
