@@ -20,24 +20,24 @@ namespace AIProgrammer
     class Program
     {
         private static GA _ga = null; // Our genetic algorithm instance.
-        private static double bestfitness = 0; // Best fitness so far.
-        private static string bestprogram = ""; // Best program so far.
-        private static string bestoutput = ""; // Best program output so far.
-        private static int bestiteration = 0; // Current iteration (generation) count.
-        private static bool bestnoerrors = false; // Indicator if the program had errors or not.
-        private static DateTime bestlastchangedate = DateTime.Now; // Time of last improved evolution.
-        private static int maxIterationCount = 2500; // Max iterations a program may run before being killed (prevents infinite loops).
-        private static string targetString = "Hi!"; // Target string to generate a program to print.
+        private static double _bestFitness = 0; // Best fitness so far.
+        private static string _bestProgram = ""; // Best program so far.
+        private static string _bestOutput = ""; // Best program output so far.
+        private static int _besIiteration = 0; // Current iteration (generation) count.
+        private static bool _bestNoErrors = false; // Indicator if the program had errors or not.
+        private static DateTime _bestLastChangeDate = DateTime.Now; // Time of last improved evolution.
+        private static int _maxIterationCount = 2500; // Max iterations a program may run before being killed (prevents infinite loops).
+        private static string _targetString = "Hi!"; // Target string to generate a program to print.
 
         /// <summary>
         /// Event handler that is called upon each generation. We use this opportunity to display some status info and save the current genetic algorithm in case of crashes etc.
         /// </summary>
         private static void OnGeneration(GA ga)
         {
-            if (bestiteration++ > 1000)
+            if (_besIiteration++ > 1000)
             {
-                bestiteration = 0;
-                Console.WriteLine("Best Fitness: " + bestfitness + "/" + ga.GAParams.TargetFitness + " " + Math.Round(bestfitness / ga.GAParams.TargetFitness * 100) + "%, Best Output: " + bestoutput + ", Changed: " + bestlastchangedate.ToString() + ", Program: " + bestprogram);
+                _besIiteration = 0;
+                Console.WriteLine("Best Fitness: " + _bestFitness + "/" + ga.GAParams.TargetFitness + " " + Math.Round(_bestFitness / ga.GAParams.TargetFitness * 100) + "%, Best Output: " + _bestOutput + ", Changed: " + _bestLastChangeDate.ToString() + ", Program: " + _bestProgram);
 
                 ga.Save("my-genetic-algorithm.dat");
             }
@@ -64,7 +64,7 @@ namespace AIProgrammer
                 {
                     console += (char)b;
                 });
-                bf.Run(maxIterationCount);
+                bf.Run(_maxIterationCount);
 
                 // It runs!
                 noErrors = true;
@@ -74,22 +74,22 @@ namespace AIProgrammer
             }
 
             // Order bonus.
-            for (int i = 0; i < targetString.Length; i++)
+            for (int i = 0; i < _targetString.Length; i++)
             {
                 if (console.Length > i)
                 {
-                    fitness += 256 - Math.Abs(console[i] - targetString[i]);
+                    fitness += 256 - Math.Abs(console[i] - _targetString[i]);
                 }
             }
 
             // Is this a new best fitness?
-            if (fitness > bestfitness)
+            if (fitness > _bestFitness)
             {
-                bestfitness = fitness;
-                bestoutput = console;
-                bestnoerrors = noErrors;
-                bestlastchangedate = DateTime.Now;
-                bestprogram = program;
+                _bestFitness = fitness;
+                _bestOutput = console;
+                _bestNoErrors = noErrors;
+                _bestLastChangeDate = DateTime.Now;
+                _bestProgram = program;
             }
 
             return fitness;
@@ -131,7 +131,7 @@ namespace AIProgrammer
 
             // Start a new genetic algorithm.
             _ga.GAParams.Elitism = true;
-            _ga.GAParams.TargetFitness = targetString.Length * 256;
+            _ga.GAParams.TargetFitness = _targetString.Length * 256;
             _ga.GAParams.HistoryPath = System.IO.Directory.GetCurrentDirectory() + "\\history.txt";
             _ga.FitnessFunction = new GAFunction(fitnessFunction);
             _ga.OnGenerationFunction = new OnGeneration(OnGeneration);
@@ -174,7 +174,7 @@ namespace AIProgrammer
                     Console.Write((char)b);
                 });
 
-                bf.Run(maxIterationCount);
+                bf.Run(_maxIterationCount);
             }
             catch (Exception ex)
             {
