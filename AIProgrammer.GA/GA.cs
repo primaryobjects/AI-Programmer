@@ -103,9 +103,9 @@ namespace AIProgrammer.GeneticAlgorithm
             if (!resume)
             {
                 //  Create the fitness table.
-                GAParams.m_fitnessTable = new List<double>();
-                GAParams.m_thisGeneration = new List<Genome>(GAParams.Generations);
-                GAParams.m_nextGeneration = new List<Genome>(GAParams.Generations);
+                GAParams.FitnessTable = new List<double>();
+                GAParams.ThisGeneration = new List<Genome>(GAParams.Generations);
+                GAParams.NextGeneration = new List<Genome>(GAParams.Generations);
 
                 CreateGenomes();
                 RankPopulation();
@@ -123,18 +123,18 @@ namespace AIProgrammer.GeneticAlgorithm
                     if (GAParams.HistoryPath != "")
                     {
                         // Record history timeline.
-                        File.AppendAllText(GAParams.HistoryPath, DateTime.Now.ToString() + "," + fitness + "," + GAParams.targetFitness + "," + GAParams.CurrentGeneration + "\r\n");
+                        File.AppendAllText(GAParams.HistoryPath, DateTime.Now.ToString() + "," + fitness + "," + GAParams.TargetFitness + "," + GAParams.CurrentGeneration + "\r\n");
                     }
                 }
 
-                if (GAParams.targetFitness > 0 && fitness >= GAParams.targetFitness)
+                if (GAParams.TargetFitness > 0 && fitness >= GAParams.TargetFitness)
                 {
-                    if (GAParams.targetFitnessCount++ > 500)
+                    if (GAParams.TargetFitnessCount++ > 500)
                         break;
                 }
                 else
                 {
-                    GAParams.targetFitnessCount = 0;
+                    GAParams.TargetFitnessCount = 0;
                 }
 
                 if (OnGenerationFunction != null)
@@ -155,7 +155,7 @@ namespace AIProgrammer.GeneticAlgorithm
 		/// <returns>Random individual biased towards highest fitness</returns>
 		private int RouletteSelection()
 		{
-            double randomFitness = m_random.NextDouble() * GAParams.m_totalFitness;
+            double randomFitness = m_random.NextDouble() * GAParams.TotalFitness;
 			int idx = -1;
 			int mid;
 			int first = 0;
@@ -166,11 +166,11 @@ namespace AIProgrammer.GeneticAlgorithm
 			//  so do this by hand.
 			while (idx == -1 && first <= last)
 			{
-                if (randomFitness < GAParams.m_fitnessTable[mid])
+                if (randomFitness < GAParams.FitnessTable[mid])
 				{
 					last = mid;
 				}
-                else if (randomFitness > GAParams.m_fitnessTable[mid])
+                else if (randomFitness > GAParams.FitnessTable[mid])
                 {
 					first = mid;
 				}
@@ -187,25 +187,25 @@ namespace AIProgrammer.GeneticAlgorithm
 		/// </summary>
 		private double RankPopulation()
 		{
-            GAParams.m_totalFitness = 0.0;
-            foreach (Genome g in GAParams.m_thisGeneration)
+            GAParams.TotalFitness = 0.0;
+            foreach (Genome g in GAParams.ThisGeneration)
 			{
 				g.Fitness = FitnessFunction(g.Genes());
-                GAParams.m_totalFitness += g.Fitness;
+                GAParams.TotalFitness += g.Fitness;
 			}
-            GAParams.m_thisGeneration.Sort(delegate(Genome x, Genome y) 
+            GAParams.ThisGeneration.Sort(delegate(Genome x, Genome y) 
                 { return Comparer<double>.Default.Compare(x.Fitness, y.Fitness); });
 
             //  now sorted in order of fitness.
             double fitness = 0.0;
-            GAParams.m_fitnessTable.Clear();
-            foreach (Genome t in GAParams.m_thisGeneration)
+            GAParams.FitnessTable.Clear();
+            foreach (Genome t in GAParams.ThisGeneration)
 			{
 				fitness += t.Fitness;
-                GAParams.m_fitnessTable.Add(t.Fitness);
+                GAParams.FitnessTable.Add(t.Fitness);
             }
 
-            return GAParams.m_fitnessTable[GAParams.m_fitnessTable.Count - 1];
+            return GAParams.FitnessTable[GAParams.FitnessTable.Count - 1];
         }
 
         /// <summary>
@@ -216,22 +216,22 @@ namespace AIProgrammer.GeneticAlgorithm
             for (int i = 0; i < GAParams.PopulationSize; i++)
 			{
                 Genome g = new Genome(GAParams.GenomeSize);
-                GAParams.m_thisGeneration.Add(g);
+                GAParams.ThisGeneration.Add(g);
 			}
 		}
 
 		private void CreateNextGeneration()
 		{
-            GAParams.m_nextGeneration.Clear();
+            GAParams.NextGeneration.Clear();
             Genome g = null, g2 = null;
             int length = GAParams.PopulationSize;
 
             if (GAParams.Elitism)
             {
-                g = GAParams.m_thisGeneration[GAParams.PopulationSize - 1].DeepCopy();
-                g.age = GAParams.m_thisGeneration[GAParams.PopulationSize - 1].age;
-                g2 = GAParams.m_thisGeneration[GAParams.PopulationSize - 2].DeepCopy();
-                g2.age = GAParams.m_thisGeneration[GAParams.PopulationSize - 2].age;
+                g = GAParams.ThisGeneration[GAParams.PopulationSize - 1].DeepCopy();
+                g.age = GAParams.ThisGeneration[GAParams.PopulationSize - 1].age;
+                g2 = GAParams.ThisGeneration[GAParams.PopulationSize - 2].DeepCopy();
+                g2.age = GAParams.ThisGeneration[GAParams.PopulationSize - 2].age;
 
                 length -= 2;
             }
@@ -241,8 +241,8 @@ namespace AIProgrammer.GeneticAlgorithm
 				int pidx1 = RouletteSelection();
 				int pidx2 = RouletteSelection();
 				Genome parent1, parent2, child1, child2;
-                parent1 = GAParams.m_thisGeneration[pidx1];
-                parent2 = GAParams.m_thisGeneration[pidx2];
+                parent1 = GAParams.ThisGeneration[pidx1];
+                parent2 = GAParams.ThisGeneration[pidx2];
 
                 if (m_random.NextDouble() < GAParams.CrossoverRate)
 				{
@@ -256,19 +256,19 @@ namespace AIProgrammer.GeneticAlgorithm
 				child1.Mutate();
 				child2.Mutate();
 
-                GAParams.m_nextGeneration.Add(child1);
-                GAParams.m_nextGeneration.Add(child2);
+                GAParams.NextGeneration.Add(child1);
+                GAParams.NextGeneration.Add(child2);
 			}
 
             if (GAParams.Elitism && g != null)
             {
                 if (g2 != null)
-                    GAParams.m_nextGeneration.Add(g2);
+                    GAParams.NextGeneration.Add(g2);
                 if (g != null)
-                    GAParams.m_nextGeneration.Add(g);
+                    GAParams.NextGeneration.Add(g);
             }
 
-            GAParams.m_thisGeneration = new List<Genome>(GAParams.m_nextGeneration);
+            GAParams.ThisGeneration = new List<Genome>(GAParams.NextGeneration);
             /*GAParams.m_thisGeneration.Clear();
             foreach (Genome ge in GAParams.m_nextGeneration)
                 GAParams.m_thisGeneration.Add(ge);*/
@@ -319,7 +319,7 @@ namespace AIProgrammer.GeneticAlgorithm
 
 		public void GetBest(out double[] values, out double fitness)
 		{
-            Genome g = GAParams.m_thisGeneration[GAParams.PopulationSize - 1];
+            Genome g = GAParams.ThisGeneration[GAParams.PopulationSize - 1];
             values = new double[g.Length];
             g.GetValues(ref values);
 			fitness = g.Fitness;
@@ -337,7 +337,7 @@ namespace AIProgrammer.GeneticAlgorithm
             if (n < 0 || n > GAParams.PopulationSize - 1)
 				throw new ArgumentOutOfRangeException("n too large, or too small");
             /// -------------
-            Genome g = GAParams.m_thisGeneration[n];
+            Genome g = GAParams.ThisGeneration[n];
             values = new double[g.Length];
             g.GetValues(ref values);
 			fitness = g.Fitness;
@@ -350,10 +350,10 @@ namespace AIProgrammer.GeneticAlgorithm
             if (n < 0 || n > GAParams.PopulationSize - 1)
                 throw new ArgumentOutOfRangeException("n too large, or too small");
             /// -------------
-            Genome g = GAParams.m_thisGeneration[n];
+            Genome g = GAParams.ThisGeneration[n];
             g.m_genes = values;
             g.Fitness = fitness;
-            GAParams.m_thisGeneration[n] = g;
+            GAParams.ThisGeneration[n] = g;
         }
     }
 }

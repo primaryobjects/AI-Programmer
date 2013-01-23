@@ -37,7 +37,7 @@ namespace AIProgrammer
             if (bestiteration++ > 1000)
             {
                 bestiteration = 0;
-                Console.WriteLine("Best Fitness: " + bestfitness + "/" + ga.GAParams.targetFitness + " " + Math.Round(bestfitness / ga.GAParams.targetFitness * 100) + "%, Best Output: " + bestoutput + ", Changed: " + bestlastchangedate.ToString() + ", Program: " + bestprogram);
+                Console.WriteLine("Best Fitness: " + bestfitness + "/" + ga.GAParams.TargetFitness + " " + Math.Round(bestfitness / ga.GAParams.TargetFitness * 100) + "%, Best Output: " + bestoutput + ", Changed: " + bestlastchangedate.ToString() + ", Program: " + bestprogram);
 
                 ga.Save("my-genetic-algorithm.dat");
             }
@@ -127,7 +127,7 @@ namespace AIProgrammer
 
             // Start a new genetic algorithm.
             _ga.GAParams.Elitism = true;
-            _ga.GAParams.targetFitness = targetString.Length * 256;
+            _ga.GAParams.TargetFitness = targetString.Length * 256;
             _ga.GAParams.HistoryPath = System.IO.Directory.GetCurrentDirectory() + "\\history.txt";
             _ga.FitnessFunction = new GAFunction(fitnessFunction);
             _ga.OnGenerationFunction = new OnGeneration(OnGeneration);

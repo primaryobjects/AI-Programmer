@@ -79,7 +79,7 @@ namespace RSSAutoGen.Repository.Concrete
             {
                 foreach (GAParams obj in _items)
                 {
-                    if (obj.CrossoverRate == ga.CrossoverRate && obj.Elitism == ga.Elitism && obj.GenomeSize == ga.GenomeSize && obj.MutationRate == ga.MutationRate && obj.PopulationSize == ga.PopulationSize && obj.targetFitness == ga.targetFitness)
+                    if (obj.CrossoverRate == ga.CrossoverRate && obj.Elitism == ga.Elitism && obj.GenomeSize == ga.GenomeSize && obj.MutationRate == ga.MutationRate && obj.PopulationSize == ga.PopulationSize && obj.TargetFitness == ga.TargetFitness)
                     {
                         return index;
                     }

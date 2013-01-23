@@ -112,7 +112,7 @@ namespace AIProgrammer
         private static double[] Setup(GA ga)
         {
             // Genetic algorithm setup.
-            ga.GAParams.targetFitness = 3102;
+            ga.GAParams.TargetFitness = 3102;
             ga.Resume(fitnessFunction, OnGeneration);
 
             // Results.
