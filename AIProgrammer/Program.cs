@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AIProgrammer.GeneticAlgorithm;
+using AIProgrammer.Repository.Interface;
+using RSSAutoGen.Repository.Concrete;
+using AIProgrammer.Types;
 
 namespace AIProgrammer
 {
@@ -23,7 +26,7 @@ namespace AIProgrammer
         private static int bestiteration = 0; // Current iteration (generation) count.
         private static bool bestnoerrors = false; // Indicator if the program had errors or not.
         private static DateTime bestlastchangedate = DateTime.Now; // Time of last improved evolution.
-        private static int maxIterationCount = 5000; // Max iterations a program may run before being killed (prevents infinite loops).
+        private static int maxIterationCount = 2500; // Max iterations a program may run before being killed (prevents infinite loops).
         private static string targetString = "reddit"; // Target string to generate a program to print.
 
         /// <summary>
@@ -34,7 +37,7 @@ namespace AIProgrammer
             if (bestiteration++ > 1000)
             {
                 bestiteration = 0;
-                Console.WriteLine("Best Fitness: " + bestfitness + ", No Errors?: " + bestnoerrors + ", Best Output: " + bestoutput + ", Changed: " + bestlastchangedate.ToString() + ", Program: " + bestprogram);
+                Console.WriteLine("Best Fitness: " + bestfitness + "/" + ga.GAParams.targetFitness + " " + Math.Round(bestfitness / ga.GAParams.targetFitness * 100) + "%, Best Output: " + bestoutput + ", Changed: " + bestlastchangedate.ToString() + ", Program: " + bestprogram);
 
                 ga.Save("my-genetic-algorithm.dat");
             }
