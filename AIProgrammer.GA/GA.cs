@@ -19,7 +19,7 @@
 //  $Id: GA.cs,v 1.1 2003/08/19 20:59:05 barry Exp $
 //
 //  Modified by Lionel Monnier 30th aug 2004
-//  Modified by Kory Becker Jan-01-2013 http://www.primaryobjects.com/kory-becker.aspx
+//  Modified by Kory Becker 01-Jan-2013 http://www.primaryobjects.com/kory-becker.aspx
 
 #region Using directives
 using AIProgrammer.Repository.Interface;
