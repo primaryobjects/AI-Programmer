@@ -3,9 +3,11 @@ AI-Programmer
 
 AI-Programmer is an experiment with using artificial intelligence and genetic algorithms to automatically generate a program, in the Brainf*** programming language, that writes a specific phrase to the console.
 
-## Why Brainf***?
+## Details
 
 The Brainf*** programming language was selected due to the fact that it consists of only 8 instructions, while being Turing complete. Theoretically, it is capable of solving any computational problem. This makes it easy to develop an interpreter, capable of running the AI-generated programs in a simulated environment. In this manner, each generated program may be executed and its performance ranked as a fitness score. Since the AI is using a Turing complete programming language, the AI itself, is also theoretically capable of solving any computational problem. However, for this experiment, the AI will focus on outputting a simple string to the console.
+
+## How It Works
 
 AI-Programmer works as follows:
 
