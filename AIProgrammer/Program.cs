@@ -26,8 +26,8 @@ namespace AIProgrammer
         private static int _besIiteration = 0; // Current iteration (generation) count.
         private static bool _bestNoErrors = false; // Indicator if the program had errors or not.
         private static DateTime _bestLastChangeDate = DateTime.Now; // Time of last improved evolution.
-        private static int _maxIterationCount = 2500; // Max iterations a program may run before being killed (prevents infinite loops).
-        private static string _targetString = "Hi!"; // Target string to generate a program to print.
+        private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
+        private static string _targetString = "hello"; // Target string to generate a program to print.
 
         /// <summary>
         /// Event handler that is called upon each generation. We use this opportunity to display some status info and save the current genetic algorithm in case of crashes etc.
@@ -106,15 +106,14 @@ namespace AIProgrammer
 
             foreach (double d in array)
             {
-                if (d <= 0.11) result += ">";
-                else if (d <= 0.22) result += "<";
-                else if (d <= 0.33) result += "+";
-                else if (d <= 0.44) result += "-";
-                else if (d <= 0.55) result += ".";
-                else if (d <= 0.66) result += ",";
-                else if (d <= 0.77) result += "[";
-                else if (d <= 0.88) result += "]";
-                else result += "#";
+                if (d <= 0.125) result += ">";
+                else if (d <= 0.25) result += "<";
+                else if (d <= 0.375) result += "+";
+                else if (d <= 0.5) result += "-";
+                else if (d <= 0.625) result += ".";
+                else if (d <= 0.75) result += ",";
+                else if (d <= 0.875) result += "[";
+                else result += "]";
             }
 
             return result;
@@ -127,7 +126,7 @@ namespace AIProgrammer
         private static double[] Setup()
         {
             // Genetic algorithm setup.
-            _ga = new GA(0.35, 0.01, 100, 10000000, 100); // Best results with: .35, .01, 100, 10000000, 100
+            _ga = new GA(0.70, 0.01, 100, 10000000, 100); // Best results with: .35, .01, 100, 10000000, 100
 
             // Start a new genetic algorithm.
             _ga.GAParams.Elitism = true;
@@ -145,10 +144,10 @@ namespace AIProgrammer
             double[] weights;
             double fitness;
             _ga.GetBest(out weights, out fitness);
-            Console.WriteLine("Best brain had a fitness of " + fitness);
+            Console.WriteLine("***** DONE! Best brain had a fitness of " + fitness);
 
             // Save the result.
-            _ga.Save("my-genetic-algorithm.dat");
+            //_ga.Save("my-genetic-algorithm.dat");
 
             return weights;
         }
