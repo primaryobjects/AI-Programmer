@@ -157,7 +157,7 @@ namespace AIProgrammer.GeneticAlgorithm
 		/// <returns>Random individual biased towards highest fitness</returns>
 		private int RouletteSelection()
 		{
-            double randomFitness = m_random.NextDouble() * (GAParams.TotalFitness == 0 ? 1 : GAParams.TotalFitness);
+            double randomFitness = m_random.NextDouble() * (GAParams.FitnessTable[GAParams.FitnessTable.Count - 1] == 0 ? 1 : GAParams.FitnessTable[GAParams.FitnessTable.Count - 1]);
 			int idx = -1;
 			int mid;
 			int first = 0;
@@ -283,9 +283,15 @@ namespace AIProgrammer.GeneticAlgorithm
         {
             ThreadPool.QueueUserWorkItem(new WaitCallback((p) =>
             {
-                IRepository<GAParams> repository = new GARepository((string)p);
-                repository.Add(GAParams);
-                repository.SaveChanges();
+                try
+                {
+                    IRepository<GAParams> repository = new GARepository((string)p);
+                    repository.Add(GAParams);
+                    repository.SaveChanges();
+                }
+                catch
+                {
+                }
             }), fileName);
         }
 
