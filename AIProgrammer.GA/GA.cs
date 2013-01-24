@@ -29,6 +29,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
 #endregion
 
 namespace AIProgrammer.GeneticAlgorithm
@@ -144,7 +147,6 @@ namespace AIProgrammer.GeneticAlgorithm
 
                 GAParams.CurrentGeneration++;
             }
-
 		}
 
 		/// <summary>
@@ -188,17 +190,20 @@ namespace AIProgrammer.GeneticAlgorithm
 		private double RankPopulation()
 		{
             GAParams.TotalFitness = 0.0;
-            foreach (Genome g in GAParams.ThisGeneration)
-			{
-				g.Fitness = FitnessFunction(g.Genes());
+
+            // Calculate fitness for each genome.
+            Parallel.ForEach(GAParams.ThisGeneration, (g) =>
+            {
+                g.Fitness = FitnessFunction(g.Genes());
                 GAParams.TotalFitness += g.Fitness;
-			}
-            GAParams.ThisGeneration.Sort(delegate(Genome x, Genome y) 
-                { return Comparer<double>.Default.Compare(x.Fitness, y.Fitness); });
+            });
+
+            GAParams.ThisGeneration.Sort(delegate(Genome x, Genome y)  { return Comparer<double>.Default.Compare(x.Fitness, y.Fitness); });
 
             //  now sorted in order of fitness.
             double fitness = 0.0;
             GAParams.FitnessTable.Clear();
+
             foreach (Genome t in GAParams.ThisGeneration)
 			{
 				fitness += t.Fitness;
@@ -276,9 +281,12 @@ namespace AIProgrammer.GeneticAlgorithm
 
         public void Save(string fileName)
         {
-            IRepository<GAParams> repository = new GARepository(fileName);
-            repository.Add(GAParams);
-            repository.SaveChanges();
+            ThreadPool.QueueUserWorkItem(new WaitCallback((p) =>
+            {
+                IRepository<GAParams> repository = new GARepository((string)p);
+                repository.Add(GAParams);
+                repository.SaveChanges();
+            }), fileName);
         }
 
         public void Load(string fileName)
