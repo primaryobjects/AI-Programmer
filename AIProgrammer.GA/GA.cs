@@ -157,7 +157,7 @@ namespace AIProgrammer.GeneticAlgorithm
 		/// <returns>Random individual biased towards highest fitness</returns>
 		private int RouletteSelection()
 		{
-            double randomFitness = m_random.NextDouble() * GAParams.TotalFitness;
+            double randomFitness = m_random.NextDouble() * (GAParams.TotalFitness == 0 ? 1 : GAParams.TotalFitness);
 			int idx = -1;
 			int mid;
 			int first = 0;
