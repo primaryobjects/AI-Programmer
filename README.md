@@ -68,6 +68,16 @@ If we trim off the excess code, we see the following syntactically-valid code:
 +[+++++-+>++>++-++++++<<]>++.[+.]
 ```
 
+## hello
+
+The AI successfully wrote a program to output "hello" after 252,0000 generations in about 29 minutes. It produced the following code:
+
+```
++-+-+>-<[++++>+++++<+<>++]>[-[---.--[[-.++++[+++..].+]],]<-+<+,.+>[[.,],+<.+-<,--+.]],+][[[.+.,,+].-
+```
+
+During the generation process, the AI came pretty close to a solution, but a couple letters were bound to each other, within a loop. The AI was able to overcome this by creating an inner-loop, within the problematic one, that successfully output the correct character, and continued processing.
+
 ## Hi!
 
 In another example, the AI successfully wrote a program to output "Hi!" after 4,559,681 generations in about 4 hours. More complex programs could likely be generated while using faster PCs.
