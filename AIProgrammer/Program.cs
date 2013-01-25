@@ -21,7 +21,7 @@ namespace AIProgrammer
     {
         private static GA _ga = null; // Our genetic algorithm instance.
         private static double _bestFitness = 0; // Best fitness so far.
-        private static double _bestTrueFitness = 0; // Best fitness so far, without optimization bonus.
+        private static double _bestTrueFitness = 0; // Best fitness so far, without optimization bonus. This is used to determine when we've found a solution (since the optimization bonus can be a variable amount).
         private static string _bestProgram = ""; // Best program so far.
         private static string _bestOutput = ""; // Best program output so far.
         private static int _bestIteration = 0; // Current iteration (generation) count.
@@ -29,7 +29,7 @@ namespace AIProgrammer
         private static bool _bestNoErrors = false; // Indicator if the program had errors or not.
         private static DateTime _bestLastChangeDate = DateTime.Now; // Time of last improved evolution.
         private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
-        private static string _targetString = "reddit"; // Target string to generate a program to print.
+        private static string _targetString = "girl"; // Target string to generate a program to print.
         private static int _targetFitness = _targetString.Length * 256;
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace AIProgrammer
             }
 
             // Bonus for less operations to optimize the code.
-            fitness += ((_maxIterationCount - bf.m_Ticks) / 10);
+            fitness += ((_maxIterationCount - bf.m_Ticks) / 10.0);
 
             // Is this a new best fitness?
             if (fitness > _bestFitness)
@@ -147,7 +147,7 @@ namespace AIProgrammer
         private static double[] Setup()
         {
             // Genetic algorithm setup.
-            _ga = new GA(0.70, 0.01, 100, 10000000, 100); // Best results with: .35, .01, 100, 10000000, 100
+            _ga = new GA(0.70, 0.05, 100, 10000000, 100);
 
             // Start a new genetic algorithm.
             _ga.GAParams.Elitism = true;
@@ -196,9 +196,8 @@ namespace AIProgrammer
 
                 bf.Run(_maxIterationCount);
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.Message);
             }
 
             

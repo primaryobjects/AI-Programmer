@@ -79,9 +79,6 @@ namespace AIProgrammer
         /// <param name="output"></param>
         public Interpreter(string programCode, Func<byte> input, Action<byte> output)
         {
-            // Initialize tick counter (number of instructions executed).
-            this.m_Ticks = 0;
-
             // Save the program code
             this.m_Source = programCode.ToCharArray();
 
@@ -137,6 +134,9 @@ namespace AIProgrammer
         /// </summary>
         public void Run(int maxInstructions)
         {
+            // Initialize tick counter (number of instructions executed).
+            this.m_Ticks = 0;
+
             if (maxInstructions > 0)
             {
                 RunLimited(maxInstructions);
