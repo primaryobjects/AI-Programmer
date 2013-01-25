@@ -45,6 +45,7 @@ namespace AIProgrammer.GeneticAlgorithm
 	public class GA
 	{
         public GAParams GAParams { get; set; }
+        public bool Stop = false;
 
 		/// <summary>
 		/// Default constructor sets mutation rate to 5%, crossover to 80%, population to 100,
@@ -114,7 +115,7 @@ namespace AIProgrammer.GeneticAlgorithm
                 RankPopulation();
             }
 
-            while (GAParams.CurrentGeneration < GAParams.Generations)
+            while (GAParams.CurrentGeneration < GAParams.Generations && !Stop)
             {
                 CreateNextGeneration();
                 double fitness = RankPopulation();
