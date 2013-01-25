@@ -27,7 +27,7 @@ namespace AIProgrammer
         private static bool _bestNoErrors = false; // Indicator if the program had errors or not.
         private static DateTime _bestLastChangeDate = DateTime.Now; // Time of last improved evolution.
         private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
-        private static string _targetString = "hello"; // Target string to generate a program to print.
+        private static string _targetString = "reddit"; // Target string to generate a program to print.
 
         /// <summary>
         /// Event handler that is called upon each generation. We use this opportunity to display some status info and save the current genetic algorithm in case of crashes etc.
@@ -175,9 +175,8 @@ namespace AIProgrammer
 
                 bf.Run(_maxIterationCount);
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.Message);
             }
 
             
