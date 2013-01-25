@@ -18,9 +18,9 @@ The Brainf*** programming language was selected due to the fact that it consists
 AI-Programmer works as follows:
 
 - A genome consists of an array of doubles.
-- Each gene cooresponds to an instruction in the Brainf*** programming language.
+- Each gene corresponds to an instruction in the Brainf*** programming language.
 - Start with a population of random genomes.
-- Decode each genome into a resulting program by converting each double into its cooresponding instruction and execute the program.
+- Decode each genome into a resulting program by converting each double into its corresponding instruction and execute the program.
 - Get each program's fitness score, based upon the output it writes to the console (if any), and rank them.
 - Mate the best genomes together using roulette selection, crossover, and mutation to produce a new generation.
 - Repeat the process with the new generation until the target fitness score is achieved.
@@ -80,7 +80,13 @@ During the generation process, the AI came pretty close to a solution, but a cou
 
 ## Hi!
 
-In another example, the AI successfully wrote a program to output "Hi!" after 4,559,681 generations in about 4 hours. More complex programs could likely be generated while using faster PCs.
+In another example, the AI successfully wrote a program to output "Hi!" after 1,219,400 generations in about 2 hours and 7 minutes. It produced the following code:
+
+```
+>-----------<++[[++>++<+][]>-.+[+++++++++++++++++++++++++++++><+++.<><-->>>+].]
+```
+
+More complex programs could likely be generated while using faster PCs.
 
 ## Author
 
