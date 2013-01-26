@@ -26,8 +26,12 @@ namespace AIProgrammer
         private static int _besIiteration = 0; // Current iteration (generation) count.
         private static bool _bestNoErrors = false; // Indicator if the program had errors or not.
         private static DateTime _bestLastChangeDate = DateTime.Now; // Time of last improved evolution.
+        
+        private static double _crossoverRate = 0.70; // Percentage chance that a child genome will use crossover of two parents.
+        private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
+        private static int _genomeSize = 100; // Number of programming instructions in generated program (size of genome array).
         private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
-        private static string _targetString = "reddit"; // Target string to generate a program to print.
+        private static string _targetString = "hi"; // Target string to generate a program to print.
 
         /// <summary>
         /// Event handler that is called upon each generation. We use this opportunity to display some status info and save the current genetic algorithm in case of crashes etc.
@@ -126,7 +130,7 @@ namespace AIProgrammer
         private static double[] Setup()
         {
             // Genetic algorithm setup.
-            _ga = new GA(0.70, 0.01, 100, 10000000, 100); // Best results with: .35, .01, 100, 10000000, 100
+            _ga = new GA(_crossoverRate, _mutationRate, 100, 10000000, _genomeSize);
 
             // Start a new genetic algorithm.
             _ga.GAParams.Elitism = true;
