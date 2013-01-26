@@ -37,7 +37,7 @@ namespace AIProgrammer
             if (_besIiteration++ > 1000)
             {
                 _besIiteration = 0;
-                Console.WriteLine("Best Fitness: " + _bestFitness + "/" + ga.GAParams.TargetFitness + " " + Math.Round(_bestFitness / ga.GAParams.TargetFitness * 100) + "%, Best Output: " + _bestOutput + ", Changed: " + _bestLastChangeDate.ToString() + ", Program: " + _bestProgram);
+                Console.WriteLine("Best Fitness: " + _bestFitness + "/" + ga.GAParams.TargetFitness + " " + Math.Round(_bestFitness / ga.GAParams.TargetFitness * 100, 2) + "%, Best Output: " + _bestOutput + ", Changed: " + _bestLastChangeDate.ToString() + ", Program: " + _bestProgram);
 
                 ga.Save("my-genetic-algorithm.dat");
             }
