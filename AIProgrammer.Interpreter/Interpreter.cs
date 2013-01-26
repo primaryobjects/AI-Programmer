@@ -167,7 +167,7 @@ namespace AIProgrammer
                 // Have we exceeded the max instruction count?
                 if (maxInstructions > 0 && instructionCount++ > maxInstructions)
                 {
-                    throw new StackOverflowException();
+                    break;
                 }
             }
         }
