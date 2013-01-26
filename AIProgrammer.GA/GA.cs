@@ -253,11 +253,11 @@ namespace AIProgrammer.GeneticAlgorithm
 				{
 					parent1.Crossover(ref parent2, out child1, out child2);
 				}
-				else
-				{
-					child1 = parent1;
-					child2 = parent2;
-				}
+                else
+                {
+                    child1 = parent1;
+                    child2 = parent2;
+                }
 				child1.Mutate();
 				child2.Mutate();
 
