@@ -91,7 +91,10 @@ More complex programs could likely be generated while using faster PCs.
 ## Author
 
 Kory Becker
-http://www.primaryobjects.com
+http://www.primaryobjects.com/kory-becker.aspx
+
+Read @ Primary Objects
+http://www.primaryobjects.com/CMS/Article149.aspx
 
 View @ GitHub
 https://github.com/primaryobjects/ai-programmer
