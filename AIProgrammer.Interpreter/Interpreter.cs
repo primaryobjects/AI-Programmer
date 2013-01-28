@@ -67,6 +67,11 @@ namespace AIProgrammer
         private bool m_ExitLoop;
 
         /// <summary>
+        /// Count of number of instructions executed.
+        /// </summary>
+        public int m_Ticks;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="programCode"></param>
@@ -129,6 +134,9 @@ namespace AIProgrammer
         /// </summary>
         public void Run(int maxInstructions = 0)
         {
+            // Initialize tick counter (number of instructions executed).
+            this.m_Ticks = 0;
+
             if (maxInstructions > 0)
             {
                 RunLimited(maxInstructions);
@@ -145,8 +153,6 @@ namespace AIProgrammer
         /// <param name="maxInstructions">Max number of instructions to execute</param>
         private void RunLimited(int maxInstructions)
         {
-            int instructionCount = 0;
-
             // Iterate through the whole program source
             while (this.m_InstructionPointer < this.m_Source.Length)
             {
@@ -165,10 +171,13 @@ namespace AIProgrammer
                 this.m_InstructionPointer++;
 
                 // Have we exceeded the max instruction count?
-                if (maxInstructions > 0 && instructionCount++ > maxInstructions)
+                if (maxInstructions > 0 && m_Ticks > maxInstructions)
                 {
                     break;
                 }
+
+                // Increment number of instructions executed.
+                m_Ticks++;
             }
         }
 
@@ -193,6 +202,9 @@ namespace AIProgrammer
 
                 // Next instruction
                 this.m_InstructionPointer++;
+
+                // Increment number of instructions executed.
+                m_Ticks++;
             }
         }
     }
