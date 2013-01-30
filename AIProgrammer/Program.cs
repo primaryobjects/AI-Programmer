@@ -28,7 +28,9 @@ namespace AIProgrammer
         private static int _bestTotalInstructions = 0; // Number of instructions executed by the best program.
         private static bool _bestNoErrors = false; // Indicator if the program had errors or not.
         private static DateTime _bestLastChangeDate = DateTime.Now; // Time of last improved evolution.
-        
+        private static DateTime _startTime = DateTime.Now; // Time the program was started.
+        private static int _bestTicks = 0;
+
         private static double _crossoverRate = 0.70; // Percentage chance that a child genome will use crossover of two parents.
         private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
         private static int _genomeSize = 100; // Number of programming instructions in generated program (size of genome array).
@@ -44,7 +46,7 @@ namespace AIProgrammer
             if (_bestIteration++ > 1000)
             {
                 _bestIteration = 0;
-                Console.WriteLine("Best Fitness: " + _bestTrueFitness + "/" + _targetFitness + " " + Math.Round(_bestTrueFitness / _targetFitness * 100, 2) + "%, Ticks: " + _bestTotalInstructions + ", Output: " + _bestOutput + ", Changed: " + _bestLastChangeDate.ToString() + ", Program: " + _bestProgram);
+                Console.WriteLine("Best Fitness: " + _bestTrueFitness + "/" + _targetFitness + " " + Math.Round(_bestTrueFitness / _targetFitness * 100, 2) + "%, Ticks: " + _bestTotalInstructions + ", Output: " + _bestOutput + ", Running: " + Math.Round((DateTime.Now - _startTime).TotalMinutes) + "m, Changed: " + _bestLastChangeDate.ToString() + ", Program: " + _bestProgram);
 
                 ga.Save("my-genetic-algorithm.dat");
             }
@@ -57,11 +59,11 @@ namespace AIProgrammer
         /// <returns>double, indicating the score</returns>
         private static double fitnessFunction(double[] weights)
         {
-            Interpreter bf = null;
             double fitness = 0;
             double trueFitness = 0; // fitness without secondary bonuses (ie., optimization, etc)
-            string console = "";
             bool noErrors = false;
+			StringBuilder console = new StringBuilder();
+            Interpreter bf = null;
 
             // Get the resulting Brainfuck program.
             string program = ConvertDoubleArrayToBF(weights);
@@ -71,7 +73,7 @@ namespace AIProgrammer
                 // Run the program.
                 bf = new Interpreter(program, null, (b) =>
                 {
-                    console += (char)b;
+                    console.Append((char)b);
                 });
                 bf.Run(_maxIterationCount);
 
@@ -110,7 +112,7 @@ namespace AIProgrammer
             {
                 _bestFitness = fitness;
                 _bestTrueFitness = trueFitness;
-                _bestOutput = console;
+                _bestOutput = console.ToString();
                 _bestNoErrors = noErrors;
                 _bestLastChangeDate = DateTime.Now;
                 _bestProgram = program;
@@ -127,21 +129,21 @@ namespace AIProgrammer
         /// <returns>string - Brainfuck program</returns>
         private static string ConvertDoubleArrayToBF(double[] array)
         {
-            string result = "";
+            StringBuilder sb = new StringBuilder();
 
             foreach (double d in array)
             {
-                if (d <= 0.125) result += ">";
-                else if (d <= 0.25) result += "<";
-                else if (d <= 0.375) result += "+";
-                else if (d <= 0.5) result += "-";
-                else if (d <= 0.625) result += ".";
-                else if (d <= 0.75) result += ",";
-                else if (d <= 0.875) result += "[";
-                else result += "]";
+                if (d <= 0.125) sb.Append('>');
+                else if (d <= 0.25) sb.Append('<');
+                else if (d <= 0.375) sb.Append('+');
+                else if (d <= 0.5) sb.Append('-');
+                else if (d <= 0.625) sb.Append('.');
+                else if (d <= 0.75) sb.Append(',');
+                else if (d <= 0.875) sb.Append('[');
+                else sb.Append(']');
             }
 
-            return result;
+            return sb.ToString();
         }
 
         /// <summary>
@@ -203,7 +205,7 @@ namespace AIProgrammer
             catch
             {
             }
-            
+
             Console.ReadKey();
         }
     }
