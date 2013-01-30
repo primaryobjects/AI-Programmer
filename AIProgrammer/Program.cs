@@ -102,10 +102,15 @@ namespace AIProgrammer
                 // Note, you can alternatively use the _ga.GAParams.TargetFitness to set a specific fitness to achieve.
                 // In our case, the number of ticks (instructions executed) is a variable part of the fitness, so we don't know the exact perfect fitness value once this part is added.
                 _ga.Stop = true;
-            }
 
-            // Bonus for less operations to optimize the code.
-            fitness += ((_maxIterationCount - bf.m_Ticks) / 20.0);
+                // Set this genome as the solution.
+                fitness = Double.MaxValue;
+            }
+            else
+            {
+                // Bonus for less operations to optimize the code.
+                fitness += ((_maxIterationCount - bf.m_Ticks) / 20.0);
+            }
 
             // Is this a new best fitness?
             if (fitness > _bestFitness)
