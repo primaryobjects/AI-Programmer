@@ -24,10 +24,10 @@ namespace AIProgrammer
         private static string _bestProgram = ""; // Best program so far.
         private static string _bestOutput = ""; // Best program output so far.
         private static int _bestIteration = 0; // Current iteration (generation) count.
+        private static int _bestTicks = 0; // Number of instructions executed by the best program.
         private static bool _bestNoErrors = false; // Indicator if the program had errors or not.
         private static DateTime _bestLastChangeDate = DateTime.Now; // Time of last improved evolution.
         private static DateTime _startTime = DateTime.Now; // Time the program was started.
-        private static int _bestTicks = 0;
 
         private static double _crossoverRate = 0.70; // Percentage chance that a child genome will use crossover of two parents.
         private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
