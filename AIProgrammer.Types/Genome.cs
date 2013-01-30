@@ -30,37 +30,37 @@ using System.Collections.Generic;
 namespace AIProgrammer.Types
 {
     /// <summary>
-	/// Summary description for Genome.
-	/// </summary>
+    /// Summary description for Genome.
+    /// </summary>
     [Serializable]
     public class Genome
     {
-		public Genome()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
-		public Genome(int length)
-		{
-			m_length = length;
+        public Genome()
+        {
+            //
+            // TODO: Add constructor logic here
+            //
+        }
+        public Genome(int length)
+        {
+            m_length = length;
             m_genes = new double[length];
             CreateGenes();
-		}
-		public Genome(int length, bool createGenes)
-		{
-			m_length = length;
+        }
+        public Genome(int length, bool createGenes)
+        {
+            m_length = length;
             m_genes = new double[length];
             if (createGenes)
-				CreateGenes();
-		}
+                CreateGenes();
+        }
 
         public Genome(ref double[] genes)
         {
-			m_length = genes.Length;
+            m_length = genes.Length;
             m_genes = new double[m_length];
             Array.Copy(genes, m_genes, m_length);
-		}
+        }
 
         public Genome DeepCopy()
         {
@@ -70,16 +70,16 @@ namespace AIProgrammer.Types
         }
 
         private void CreateGenes()
-		{
+        {
             for (int i = 0; i < m_genes.Length; i++)
                 m_genes[i] = m_random.NextDouble();
         }
 
         public void Crossover(ref Genome genome2, out Genome child1, out Genome child2)
-		{
-			int pos = (int)(m_random.NextDouble() * (double)m_length);
-			child1 = new Genome(m_length, false);
-			child2 = new Genome(m_length, false);
+        {
+            int pos = (int)(m_random.NextDouble() * (double)m_length);
+            child1 = new Genome(m_length, false);
+            child2 = new Genome(m_length, false);
 
             // Array.Copy is the same speed (fraction slower) than iterating over the array.
             /*// Copy first half for child1 with random genes, second half with parent genes.
@@ -90,20 +90,20 @@ namespace AIProgrammer.Types
             Array.Copy(genome2.m_genes, 0, child2.m_genes, 0, pos);
             Array.Copy(m_genes, pos, child2.m_genes, pos, m_length - pos);*/
 
-            for(int i = 0 ; i < m_length ; i++)
-			{
-				if (i < pos)
-				{
-					child1.m_genes[i] = m_genes[i];
-					child2.m_genes[i] = genome2.m_genes[i];
-				}
-				else
-				{
-					child1.m_genes[i] = genome2.m_genes[i];
-					child2.m_genes[i] = m_genes[i];
-				}
+            for (int i = 0; i < m_length; i++)
+            {
+                if (i < pos)
+                {
+                    child1.m_genes[i] = m_genes[i];
+                    child2.m_genes[i] = genome2.m_genes[i];
+                }
+                else
+                {
+                    child1.m_genes[i] = genome2.m_genes[i];
+                    child2.m_genes[i] = m_genes[i];
+                }
             }
-		}
+        }
 
         /// <summary>
         /// Mutation by insert, replace, delete.
@@ -113,118 +113,121 @@ namespace AIProgrammer.Types
         /// - If deleting, all bits are shifted down at the position. A mutated bit is added at the end of the array.
         /// </summary>
         public void Mutate()
-		{
-            double r = m_random.NextDouble();
-            if (r <= 0.333)
+        {
+            // Go through each bit.
+            for (int pos = 0; pos < m_length; pos++)
             {
-                // Insertion mutation.
-                // Get shift index.
-                int mutationIndex = m_random.Next(m_genes.Length);
-
-                // Make a copy of the current bit before we mutate it.
-                double shiftBit = m_genes[mutationIndex];
-
-                // Set random bit at mutation index.
-                m_genes[mutationIndex] = m_random.NextDouble();
-
-                // Bump bits up by 1.
-                for (int i = mutationIndex + 1; i < m_length;  i++)
+                // Should this bit mutate?
+                if (m_random.NextDouble() < m_mutationRate)
                 {
-                    double nextShiftBit = m_genes[i];
-
-                    m_genes[i] = shiftBit;
-
-                    shiftBit = nextShiftBit;
-                }
-            }
-            else if (r <= 0.666)
-            {
-                // Deletion mutation.
-                // Get deletion index.
-                int mutationIndex = m_random.Next(m_genes.Length);
-
-                // Bump bits down by 1.
-                for (int i = mutationIndex; i < m_length - 1; i++)
-                {
-                    m_genes[i] = m_genes[i + 1];
-                }
-
-                // Add a new mutation bit at end of genome to replace the deleted one.
-                m_genes[m_length - 1] = m_random.NextDouble();
-            }
-            else
-            {
-                // Replacement mutation.
-                // Mutate bits.
-                for (int pos = 0; pos < m_length; pos++)
-                {
-                    if (m_random.NextDouble() < m_mutationRate)
+                    // Select a mutation type.
+                    double r = m_random.NextDouble();
+                    if (r <= 0.333)
                     {
+                        // Insertion mutation.
+                        // Get shift index.
+                        int mutationIndex = pos;
+
+                        // Make a copy of the current bit before we mutate it.
+                        double shiftBit = m_genes[mutationIndex];
+
+                        // Set random bit at mutation index.
+                        m_genes[mutationIndex] = m_random.NextDouble();
+
+                        // Bump bits up by 1.
+                        for (int i = mutationIndex + 1; i < m_length; i++)
+                        {
+                            double nextShiftBit = m_genes[i];
+
+                            m_genes[i] = shiftBit;
+
+                            shiftBit = nextShiftBit;
+                        }
+                    }
+                    else if (r <= 0.666)
+                    {
+                        // Deletion mutation.
+                        // Get deletion index.
+                        int mutationIndex = pos;
+
+                        // Bump bits down by 1.
+                        for (int i = mutationIndex; i < m_length - 1; i++)
+                        {
+                            m_genes[i] = m_genes[i + 1];
+                        }
+
+                        // Add a new mutation bit at end of genome to replace the deleted one.
+                        m_genes[m_length - 1] = m_random.NextDouble();
+                    }
+                    else
+                    {
+                        // Replacement mutation.
+                        // Mutate bits.
                         double mutation = m_random.NextDouble();
                         m_genes[pos] = mutation;
                     }
                 }
             }
-		}
+        }
 
-		public double[] Genes()
-		{
-			return m_genes;
-		}
+        public double[] Genes()
+        {
+            return m_genes;
+        }
 
-		public void Output()
-		{
+        public void Output()
+        {
             foreach (double valeur in m_genes)
             {
-				System.Console.WriteLine("{0:F4}", valeur);
-			}
-			System.Console.Write("------\n");
-		}
+                System.Console.WriteLine("{0:F4}", valeur);
+            }
+            System.Console.Write("------\n");
+        }
 
-		public void GetValues(ref double[] values)
-		{
-			for (int i = 0 ; i < m_length ; i++)
-				values[i] = m_genes[i];
-		}
+        public void GetValues(ref double[] values)
+        {
+            for (int i = 0; i < m_length; i++)
+                values[i] = m_genes[i];
+        }
 
-		public double[] m_genes;
+        public double[] m_genes;
         public int m_length;
         public double m_fitness;
         public int age;
-		static Random m_random = new Random((int)DateTime.Now.Ticks);
+        static Random m_random = new Random((int)DateTime.Now.Ticks);
 
         public static double m_mutationRate;
 
-		public double Fitness
-		{
-			get
-			{
-				return m_fitness;
-			}
-			set
-			{
-				m_fitness = value;
-			}
-		}
+        public double Fitness
+        {
+            get
+            {
+                return m_fitness;
+            }
+            set
+            {
+                m_fitness = value;
+            }
+        }
 
-		public static double MutationRate
-		{
-			get
-			{
-				return m_mutationRate;
-			}
-			set
-			{
-				m_mutationRate = value;
-			}
-		}
+        public static double MutationRate
+        {
+            get
+            {
+                return m_mutationRate;
+            }
+            set
+            {
+                m_mutationRate = value;
+            }
+        }
 
-		public int Length
-		{
-			get
-			{
-				return m_length;
-			}
-		}
-	}
+        public int Length
+        {
+            get
+            {
+                return m_length;
+            }
+        }
+    }
 }

@@ -67,6 +67,16 @@ namespace AIProgrammer
         private bool m_ExitLoop;
 
         /// <summary>
+        /// Number of instructions executed.
+        /// </summary>
+        public int m_Ticks;
+
+        /// <summary>
+        /// Flag to stop execution of the program.
+        /// </summary>
+        public bool m_Stop;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="programCode"></param>
@@ -88,20 +98,20 @@ namespace AIProgrammer
             this.m_InstructionSet.Add('>', () => { if (!m_ExitLoop) this.m_DataPointer++; });
             this.m_InstructionSet.Add('<', () => { if (!m_ExitLoop) this.m_DataPointer--; });
 
-            this.m_InstructionSet.Add('[', () => 
+            this.m_InstructionSet.Add('[', () =>
+            {
+                if (!m_ExitLoop)
                 {
-                    if (!m_ExitLoop)
+                    if (this.m_Memory[this.m_DataPointer] == 0)
                     {
-                        if (this.m_Memory[this.m_DataPointer] == 0)
-                        {
-                            m_ExitLoop = true;
-                        }
-                        else
-                        {
-                            this.m_CallStack.Push(this.m_InstructionPointer);
-                        }
+                        m_ExitLoop = true;
                     }
-                });
+                    else
+                    {
+                        this.m_CallStack.Push(this.m_InstructionPointer);
+                    }
+                }
+            });
             this.m_InstructionSet.Add(
                 ']',
                 () =>
@@ -129,6 +139,9 @@ namespace AIProgrammer
         /// </summary>
         public void Run(int maxInstructions = 0)
         {
+            m_Ticks = 0;
+            m_Stop = false;
+
             if (maxInstructions > 0)
             {
                 RunLimited(maxInstructions);
@@ -145,10 +158,8 @@ namespace AIProgrammer
         /// <param name="maxInstructions">Max number of instructions to execute</param>
         private void RunLimited(int maxInstructions)
         {
-            int instructionCount = 0;
-
             // Iterate through the whole program source
-            while (this.m_InstructionPointer < this.m_Source.Length)
+            while (this.m_InstructionPointer < this.m_Source.Length && !m_Stop)
             {
                 // Fetch the next instruction
                 char instruction = this.m_Source[this.m_InstructionPointer];
@@ -165,10 +176,12 @@ namespace AIProgrammer
                 this.m_InstructionPointer++;
 
                 // Have we exceeded the max instruction count?
-                if (maxInstructions > 0 && instructionCount++ > maxInstructions)
+                if (maxInstructions > 0 && m_Ticks >= maxInstructions)
                 {
                     break;
                 }
+
+                m_Ticks++;
             }
         }
 
@@ -178,7 +191,7 @@ namespace AIProgrammer
         private void RunUnlimited()
         {
             // Iterate through the whole program source
-            while (this.m_InstructionPointer < this.m_Source.Length)
+            while (this.m_InstructionPointer < this.m_Source.Length && !m_Stop)
             {
                 // Fetch the next instruction
                 char instruction = this.m_Source[this.m_InstructionPointer];
@@ -193,6 +206,8 @@ namespace AIProgrammer
 
                 // Next instruction
                 this.m_InstructionPointer++;
+
+                m_Ticks++;
             }
         }
     }

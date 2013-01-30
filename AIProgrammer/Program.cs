@@ -23,10 +23,12 @@ namespace AIProgrammer
         private static double _bestFitness = 0; // Best fitness so far.
         private static string _bestProgram = ""; // Best program so far.
         private static string _bestOutput = ""; // Best program output so far.
-        private static int _besIiteration = 0; // Current iteration (generation) count.
+        private static int _bestIteration = 0; // Current iteration (generation) count.
         private static bool _bestNoErrors = false; // Indicator if the program had errors or not.
         private static DateTime _bestLastChangeDate = DateTime.Now; // Time of last improved evolution.
-        
+        private static DateTime _startTime = DateTime.Now; // Time the program was started.
+        private static int _bestTicks = 0;
+
         private static double _crossoverRate = 0.70; // Percentage chance that a child genome will use crossover of two parents.
         private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
         private static int _genomeSize = 100; // Number of programming instructions in generated program (size of genome array).
@@ -38,10 +40,10 @@ namespace AIProgrammer
         /// </summary>
         private static void OnGeneration(GA ga)
         {
-            if (_besIiteration++ > 1000)
+            if (_bestIteration++ > 1000)
             {
-                _besIiteration = 0;
-                Console.WriteLine("Best Fitness: " + _bestFitness + "/" + ga.GAParams.TargetFitness + " " + Math.Round(_bestFitness / ga.GAParams.TargetFitness * 100, 2) + "%, Best Output: " + _bestOutput + ", Changed: " + _bestLastChangeDate.ToString() + ", Program: " + _bestProgram);
+                _bestIteration = 0;
+                Console.WriteLine("Best Fitness: " + _bestFitness + "/" + ga.GAParams.TargetFitness + " " + Math.Round(_bestFitness / ga.GAParams.TargetFitness * 100, 2) + "%, Ticks: " + _bestTicks + ", Running: " + Math.Round((DateTime.Now - _startTime).TotalMinutes) + "m, Best Output: " + _bestOutput + ", Changed: " + _bestLastChangeDate.ToString() + ", Program: " + _bestProgram);
 
                 ga.Save("my-genetic-algorithm.dat");
             }
@@ -55,8 +57,9 @@ namespace AIProgrammer
         private static double fitnessFunction(double[] weights)
         {
             double fitness = 0;
-            string console = "";
+            StringBuilder console = new StringBuilder();
             bool noErrors = false;
+            Interpreter bf = null;
 
             // Get the resulting Brainfuck program.
             string program = ConvertDoubleArrayToBF(weights);
@@ -64,9 +67,15 @@ namespace AIProgrammer
             try
             {
                 // Run the program.
-                Interpreter bf = new Interpreter(program, null, (b) =>
+                bf = new Interpreter(program, null, (b) =>
                 {
-                    console += (char)b;
+                    console.Append((char)b);
+
+                    // If we've printed out more than our target string, then kill the program. This saves us the time of running the remaining iterations. Ok maybe this is cheating, but at least it's still in the fitness function.
+                    if (console.Length >= _targetString.Length)
+                    {
+                        bf.m_Stop = true;
+                    }
                 });
                 bf.Run(_maxIterationCount);
 
@@ -90,10 +99,11 @@ namespace AIProgrammer
             if (fitness > _bestFitness)
             {
                 _bestFitness = fitness;
-                _bestOutput = console;
+                _bestOutput = console.ToString();
                 _bestNoErrors = noErrors;
                 _bestLastChangeDate = DateTime.Now;
                 _bestProgram = program;
+                _bestTicks = bf.m_Ticks;
             }
 
             return fitness;
@@ -106,21 +116,21 @@ namespace AIProgrammer
         /// <returns>string - Brainfuck program</returns>
         private static string ConvertDoubleArrayToBF(double[] array)
         {
-            string result = "";
+            StringBuilder sb = new StringBuilder();
 
             foreach (double d in array)
             {
-                if (d <= 0.125) result += ">";
-                else if (d <= 0.25) result += "<";
-                else if (d <= 0.375) result += "+";
-                else if (d <= 0.5) result += "-";
-                else if (d <= 0.625) result += ".";
-                else if (d <= 0.75) result += ",";
-                else if (d <= 0.875) result += "[";
-                else result += "]";
+                if (d <= 0.125) sb.Append('>');
+                else if (d <= 0.25) sb.Append('<');
+                else if (d <= 0.375) sb.Append('+');
+                else if (d <= 0.5) sb.Append('-');
+                else if (d <= 0.625) sb.Append('.');
+                else if (d <= 0.75) sb.Append(',');
+                else if (d <= 0.875) sb.Append('[');
+                else sb.Append(']');
             }
 
-            return result;
+            return sb.ToString();
         }
 
         /// <summary>
@@ -183,7 +193,7 @@ namespace AIProgrammer
             {
             }
 
-            
+
             Console.ReadKey();
         }
     }
