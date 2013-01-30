@@ -25,11 +25,10 @@ namespace AIProgrammer
         private static string _bestProgram = ""; // Best program so far.
         private static string _bestOutput = ""; // Best program output so far.
         private static int _bestIteration = 0; // Current iteration (generation) count.
-        private static int _bestTotalInstructions = 0; // Number of instructions executed by the best program.
+        private static int _bestTicks = 0; // Number of instructions executed by the best program.
         private static bool _bestNoErrors = false; // Indicator if the program had errors or not.
         private static DateTime _bestLastChangeDate = DateTime.Now; // Time of last improved evolution.
         private static DateTime _startTime = DateTime.Now; // Time the program was started.
-        private static int _bestTicks = 0;
 
         private static double _crossoverRate = 0.70; // Percentage chance that a child genome will use crossover of two parents.
         private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
@@ -46,7 +45,7 @@ namespace AIProgrammer
             if (_bestIteration++ > 1000)
             {
                 _bestIteration = 0;
-                Console.WriteLine("Best Fitness: " + _bestTrueFitness + "/" + _targetFitness + " " + Math.Round(_bestTrueFitness / _targetFitness * 100, 2) + "%, Ticks: " + _bestTotalInstructions + ", Output: " + _bestOutput + ", Running: " + Math.Round((DateTime.Now - _startTime).TotalMinutes) + "m, Changed: " + _bestLastChangeDate.ToString() + ", Program: " + _bestProgram);
+                Console.WriteLine("Best Fitness: " + _bestTrueFitness + "/" + _targetFitness + " " + Math.Round(_bestTrueFitness / _targetFitness * 100, 2) + "%, Ticks: " + _bestTicks + ", Output: " + _bestOutput + ", Running: " + Math.Round((DateTime.Now - _startTime).TotalMinutes) + "m, Changed: " + _bestLastChangeDate.ToString() + ", Program: " + _bestProgram);
 
                 ga.Save("my-genetic-algorithm.dat");
             }
@@ -121,7 +120,7 @@ namespace AIProgrammer
                 _bestNoErrors = noErrors;
                 _bestLastChangeDate = DateTime.Now;
                 _bestProgram = program;
-                _bestTotalInstructions = bf.m_Ticks;
+                _bestTicks = bf.m_Ticks;
             }
 
             return fitness;
