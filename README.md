@@ -1,6 +1,9 @@
 AI-Programmer
 =========
 
+Read the full article at:
+http://www.primaryobjects.com/CMS/Article149.aspx
+ 
 AI-Programmer is an experiment with using artificial intelligence and genetic algorithms to automatically generate a program, in the Brainf*** programming language, that writes a specific phrase to the console. In short, it's an AI genetic algorithm implementation with self modifying code.
 
 ## Motivation
@@ -84,6 +87,14 @@ In another example, the AI successfully wrote a program to output "Hi!" after 1,
 
 ```
 >-----------<++[[++>++<+][]>-.+[+++++++++++++++++++++++++++++><+++.<><-->>>+].]
+```
+
+## I love all humans
+
+The AI successfully wrote a program to output "I love all humans" after 6,057,200 generations in about 10 hours. It produced the following code:
+
+```
++[>+<+++]+>------------.+<+++++++++++++++++++++++++++++++.>++++++++++++++++++++++++++++++++++.+++.+++++++.-----------------.--<.>--.+++++++++++..---<.>-.+++++++++++++.--------.------------.+++++++++++++.+++++.
 ```
 
 More complex programs could likely be generated while using faster PCs.
