@@ -44,7 +44,7 @@ namespace AIProgrammer
         /// <returns>IFitness</returns>
         private static IFitness GetFitnessMethod()
         {
-            return new SumToCharFitness(_ga, _targetFitness, _maxIterationCount);
+            return new SumFitness(_ga, _targetFitness, _maxIterationCount);
         }
 
         #region Worker Methods

@@ -12,6 +12,7 @@ namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
     /// Calculates the sum of various input integers and outputs the result as ASCII char values (ie., 3 => 51).
+    /// Note, input is taken in byte value (not ASCII character) so you will probably get different results if you run results on web-based interpreters, as those usually translate inputs into ASCII values.
     /// </summary>
     public class SumToCharFitness : FitnessBase
     {
@@ -28,16 +29,16 @@ namespace AIProgrammer.Fitness.Concrete
             int state = 0;
             double countBonus = 0;
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 5; i++)
             {
                 switch (i)
                 {
                     case 0: input1 = 1; input2 = 2; break;
-                    case 1: input1 = 3; input2 = 4; break;
-                    case 2: input1 = 5; input2 = 6; break;
-                    case 3: input1 = 7; input2 = 8; break;
-                    case 4: input1 = 9; input2 = 10; break;
-                    case 5: input1 = 2; input2 = 5; break;
+                    case 1: input1 = 2; input2 = 3; break;
+                    case 2: input1 = 2; input2 = 4; break;
+                    case 3: input1 = 3; input2 = 4; break;
+                    case 4: input1 = 3; input2 = 5; break;
+                    case 5: input1 = 6; input2 = 3; break;
                 };
 
                 try
@@ -65,10 +66,10 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        if (state == 2 && _console.Length == 0)
-                        {
+                        /*if (state == 2 && _console.Length == 0)
+                        {*/
                             _console.Append((char)b);
-                        }
+                        //}
                     });
                     _bf.Run(_maxIterationCount);
                 }
@@ -123,17 +124,15 @@ namespace AIProgrammer.Fitness.Concrete
                         if (state == 0)
                         {
                             state++;
-                            Console.WriteLine();
                             Console.Write(">: ");
-                            byte b = Byte.Parse(Console.ReadKey().KeyChar.ToString());
+                            byte b = Byte.Parse(Console.ReadLine());
                             return b;
                         }
                         else if (state == 1)
                         {
                             state++;
-                            Console.WriteLine();
                             Console.Write(">: ");
-                            byte b = Byte.Parse(Console.ReadKey().KeyChar.ToString());
+                            byte b = Byte.Parse(Console.ReadLine());
                             return b;
                         }
                         else
@@ -143,11 +142,11 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        if (state == 2 && !alreadyDisplay)
-                        {
-                            alreadyDisplay = true;
-                            _console.Append("= " + (char)b);
-                        }
+                        /*if (state == 2 && !alreadyDisplay)
+                        {*/
+                            //alreadyDisplay = true;
+                            _console.Append((char)b);
+                        //}
                     });
 
                     bf.Run(_maxIterationCount);
@@ -157,6 +156,7 @@ namespace AIProgrammer.Fitness.Concrete
                 }
 
                 // Show result.
+                Console.WriteLine();
                 Console.WriteLine(_console);
                 _console.Clear();
             }
