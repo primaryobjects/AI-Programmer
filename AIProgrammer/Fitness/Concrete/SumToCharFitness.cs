@@ -29,7 +29,7 @@ namespace AIProgrammer.Fitness.Concrete
             int state = 0;
             double countBonus = 0;
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 3; i++)
             {
                 switch (i)
                 {
@@ -80,13 +80,14 @@ namespace AIProgrammer.Fitness.Concrete
                 // Order bonus.
                 if (_console.Length > 0)
                 {
-                    Output = _console.ToString();
+                    Output += _console.ToString() + ",";
 
                     string _targetString = (input1 + input2).ToString();
                     for (int j = 0; j < _targetString.Length; j++)
                     {
                         if (_console.Length > j)
                         {
+                            // Fitness will add up wrong for targetString values with more than 1 digit (eg., 12 will check the 1 and 2 causing 256 * 2 higher of a fitness score).
                             Fitness += 256 - Math.Abs(_console[j] - _targetString[j]);
                         }
                     }
@@ -105,6 +106,8 @@ namespace AIProgrammer.Fitness.Concrete
             {
                 _fitness = Fitness + countBonus;
             }
+
+            Output = Output.TrimEnd(',');
 
             return _fitness;
         }
