@@ -145,7 +145,8 @@ namespace AIProgrammer.Fitness.Concrete
                         /*if (state == 2 && !alreadyDisplay)
                         {*/
                             //alreadyDisplay = true;
-                            _console.Append((char)b);
+                            //_console.Append((char)b);
+                        Console.WriteLine((char)b);
                         //}
                     });
 
@@ -154,11 +155,6 @@ namespace AIProgrammer.Fitness.Concrete
                 catch
                 {
                 }
-
-                // Show result.
-                Console.WriteLine();
-                Console.WriteLine(_console);
-                _console.Clear();
             }
         }
 

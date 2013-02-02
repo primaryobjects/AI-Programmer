@@ -12,11 +12,12 @@ namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
     /// Calculates the sum of various input integers and outputs the result as byte values (ie., 3 => 3, you would need to do a ToString() to display it on the console).
+    /// Cleans the output to a single byte. Removes extraneous printed values.
     /// Note, input is taken in byte value (not ASCII character) so you will probably get different results if you run results on web-based interpreters, as those usually translate inputs into ASCII values.
     /// </summary>
-    public class SumFitness : FitnessBase
+    public class SumCleanFitness : FitnessBase
     {
-        public SumFitness(GA ga, double targetFitness, int maxIterationCount)
+        public SumCleanFitness(GA ga, double targetFitness, int maxIterationCount)
             : base(ga, targetFitness, maxIterationCount)
         {
         }
@@ -66,7 +67,10 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        _console.Append(b.ToString());
+                        if (state == 2 && _console.Length == 0)
+                        {
+                            _console.Append(b.ToString());
+                        }
                     });
                     _bf.Run(_maxIterationCount);
                 }
@@ -79,11 +83,8 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                     Output += _console.ToString() + ",";
 
-                    int value;
-                    if (Int32.TryParse(_console.ToString(), out value))
-                    {
-                        Fitness += 256 - Math.Abs(value - (input1 + input2));
-                    }
+                    Byte value = Byte.Parse(_console.ToString());
+                    Fitness += 256 - Math.Abs(value - (input1 + input2));
                 }
 
                 // Check for solution.
@@ -110,6 +111,7 @@ namespace AIProgrammer.Fitness.Concrete
                 try
                 {
                     int state = 0;
+                    bool alreadyDisplayed = false;
 
                     // Run the program.
                     Interpreter bf = new Interpreter(program, () =>
@@ -135,7 +137,11 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        Console.WriteLine(b.ToString());
+                        if (state == 2 && !alreadyDisplayed)
+                        {
+                            alreadyDisplayed = true;
+                            Console.WriteLine(b.ToString());
+                        }
                     });
 
                     bf.Run(_maxIterationCount);
