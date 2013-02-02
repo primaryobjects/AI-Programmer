@@ -12,7 +12,7 @@ namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
     /// Calculates the sum of various input integers and outputs the result as byte values (ie., 3 => 3, you would need to do a ToString() to display it on the console).
-    /// Cleans the output to a single byte. Removes extraneous printed values.
+    /// Only checks the output after the two inputs have been provided, and only considers one output. Ignores the rest.
     /// Note, input is taken in byte value (not ASCII character) so you will probably get different results if you run results on web-based interpreters, as those usually translate inputs into ASCII values.
     /// </summary>
     public class SumCleanFitness : FitnessBase
@@ -30,7 +30,7 @@ namespace AIProgrammer.Fitness.Concrete
             int state = 0;
             double countBonus = 0;
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
                 switch (i)
                 {
@@ -100,6 +100,8 @@ namespace AIProgrammer.Fitness.Concrete
             {
                 _fitness = Fitness + countBonus;
             }
+
+            Output = Output.TrimEnd(',');
 
             return _fitness;
         }

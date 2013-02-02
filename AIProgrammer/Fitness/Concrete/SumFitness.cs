@@ -29,7 +29,7 @@ namespace AIProgrammer.Fitness.Concrete
             int state = 0;
             double countBonus = 0;
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
                 switch (i)
                 {
@@ -99,6 +99,8 @@ namespace AIProgrammer.Fitness.Concrete
             {
                 _fitness = Fitness + countBonus;
             }
+
+            Output = Output.TrimEnd(',');
 
             return _fitness;
         }
