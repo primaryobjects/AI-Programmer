@@ -14,9 +14,9 @@ namespace AIProgrammer.Fitness.Concrete
     /// Calculates the sum of various input integers and outputs the result as ASCII char values (ie., 3 => 51).
     /// Note, input is taken in byte value (not ASCII character) so you will probably get different results if you run results on web-based interpreters, as those usually translate inputs into ASCII values.
     /// </summary>
-    public class SumToCharFitness : FitnessBase
+    public class AddToCharFitness : FitnessBase
     {
-        public SumToCharFitness(GA ga, double targetFitness, int maxIterationCount)
+        public AddToCharFitness(GA ga, double targetFitness, int maxIterationCount)
             : base(ga, targetFitness, maxIterationCount)
         {
         }
@@ -29,15 +29,15 @@ namespace AIProgrammer.Fitness.Concrete
             int state = 0;
             double countBonus = 0;
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
                 switch (i)
                 {
                     case 0: input1 = 1; input2 = 2; break;
-                    case 1: input1 = 2; input2 = 3; break;
-                    case 2: input1 = 2; input2 = 4; break;
-                    case 3: input1 = 3; input2 = 4; break;
-                    case 4: input1 = 3; input2 = 5; break;
+                    case 1: input1 = 3; input2 = 4; break;
+                    case 2: input1 = 5; input2 = 1; break;
+                    case 3: input1 = 6; input2 = 2; break;
+                    case 4: input1 = 3; input2 = 6; break;
                     case 5: input1 = 6; input2 = 3; break;
                 };
 
@@ -119,7 +119,7 @@ namespace AIProgrammer.Fitness.Concrete
                 try
                 {
                     int state = 0;
-                    bool alreadyDisplay = false;
+                    //bool alreadyDisplay = false;
 
                     // Run the program.
                     Interpreter bf = new Interpreter(program, () =>
@@ -149,7 +149,7 @@ namespace AIProgrammer.Fitness.Concrete
                         {*/
                             //alreadyDisplay = true;
                             //_console.Append((char)b);
-                        Console.WriteLine((char)b);
+                        Console.Write((char)b);
                         //}
                     });
 

@@ -41,13 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fitness\Concrete\SumCleanFitness.cs" />
-    <Compile Include="Fitness\Concrete\SumToCharFitness.cs" />
+    <Compile Include="Fitness\Concrete\AddCleanFitness.cs" />
+    <Compile Include="Fitness\Concrete\AddToCharFitness.cs" />
     <Compile Include="Fitness\Concrete\StringFitness.cs" />
     <Compile Include="Fitness\Concrete\StringOptimizedFitness.cs" />
     <Compile Include="Managers\GAManager.cs" />
     <Compile Include="Fitness\Base\FitnessBase.cs" />
-    <Compile Include="Fitness\Concrete\SumFitness.cs" />
+    <Compile Include="Fitness\Concrete\AddFitness.cs" />
     <Compile Include="Fitness\Interface\IFitness.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
