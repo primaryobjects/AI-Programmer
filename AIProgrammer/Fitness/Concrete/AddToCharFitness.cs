@@ -11,8 +11,7 @@ using System.Threading.Tasks;
 namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
-    /// Calculates the sum of various input integers and outputs the result as ASCII char values (ie., 3 => 51).
-    /// Note, input is taken in byte value (not ASCII character) so you will probably get different results if you run results on web-based interpreters, as those usually translate inputs into ASCII values.
+    /// Calculates the sum of input integers, assuming input and output are ASCII values (ie., 1 => 49, 2 => 50, 3 => 51).
     /// </summary>
     public class AddToCharFitness : FitnessBase
     {
@@ -25,20 +24,20 @@ namespace AIProgrammer.Fitness.Concrete
 
         public override double GetFitnessMethod(string program)
         {
-            byte input1 = 0, input2 = 0;
+            char input1 = '\0', input2 = '\0';
             int state = 0;
             double countBonus = 0;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 2; i++)
             {
                 switch (i)
                 {
-                    case 0: input1 = 1; input2 = 2; break;
-                    case 1: input1 = 3; input2 = 4; break;
-                    case 2: input1 = 5; input2 = 1; break;
-                    case 3: input1 = 6; input2 = 2; break;
-                    case 4: input1 = 3; input2 = 6; break;
-                    case 5: input1 = 6; input2 = 3; break;
+                    case 0: input1 = '1'; input2 = '2'; break;
+                    case 1: input1 = '3'; input2 = '4'; break;
+                    case 2: input1 = '5'; input2 = '1'; break;
+                    case 3: input1 = '6'; input2 = '2'; break;
+                    case 4: input1 = '3'; input2 = '6'; break;
+                    case 5: input1 = '6'; input2 = '3'; break;
                 };
 
                 try
@@ -52,12 +51,12 @@ namespace AIProgrammer.Fitness.Concrete
                         if (state == 0)
                         {
                             state++;
-                            return input1;
+                            return (byte)input1;
                         }
                         else if (state == 1)
                         {
                             state++;
-                            return input2;
+                            return (byte)input2;
                         }
                         else
                         {
@@ -66,10 +65,8 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        /*if (state == 2 && _console.Length == 0)
-                        {*/
-                            _console.Append((char)b);
-                        //}
+                        // b = 2      (char)b => 2 ' '     b.ToString()[0] => 50 '2'
+                        _console.Append(b.ToString());
                     });
                     _bf.Run(_maxIterationCount);
                 }
@@ -82,7 +79,7 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                     Output += _console.ToString() + ",";
 
-                    string _targetString = (input1 + input2).ToString();
+                    string _targetString = (Convert.ToInt32(input1.ToString()) + Convert.ToInt32(input2.ToString())).ToString();
                     for (int j = 0; j < _targetString.Length; j++)
                     {
                         if (_console.Length > j)
@@ -119,7 +116,6 @@ namespace AIProgrammer.Fitness.Concrete
                 try
                 {
                     int state = 0;
-                    //bool alreadyDisplay = false;
 
                     // Run the program.
                     Interpreter bf = new Interpreter(program, () =>
@@ -145,12 +141,7 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        /*if (state == 2 && !alreadyDisplay)
-                        {*/
-                            //alreadyDisplay = true;
-                            //_console.Append((char)b);
-                        Console.Write((char)b);
-                        //}
+                        Console.Write(b.ToString());
                     });
 
                     bf.Run(_maxIterationCount);

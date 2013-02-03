@@ -36,7 +36,7 @@ namespace AIProgrammer
         private static int _genomeSize = 100; // Number of programming instructions in generated program (size of genome array).
         private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
         private static string _targetString = "hello"; // Target string to generate a program to print.
-        private static double _targetFitness = 1024;//_targetString.Length * 256;
+        private static double _targetFitness = 512; //_targetString.Length * 256;
 
         /// <summary>
         /// Selects the type of fitness algorithm to use (Hello World solutions, Calculation solutions, etc).
