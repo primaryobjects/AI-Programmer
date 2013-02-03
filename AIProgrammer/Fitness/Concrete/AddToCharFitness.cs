@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
-    /// Calculates the sum of input integers, assuming input and output are ASCII values (ie., 1 => 49, 2 => 50, 3 => 51).
+    /// Calculates the sum of input integers, assuming input is decimal and output is ASCII (ie., 1 => 49, 2 => 50, 3 => 51).
     /// </summary>
     public class AddToCharFitness : FitnessBase
     {
@@ -24,20 +24,20 @@ namespace AIProgrammer.Fitness.Concrete
 
         public override double GetFitnessMethod(string program)
         {
-            char input1 = '\0', input2 = '\0';
+            byte input1 = 0, input2 = 0;
             int state = 0;
             double countBonus = 0;
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 3; i++)
             {
                 switch (i)
                 {
-                    case 0: input1 = '1'; input2 = '2'; break;
-                    case 1: input1 = '3'; input2 = '4'; break;
-                    case 2: input1 = '5'; input2 = '1'; break;
-                    case 3: input1 = '6'; input2 = '2'; break;
-                    case 4: input1 = '3'; input2 = '6'; break;
-                    case 5: input1 = '6'; input2 = '3'; break;
+                    case 0: input1 = 1; input2 = 2; break;
+                    case 1: input1 = 3; input2 = 4; break;
+                    case 2: input1 = 5; input2 = 1; break;
+                    case 3: input1 = 6; input2 = 2; break;
+                    case 4: input1 = 3; input2 = 6; break;
+                    case 5: input1 = 6; input2 = 3; break;
                 };
 
                 try
@@ -66,7 +66,7 @@ namespace AIProgrammer.Fitness.Concrete
                     (b) =>
                     {
                         // b = 2      (char)b => 2 ' '     b.ToString()[0] => 50 '2'
-                        _console.Append(b.ToString());
+                        _console.Append((char)b);
                     });
                     _bf.Run(_maxIterationCount);
                 }
@@ -79,7 +79,8 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                     Output += (byte)_console[0] + " '" + _console[0] + "', ";
 
-                    string _targetString = (Convert.ToInt32(input1.ToString()) + Convert.ToInt32(input2.ToString())).ToString();
+                    //string _targetString = (Convert.ToInt32(input1.ToString()) + Convert.ToInt32(input2.ToString())).ToString();
+                    string _targetString = (input1 + input2).ToString();                    
                     for (int j = 0; j < _targetString.Length; j++)
                     {
                         if (_console.Length > j)
@@ -141,7 +142,7 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        Console.Write(b.ToString());
+                        Console.Write((char)b);
                     });
 
                     bf.Run(_maxIterationCount);
