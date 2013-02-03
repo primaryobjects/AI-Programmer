@@ -47,6 +47,7 @@ namespace AIProgrammer.Fitness.Concrete
             }
 
             Ticks = _bf.m_Ticks;
+            Output = _console.ToString();
 
             return _fitness;
         }

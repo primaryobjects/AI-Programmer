@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="Fitness\Concrete\AddCleanFitness.cs" />
     <Compile Include="Fitness\Concrete\AddToCharFitness.cs" />
+    <Compile Include="Fitness\Concrete\MultiplyFitness.cs" />
+    <Compile Include="Fitness\Concrete\SubtractFitness.cs" />
     <Compile Include="Fitness\Concrete\StringFitness.cs" />
     <Compile Include="Fitness\Concrete\StringOptimizedFitness.cs" />
     <Compile Include="Managers\GAManager.cs" />

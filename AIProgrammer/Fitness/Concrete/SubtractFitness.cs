@@ -11,12 +11,11 @@ using System.Threading.Tasks;
 namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
-    /// Calculates the sum of input integers, assuming input and output are ASCII values (ie., 1 => 49, 2 => 50, 3 => 51).
-    /// Note, this currently does not work. It has something to do with the input being ascii values and then trying to do addition on them, to return the result as an ascii-range value (where addition should be done on the byte value, not the ascii value, ie: 49 + 51 = 4 wont work, whereas 1 + 3 = 4 works).
+    /// Calculates the sum of various input integers and outputs the result as byte values (ie., 3 => 3, you would need to do a ToString() to display it on the console).
     /// </summary>
-    public class AddToCharFitness : FitnessBase
+    public class SubtractFitness : FitnessBase
     {
-        public AddToCharFitness(GA ga, double targetFitness, int maxIterationCount)
+        public SubtractFitness(GA ga, double targetFitness, int maxIterationCount)
             : base(ga, targetFitness, maxIterationCount)
         {
         }
@@ -25,20 +24,20 @@ namespace AIProgrammer.Fitness.Concrete
 
         public override double GetFitnessMethod(string program)
         {
-            char input1 = '\0', input2 = '\0';
+            byte input1 = 0, input2 = 0;
             int state = 0;
             double countBonus = 0;
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 5; i++)
             {
                 switch (i)
                 {
-                    case 0: input1 = '1'; input2 = '2'; break;
-                    case 1: input1 = '3'; input2 = '4'; break;
-                    case 2: input1 = '5'; input2 = '1'; break;
-                    case 3: input1 = '6'; input2 = '2'; break;
-                    case 4: input1 = '3'; input2 = '6'; break;
-                    case 5: input1 = '6'; input2 = '3'; break;
+                    case 0: input1 = 9; input2 = 8; break;
+                    case 1: input1 = 6; input2 = 3; break;
+                    case 2: input1 = 4; input2 = 2; break;
+                    case 3: input1 = 5; input2 = 1; break;
+                    case 4: input1 = 7; input2 = 2; break;
+                    case 5: input1 = 6; input2 = 1; break;
                 };
 
                 try
@@ -52,12 +51,12 @@ namespace AIProgrammer.Fitness.Concrete
                         if (state == 0)
                         {
                             state++;
-                            return (byte)input1;
+                            return input1;
                         }
                         else if (state == 1)
                         {
                             state++;
-                            return (byte)input2;
+                            return input2;
                         }
                         else
                         {
@@ -66,10 +65,7 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        // b = 2      (char)b => 2 ' '     b.ToString()[0] => 50 '2'
-                        // When input is char, we're already in the ascii range, so just append the (char)b.
-                        // When input is byte, we need the ascii version of the value, b.ToString() does that.
-                        _console.Append((char)b);
+                        _console.Append(b.ToString());
                     });
                     _bf.Run(_maxIterationCount);
                 }
@@ -80,16 +76,12 @@ namespace AIProgrammer.Fitness.Concrete
                 // Order bonus.
                 if (_console.Length > 0)
                 {
-                    Output += (byte)_console[0] + " '" + _console[0] + "', ";
+                    Output += _console.ToString() + ",";
 
-                    string _targetString = (Convert.ToInt32(input1.ToString()) + Convert.ToInt32(input2.ToString())).ToString();
-                    for (int j = 0; j < _targetString.Length; j++)
+                    int value;
+                    if (Int32.TryParse(_console.ToString(), out value))
                     {
-                        if (_console.Length > j)
-                        {
-                            // Fitness will add up wrong for targetString values with more than 1 digit (eg., 12 will check the 1 and 2 causing 256 * 2 higher of a fitness score).
-                            Fitness += 256 - Math.Abs(_console[j] - _targetString[j]);
-                        }
+                        Fitness += 256 - Math.Abs(value - (input1 - input2));
                     }
                 }
 
@@ -126,15 +118,17 @@ namespace AIProgrammer.Fitness.Concrete
                         if (state == 0)
                         {
                             state++;
+                            Console.WriteLine();
                             Console.Write(">: ");
-                            byte b = (byte)Char.Parse(Console.ReadLine());
+                            byte b = Byte.Parse(Console.ReadLine());
                             return b;
                         }
                         else if (state == 1)
                         {
                             state++;
+                            Console.WriteLine();
                             Console.Write(">: ");
-                            byte b = (byte)Char.Parse(Console.ReadLine());
+                            byte b = Byte.Parse(Console.ReadLine());
                             return b;
                         }
                         else
@@ -144,7 +138,7 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        Console.Write((char)b);
+                        Console.Write(b.ToString());
                     });
 
                     bf.Run(_maxIterationCount);
