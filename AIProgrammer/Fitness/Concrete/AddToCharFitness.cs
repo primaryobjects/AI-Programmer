@@ -77,7 +77,7 @@ namespace AIProgrammer.Fitness.Concrete
                 // Order bonus.
                 if (_console.Length > 0)
                 {
-                    Output += _console.ToString() + ",";
+                    Output += (byte)_console[0] + " '" + _console[0] + "', ";
 
                     string _targetString = (Convert.ToInt32(input1.ToString()) + Convert.ToInt32(input2.ToString())).ToString();
                     for (int j = 0; j < _targetString.Length; j++)
