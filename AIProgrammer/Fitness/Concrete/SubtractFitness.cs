@@ -37,7 +37,6 @@ namespace AIProgrammer.Fitness.Concrete
                     case 2: input1 = 4; input2 = 2; break;
                     case 3: input1 = 5; input2 = 1; break;
                     case 4: input1 = 7; input2 = 2; break;
-                    case 5: input1 = 6; input2 = 1; break;
                 };
 
                 try

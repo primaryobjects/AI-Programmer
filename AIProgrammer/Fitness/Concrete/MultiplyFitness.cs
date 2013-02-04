@@ -28,16 +28,15 @@ namespace AIProgrammer.Fitness.Concrete
             int state = 0;
             double countBonus = 0;
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 3; i++)
             {
                 switch (i)
                 {
                     case 0: input1 = 2; input2 = 1; break;
                     case 1: input1 = 4; input2 = 2; break;
-                    case 2: input1 = 5; input2 = 1; break;
+                    case 2: input1 = 5; input2 = 3; break;
                     case 3: input1 = 6; input2 = 3; break;
                     case 4: input1 = 7; input2 = 2; break;
-                    case 5: input1 = 9; input2 = 7; break;
                 };
 
                 try
