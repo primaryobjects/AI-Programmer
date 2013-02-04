@@ -75,7 +75,8 @@ namespace AIProgrammer.Fitness.Concrete
                 // Order bonus.
                 if (_console.Length > 0)
                 {
-                    Output += _console.ToString() + ",";
+                    _output.Append(_console.ToString());
+                    _output.Append(",");
 
                     int value;
                     if (Int32.TryParse(_console.ToString(), out value))
@@ -97,8 +98,6 @@ namespace AIProgrammer.Fitness.Concrete
             {
                 _fitness = Fitness + countBonus;
             }
-
-            Output = Output.TrimEnd(',');
 
             return _fitness;
         }

@@ -17,11 +17,12 @@ namespace AIProgrammer.Fitness.Base
         public int Ticks { get; set; } // Number of instructions executed by the best program.
 
         protected double _fitness = 0; // Total fitness to return to genetic algorithm (may be variable, solution is not based upon this value, just the rank).
-        protected double _targetFitness = 1536;
+        protected double _targetFitness = 1536; // Target fitness to achieve.
         protected int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
-        protected StringBuilder _console = new StringBuilder();
-        protected Interpreter _bf = null;
-        protected GA _ga;
+        protected StringBuilder _console = new StringBuilder(); // Used by classes to collect console output.
+        protected StringBuilder _output = new StringBuilder(); // Used by classes to collect and concat output for assigning to Output.
+        protected Interpreter _bf = null; // Brainfuck interpreter instance
+        protected GA _ga; // Shared genetic algorithm instance
 
         public FitnessBase(GA ga, double targetFitness, int maxIterationCount)
         {
@@ -60,7 +61,16 @@ namespace AIProgrammer.Fitness.Base
             // Get the resulting Brainfuck program.
             Program = CommonManager.ConvertDoubleArrayToBF(weights);
 
-            return GetFitnessMethod(Program);
+            // Get the fitness.
+            double fitness = GetFitnessMethod(Program);
+
+            // Get the output.
+            if (_output.Length > 0)
+            {
+                Output = _output.ToString().TrimEnd(',');
+            }
+
+            return fitness;
         }
 
         public string RunProgram(string program)

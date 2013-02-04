@@ -31,8 +31,9 @@ namespace AIProgrammer.Fitness.Concrete
             string targetStringName = "";
             int state = 0;
             double countBonus = 0;
+            StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 3; i++)
             {
                 switch (i)
                 {
@@ -43,7 +44,10 @@ namespace AIProgrammer.Fitness.Concrete
                     case 4: name = "fu"; break;
                 };
 
-                targetStringName = _targetString + name;
+                sb.Clear();
+                sb.Append(_targetString);
+                sb.Append(name);
+                targetStringName = sb.ToString();
 
                 try
                 {
@@ -72,7 +76,8 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                 }
 
-                Output += _console.ToString() + ", ";
+                _output.Append(_console.ToString());
+                _output.Append(", ");
 
                 // Order bonus.
                 for (int j = 0; j < targetStringName.Length; j++)
@@ -106,8 +111,6 @@ namespace AIProgrammer.Fitness.Concrete
             {
                 try
                 {
-                    int state = 0;
-
                     // Run the program.
                     Interpreter bf = new Interpreter(program, () =>
                     {

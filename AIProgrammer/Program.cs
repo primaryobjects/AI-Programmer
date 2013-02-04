@@ -37,15 +37,20 @@ namespace AIProgrammer
         private static int _genomeSize = 100; // Number of programming instructions in generated program (size of genome array).
         private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
         private static string _targetString = "hi"; // Target string to generate a program to print.
-        private static double _targetFitness = _targetString.Length * 256;
+        private static double _targetFitness = (_targetString.Length + 2) * 256 * 3;
 
         /// <summary>
         /// Selects the type of fitness algorithm to use (Hello World solutions, Calculation solutions, etc).
+        /// QUICK START GUIDE:
+        /// - Use the desired concrete Fitness class. For example, use StringOptimizedFitness() for a simple "Hello World" type of program.
+        /// - Set the _targetFitness according to the Fitness class selected.
+        /// - StringFitness and StringOptimizedFitness should have _targetFitness = _targetString.Length * 256
+        /// - AddFitness, SubtractFitness, MultiplyFitness should have _targetFitness = 1280 (or less, depending on how many for loop iterations you will train on, defined inside the Fitness class).
         /// </summary>
         /// <returns>IFitness</returns>
         private static IFitness GetFitnessMethod()
         {
-            return new StringOptimizedFitness(_ga, _targetFitness, _maxIterationCount, _targetString);
+            return new HelloUserFitness(_ga, _targetFitness, _maxIterationCount, _targetString);
         }
 
         #region Worker Methods

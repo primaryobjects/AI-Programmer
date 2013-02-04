@@ -80,7 +80,8 @@ namespace AIProgrammer.Fitness.Concrete
                 // Order bonus.
                 if (_console.Length > 0)
                 {
-                    Output += _console.ToString() + ",";
+                    _output.Append(_console.ToString());
+                    _output.Append(", ");
 
                     Byte value = Byte.Parse(_console.ToString());
                     Fitness += 256 - Math.Abs(value - (input1 + input2));
@@ -99,8 +100,6 @@ namespace AIProgrammer.Fitness.Concrete
             {
                 _fitness = Fitness + countBonus;
             }
-
-            Output = Output.TrimEnd(',');
 
             return _fitness;
         }
