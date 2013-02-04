@@ -31,16 +31,17 @@ namespace AIProgrammer.Fitness.Concrete
             string targetStringName = "";
             int state = 0;
             double countBonus = 0;
+            int penalty = 0;
             StringBuilder sb = new StringBuilder();
 
             for (int i = 0; i < 3; i++)
             {
                 switch (i)
                 {
-                    case 0: name = "me"; break;
-                    case 1: name = "tu"; break;
-                    case 2: name = "yo"; break;
-                    case 3: name = "bo"; break;
+                    case 0: name = "z"; break;
+                    case 1: name = "yo"; break;
+                    case 2: name = "mee"; break;
+                    case 3: name = "peep"; break;
                     case 4: name = "fu"; break;
                 };
 
@@ -57,18 +58,27 @@ namespace AIProgrammer.Fitness.Concrete
                     // Run the program.
                     _bf = new Interpreter(program, () =>
                     {
-                        if (state < name.Length)
+                        if (state > 0 && state < name.Length + 1)
                         {
-                            return (byte)name[state++];
+                            // We've output 2 bytes, we're ready to send input.
+                            return (byte)name[state++ - 1];
                         }
                         else
                         {
+                            penalty++;
                             return 0;
                         }
                     },
                     (b) =>
                     {
                         _console.Append((char)b);
+
+                        // Coax the AI into outputting 2 bytes before looking for input.
+                        if (state == 0 && _console.Length >= 2)
+                        {
+                            // We've output two bytes, let input come through.
+                            state = 1;
+                        }
                     });
                     _bf.Run(_maxIterationCount);
                 }
@@ -77,7 +87,7 @@ namespace AIProgrammer.Fitness.Concrete
                 }
 
                 _output.Append(_console.ToString());
-                _output.Append(", ");
+                _output.Append(",");
 
                 // Order bonus.
                 for (int j = 0; j < targetStringName.Length; j++)
@@ -99,7 +109,7 @@ namespace AIProgrammer.Fitness.Concrete
 
             if (_fitness != Double.MaxValue)
             {
-                _fitness = Fitness + countBonus;
+                _fitness = Fitness + countBonus - penalty;
             }
 
             return _fitness;

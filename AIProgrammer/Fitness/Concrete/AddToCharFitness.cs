@@ -82,7 +82,7 @@ namespace AIProgrammer.Fitness.Concrete
                     _output.Append((byte)_console[0]);
                     _output.Append(" '");
                     _output.Append(_console[0]);
-                    _output.Append("', ");
+                    _output.Append("',");
 
                     string _targetString = (Convert.ToInt32(input1.ToString()) + Convert.ToInt32(input2.ToString())).ToString();
                     for (int j = 0; j < _targetString.Length; j++)
