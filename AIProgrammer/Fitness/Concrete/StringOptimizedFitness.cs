@@ -26,7 +26,7 @@ namespace AIProgrammer.Fitness.Concrete
         public override double GetFitnessMethod(string program)
         {
             // Run the source code.
-            RunProgram(program);
+            Output = RunProgram(program);
 
             // Order bonus.
             for (int i = 0; i < _targetString.Length; i++)
@@ -47,7 +47,6 @@ namespace AIProgrammer.Fitness.Concrete
             }
 
             Ticks = _bf.m_Ticks;
-            Output = _console.ToString();
 
             return _fitness;
         }

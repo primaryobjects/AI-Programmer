@@ -79,7 +79,7 @@ namespace AIProgrammer
             // Is this a new best fitness?
             if (fitness > _bestFitness)
             {
-                _bestFitness = myFitness.Fitness;
+                _bestFitness = fitness;
                 _bestOutput = myFitness.Output;
                 _bestLastChangeDate = DateTime.Now;
                 _bestProgram = myFitness.Program;
