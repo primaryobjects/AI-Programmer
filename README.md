@@ -97,7 +97,7 @@ The AI successfully wrote a program to output "I love all humans" after 6,057,20
 +[>+<+++]+>------------.+<+++++++++++++++++++++++++++++++.>++++++++++++++++++++++++++++++++++.+++.+++++++.-----------------.--<.>--.+++++++++++..---<.>-.+++++++++++++.--------.------------.+++++++++++++.+++++.
 ```
 
-More complex programs could likely be generated while using faster PCs.
+More complex programs could likely be generated while using faster PCs. Next steps include attempting to accept user input and process results.
 
 ## Author
 
