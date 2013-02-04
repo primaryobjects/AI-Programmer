@@ -36,8 +36,8 @@ namespace AIProgrammer
         private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
         private static int _genomeSize = 100; // Number of programming instructions in generated program (size of genome array).
         private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
-        private static string _targetString = "Kory Becker"; // Target string to generate a program to print.
-        private static double _targetFitness = 768; //_targetString.Length * 256;
+        private static string _targetString = "hi"; // Target string to generate a program to print.
+        private static double _targetFitness = _targetString.Length * 256;
 
         /// <summary>
         /// Selects the type of fitness algorithm to use (Hello World solutions, Calculation solutions, etc).
@@ -45,7 +45,7 @@ namespace AIProgrammer
         /// <returns>IFitness</returns>
         private static IFitness GetFitnessMethod()
         {
-            return new MultiplyFitness(_ga, _targetFitness, _maxIterationCount);
+            return new StringOptimizedFitness(_ga, _targetFitness, _maxIterationCount, _targetString);
         }
 
         #region Worker Methods

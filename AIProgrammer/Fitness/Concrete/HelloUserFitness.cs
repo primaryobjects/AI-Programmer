@@ -11,33 +11,39 @@ using System.Threading.Tasks;
 namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
-    /// Calculates the subtraction of various input integers and outputs the result as byte values (ie., 3 => 3, you would need to do a ToString() to display it on the console).
+    /// Prints "Hello [Name]". Prompts the user for input, one letter at a time, terminated by a zero. Then prints the text.
     /// </summary>
-    public class SubtractFitness : FitnessBase
+    public class HelloUserFitness : FitnessBase
     {
-        public SubtractFitness(GA ga, double targetFitness, int maxIterationCount)
+        private string _targetString;
+
+        public HelloUserFitness(GA ga, double targetFitness, int maxIterationCount, string targetString)
             : base(ga, targetFitness, maxIterationCount)
         {
+            _targetString = targetString;
         }
 
         #region FitnessBase Members
 
         public override double GetFitnessMethod(string program)
         {
-            byte input1 = 0, input2 = 0;
+            string name = "";
+            string targetStringName = "";
             int state = 0;
             double countBonus = 0;
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 1; i++)
             {
                 switch (i)
                 {
-                    case 0: input1 = 9; input2 = 8; break;
-                    case 1: input1 = 6; input2 = 3; break;
-                    case 2: input1 = 4; input2 = 2; break;
-                    case 3: input1 = 5; input2 = 1; break;
-                    case 4: input1 = 7; input2 = 2; break;
+                    case 0: name = "me"; break;
+                    case 1: name = "tu"; break;
+                    case 2: name = "yo"; break;
+                    case 3: name = "bo"; break;
+                    case 4: name = "fu"; break;
                 };
+
+                targetStringName = _targetString + name;
 
                 try
                 {
@@ -47,15 +53,9 @@ namespace AIProgrammer.Fitness.Concrete
                     // Run the program.
                     _bf = new Interpreter(program, () =>
                     {
-                        if (state == 0)
+                        if (state < name.Length)
                         {
-                            state++;
-                            return input1;
-                        }
-                        else if (state == 1)
-                        {
-                            state++;
-                            return input2;
+                            return (byte)name[state++];
                         }
                         else
                         {
@@ -64,7 +64,7 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        _console.Append(b.ToString());
+                        _console.Append((char)b);
                     });
                     _bf.Run(_maxIterationCount);
                 }
@@ -72,15 +72,14 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                 }
 
-                // Order bonus.
-                if (_console.Length > 0)
-                {
-                    Output += _console.ToString() + ",";
+                Output += _console.ToString() + ", ";
 
-                    int value;
-                    if (Int32.TryParse(_console.ToString(), out value))
+                // Order bonus.
+                for (int j = 0; j < targetStringName.Length; j++)
+                {
+                    if (_console.Length > j)
                     {
-                        Fitness += 256 - Math.Abs(value - (input1 - input2));
+                        Fitness += 256 - Math.Abs(_console[j] - targetStringName[j]);
                     }
                 }
 
@@ -88,7 +87,7 @@ namespace AIProgrammer.Fitness.Concrete
                 IsFitnessAchieved();
 
                 // Bonus for less operations to optimize the code.
-                countBonus += ((_maxIterationCount - _bf.m_Ticks) / 1000.0);
+                countBonus += ((_maxIterationCount - _bf.m_Ticks) / 20.0);
 
                 Ticks += _bf.m_Ticks;
             }
@@ -97,8 +96,6 @@ namespace AIProgrammer.Fitness.Concrete
             {
                 _fitness = Fitness + countBonus;
             }
-
-            Output = Output.TrimEnd(',');
 
             return _fitness;
         }
@@ -114,30 +111,14 @@ namespace AIProgrammer.Fitness.Concrete
                     // Run the program.
                     Interpreter bf = new Interpreter(program, () =>
                     {
-                        if (state == 0)
-                        {
-                            state++;
-                            Console.WriteLine();
-                            Console.Write(">: ");
-                            byte b = Byte.Parse(Console.ReadLine());
-                            return b;
-                        }
-                        else if (state == 1)
-                        {
-                            state++;
-                            Console.WriteLine();
-                            Console.Write(">: ");
-                            byte b = Byte.Parse(Console.ReadLine());
-                            return b;
-                        }
-                        else
-                        {
-                            return 0;
-                        }
+                        Console.WriteLine();
+                        Console.Write(">: ");
+                        byte b = Byte.Parse(Console.ReadLine());
+                        return b;
                     },
                     (b) =>
                     {
-                        Console.Write(b.ToString());
+                        _console.Append((char)b);
                     });
 
                     bf.Run(_maxIterationCount);
