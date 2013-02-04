@@ -36,8 +36,8 @@ namespace AIProgrammer
         private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
         private static int _genomeSize = 200; // Number of programming instructions in generated program (size of genome array).
         private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
-        private static string _targetString = "Hello "; // Target string to generate a program to print.
-        private static double _targetFitness = ((_targetString.Length + 1) * 256) + ((_targetString.Length + 2) * 256) + ((_targetString.Length + 3) * 256);
+        private static string _targetString = "hi"; // Target string to generate a program to print.
+        private static double _targetFitness = 0;
 
         /// <summary>
         /// Selects the type of fitness algorithm to use (Hello World solutions, Calculation solutions, etc).
@@ -50,7 +50,7 @@ namespace AIProgrammer
         /// <returns>IFitness</returns>
         private static IFitness GetFitnessMethod()
         {
-            return new HelloUserFitness(_ga, _targetFitness, _maxIterationCount, _targetString);
+            return new StringOptimizedFitness(_ga, _maxIterationCount, _targetString);
         }
 
         #region Worker Methods
@@ -106,6 +106,9 @@ namespace AIProgrammer
 
             // Genetic algorithm setup.
             _ga = new GA(_crossoverRate, _mutationRate, 100, 10000000, _genomeSize);
+
+            // Get the target fitness for this method.
+            _targetFitness = myFitness.TargetFitness;
 
             // Run the genetic algorithm and get the best brain.
             string program = GAManager.Run(_ga, fitnessFunction, OnGeneration);

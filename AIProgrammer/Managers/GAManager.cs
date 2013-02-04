@@ -43,7 +43,7 @@ namespace AIProgrammer.Managers
             double fitness;
             ga.GetBest(out weights, out fitness);
 
-            Console.WriteLine("***** DONE! Best brain had a fitness of " + fitness);
+            Console.WriteLine("***** DONE! *****");
 
             return CommonManager.ConvertDoubleArrayToBF(weights);
         }

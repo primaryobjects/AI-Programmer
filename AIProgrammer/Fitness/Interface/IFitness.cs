@@ -25,6 +25,11 @@ namespace AIProgrammer.Fitness.Interface
         double Fitness { get; set; }
 
         /// <summary>
+        /// Target fitness to achieve a solution.
+        /// </summary>
+        double TargetFitness { get; }
+
+        /// <summary>
         /// Number of instructions executed for the best fitness.
         /// </summary>
         int Ticks { get; set; }

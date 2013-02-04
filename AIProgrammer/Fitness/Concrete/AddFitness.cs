@@ -16,9 +16,16 @@ namespace AIProgrammer.Fitness.Concrete
     /// </summary>
     public class AddFitness : FitnessBase
     {
-        public AddFitness(GA ga, double targetFitness, int maxIterationCount)
-            : base(ga, targetFitness, maxIterationCount)
+        private int _trainingCount = 5;
+
+        public AddFitness(GA ga, int maxIterationCount, int maxTrainingCount)
+            : base(ga, maxIterationCount)
         {
+            _trainingCount = maxTrainingCount;
+            if (_targetFitness == 0)
+            {
+                _targetFitness = _trainingCount * 256;
+            }
         }
 
         #region FitnessBase Members
@@ -29,7 +36,7 @@ namespace AIProgrammer.Fitness.Concrete
             int state = 0;
             double countBonus = 0;
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < _trainingCount; i++)
             {
                 switch (i)
                 {

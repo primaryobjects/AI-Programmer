@@ -15,9 +15,16 @@ namespace AIProgrammer.Fitness.Concrete
     /// </summary>
     public class MultiplyFitness : FitnessBase
     {
-        public MultiplyFitness(GA ga, double targetFitness, int maxIterationCount)
-            : base(ga, targetFitness, maxIterationCount)
+        private int _trainingCount = 5;
+
+        public MultiplyFitness(GA ga, int maxIterationCount, int maxTrainingCount)
+            : base(ga, maxIterationCount)
         {
+            _trainingCount = maxTrainingCount;
+            if (_targetFitness == 0)
+            {
+                _targetFitness = _trainingCount * 256;
+            }
         }
 
         #region FitnessBase Members
@@ -28,7 +35,7 @@ namespace AIProgrammer.Fitness.Concrete
             int state = 0;
             double countBonus = 0;
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < _trainingCount; i++)
             {
                 switch (i)
                 {

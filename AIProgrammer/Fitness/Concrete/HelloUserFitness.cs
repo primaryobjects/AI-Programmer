@@ -17,10 +17,14 @@ namespace AIProgrammer.Fitness.Concrete
     {
         private string _targetString;
 
-        public HelloUserFitness(GA ga, double targetFitness, int maxIterationCount, string targetString)
-            : base(ga, targetFitness, maxIterationCount)
+        public HelloUserFitness(GA ga, int maxIterationCount, string targetString)
+            : base(ga, maxIterationCount)
         {
             _targetString = targetString;
+            if (_targetFitness == 0)
+            {
+                _targetFitness = ((_targetString.Length + 1) * 256) + ((_targetString.Length + 2) * 256) + ((_targetString.Length + 3) * 256);
+            }
         }
 
         #region FitnessBase Members
