@@ -31,7 +31,7 @@ namespace AIProgrammer.Fitness.Concrete
             string targetStringName = "";
             int state = 0;
             double countBonus = 0;
-            int penalty = 0;
+            double penalty = 0;
             StringBuilder sb = new StringBuilder();
 
             for (int i = 0; i < 3; i++)
@@ -41,8 +41,6 @@ namespace AIProgrammer.Fitness.Concrete
                     case 0: name = "z"; break;
                     case 1: name = "yo"; break;
                     case 2: name = "mee"; break;
-                    case 3: name = "peep"; break;
-                    case 4: name = "fu"; break;
                 };
 
                 sb.Clear();
@@ -58,23 +56,33 @@ namespace AIProgrammer.Fitness.Concrete
                     // Run the program.
                     _bf = new Interpreter(program, () =>
                     {
-                        if (state > 0 && state < name.Length + 1)
+                        if (state > 0 && state < name.Length + 2)
                         {
-                            // We've output 2 bytes, we're ready to send input.
-                            return (byte)name[state++ - 1];
+                            if (state < name.Length + 1)
+                            {
+                                // We've output 2 bytes, we're ready to send input.
+                                return (byte)name[state++ - 1];
+                            }
+                            else
+                            {
+                                // Send terminator character.
+                                return 0;
+                            }
                         }
                         else
                         {
+                            // Not ready for input.
                             penalty++;
-                            return 0;
+
+                            return 255;
                         }
                     },
                     (b) =>
                     {
                         _console.Append((char)b);
 
-                        // Coax the AI into outputting 2 bytes before looking for input.
-                        if (state == 0 && _console.Length >= 2)
+                        // Output the first half of the phrase before looking for input.
+                        if (state == 0 && _console.Length >= _targetString.Length)
                         {
                             // We've output two bytes, let input come through.
                             state = 1;
@@ -119,6 +127,8 @@ namespace AIProgrammer.Fitness.Concrete
         {
             for (int i = 0; i < 99; i++)
             {
+                _console.Clear();
+
                 try
                 {
                     // Run the program.
@@ -126,7 +136,18 @@ namespace AIProgrammer.Fitness.Concrete
                     {
                         Console.WriteLine();
                         Console.Write(">: ");
-                        byte b = Byte.Parse(Console.ReadLine());
+                        string line = Console.ReadLine();
+                        byte b;
+                        if (string.IsNullOrEmpty(line))
+                        {
+                            // User entered terminator character.
+                            b = 0;
+                        }
+                        else
+                        {
+                            b = (byte)line[0];
+                        }
+
                         return b;
                     },
                     (b) =>
@@ -139,6 +160,8 @@ namespace AIProgrammer.Fitness.Concrete
                 catch
                 {
                 }
+
+                Console.WriteLine(_console.ToString());
             }
         }
 
