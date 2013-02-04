@@ -24,6 +24,7 @@ namespace AIProgrammer
     {
         private static GA _ga = null; // Our genetic algorithm instance.
         private static double _bestFitness = 0; // Best fitness so far.
+        private static double _bestTrueFitness = 0; // Best true fitness so far, used to determine when a solution is found.
         private static string _bestProgram = ""; // Best program so far.
         private static string _bestOutput = ""; // Best program output so far.
         private static int _bestIteration = 0; // Current iteration (generation) count.
@@ -36,7 +37,7 @@ namespace AIProgrammer
         private static int _genomeSize = 200; // Number of programming instructions in generated program (size of genome array).
         private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
         private static string _targetString = "Kory Becker"; // Target string to generate a program to print.
-        private static double _targetFitness = _targetString.Length * 256;
+        private static double _targetFitness = 1280; //_targetString.Length * 256;
 
         /// <summary>
         /// Selects the type of fitness algorithm to use (Hello World solutions, Calculation solutions, etc).
@@ -44,7 +45,7 @@ namespace AIProgrammer
         /// <returns>IFitness</returns>
         private static IFitness GetFitnessMethod()
         {
-            return new StringOptimizedFitness(_ga, _targetFitness, _maxIterationCount, _targetString);
+            return new SubtractFitness(_ga, _targetFitness, _maxIterationCount);
         }
 
         #region Worker Methods
@@ -57,7 +58,7 @@ namespace AIProgrammer
             if (_bestIteration++ > 1000)
             {
                 _bestIteration = 0;
-                Console.WriteLine("Best Fitness: " + _bestFitness + "/" + _targetFitness + " " + Math.Round(_bestFitness / _targetFitness * 100, 2) + "%, Ticks: " + _bestTicks + ", Running: " + Math.Round((DateTime.Now - _startTime).TotalMinutes) + "m, Best Output: " + _bestOutput + ", Changed: " + _bestLastChangeDate.ToString() + ", Program: " + _bestProgram);
+                Console.WriteLine("Best Fitness: " + _bestTrueFitness + "/" + _targetFitness + " " + Math.Round(_bestTrueFitness / _targetFitness * 100, 2) + "%, Ticks: " + _bestTicks + ", Running: " + Math.Round((DateTime.Now - _startTime).TotalMinutes) + "m, Best Output: " + _bestOutput + ", Changed: " + _bestLastChangeDate.ToString() + ", Program: " + _bestProgram);
 
                 ga.Save("my-genetic-algorithm.dat");
             }
@@ -80,6 +81,7 @@ namespace AIProgrammer
             if (fitness > _bestFitness)
             {
                 _bestFitness = fitness;
+                _bestTrueFitness = myFitness.Fitness;
                 _bestOutput = myFitness.Output;
                 _bestLastChangeDate = DateTime.Now;
                 _bestProgram = myFitness.Program;
