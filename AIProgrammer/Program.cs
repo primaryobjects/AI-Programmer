@@ -119,7 +119,7 @@ namespace AIProgrammer
             Console.WriteLine();
 
             // Compile to executable.
-            Brainfuck.Compile(program, "output.exe", myFitness, _maxIterationCount);
+            BrainPlus.Compile(program, "output.exe", myFitness, _maxIterationCount);
 
             // Run the result for the user.
             string result = myFitness.RunProgram(program);

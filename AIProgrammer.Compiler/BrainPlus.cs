@@ -13,7 +13,7 @@ namespace AIProgrammer.Compiler
     /// Usage: Compiler.Compile("++++.", "StringFitness", 2000);
     /// Output: exe file thats runs the brainfuck code.
     /// </summary>
-    public static class Brainfuck
+    public static class BrainPlus
     {
         /// <summary>
         /// Compiles brainfuck code into an executable.
@@ -68,7 +68,7 @@ class Program {
             if (includeHeader)
             {
                 sourceCode = sourceCode.Replace("[HEADER]", @"
-                    Console.WriteLine(""Brainfuck .NET Compiler 1.0"");
+                    Console.WriteLine(""BrainPlus .NET Compiler 1.0"");
                     Console.WriteLine(""Created by Kory Becker"");
                     Console.WriteLine(""http://www.primaryobjects.com/kory-becker.aspx"");
                     Console.WriteLine();");
