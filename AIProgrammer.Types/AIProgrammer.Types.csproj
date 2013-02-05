@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="GAParams.cs" />
     <Compile Include="Genome.cs" />
+    <Compile Include="Interface\IFitness.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

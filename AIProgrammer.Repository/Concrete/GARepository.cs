@@ -6,7 +6,7 @@ using AIProgrammer.Database.Concrete;
 using AIProgrammer.Types;
 using System.IO;
 
-namespace RSSAutoGen.Repository.Concrete
+namespace AIProgrammer.Repository.Concrete
 {
     public class GARepository : IRepository<GAParams>
     {

@@ -41,25 +41,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fitness\Concrete\AddCleanFitness.cs" />
-    <Compile Include="Fitness\Concrete\AddToCharFitness.cs" />
-    <Compile Include="Fitness\Concrete\HelloUserFitness.cs" />
-    <Compile Include="Fitness\Concrete\MultiplyFitness.cs" />
-    <Compile Include="Fitness\Concrete\SubtractFitness.cs" />
-    <Compile Include="Fitness\Concrete\StringFitness.cs" />
-    <Compile Include="Fitness\Concrete\StringOptimizedFitness.cs" />
-    <Compile Include="Managers\GAManager.cs" />
-    <Compile Include="Fitness\Base\FitnessBase.cs" />
-    <Compile Include="Fitness\Concrete\AddFitness.cs" />
-    <Compile Include="Fitness\Interface\IFitness.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Managers\CommonManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AIProgrammer.Compiler\AIProgrammer.Compiler.csproj">
+      <Project>{5f99b6a4-5cb2-432b-8018-e2edfbb957f7}</Project>
+      <Name>AIProgrammer.Compiler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AIProgrammer.Fitness\AIProgrammer.Fitness.csproj">
+      <Project>{2fa2525f-4faa-45a6-8268-4d561f7c46f9}</Project>
+      <Name>AIProgrammer.Fitness</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AIProgrammer.GA\AIProgrammer.GeneticAlgorithm.csproj">
       <Project>{8ec97de8-ddfd-437a-b216-91db8d1a3487}</Project>
       <Name>AIProgrammer.GeneticAlgorithm</Name>
@@ -67,6 +63,10 @@
     <ProjectReference Include="..\AIProgrammer.Interpreter\AIProgrammer.Interpreter.csproj">
       <Project>{4f4f1800-be33-4d38-ad95-6835644c076e}</Project>
       <Name>AIProgrammer.Interpreter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AIProgrammer.Managers\AIProgrammer.Managers.csproj">
+      <Project>{06d57f9c-a784-433f-8ff3-0728fecf6f5c}</Project>
+      <Name>AIProgrammer.Managers</Name>
     </ProjectReference>
     <ProjectReference Include="..\AIProgrammer.Repository\AIProgrammer.Repository.csproj">
       <Project>{bd558a71-1699-440f-9876-19322e658e88}</Project>

@@ -24,7 +24,7 @@
 #region Using directives
 using AIProgrammer.Repository.Interface;
 using AIProgrammer.Types;
-using RSSAutoGen.Repository.Concrete;
+using AIProgrammer.Repository.Concrete;
 using System;
 using System.Collections.Generic;
 using System.IO;

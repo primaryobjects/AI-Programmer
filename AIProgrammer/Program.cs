@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using AIProgrammer.GeneticAlgorithm;
 using AIProgrammer.Repository.Interface;
-using RSSAutoGen.Repository.Concrete;
+using AIProgrammer.Repository.Concrete;
 using AIProgrammer.Types;
-using AIProgrammer.Fitness.Interface;
+using AIProgrammer.Types.Interface;
 using AIProgrammer.Fitness.Concrete;
 using AIProgrammer.Managers;
+using AIProgrammer.Compiler;
 
 namespace AIProgrammer
 {
@@ -36,7 +37,7 @@ namespace AIProgrammer
         private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
         private static int _genomeSize = 250; // Number of programming instructions in generated program (size of genome array).
         private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
-        private static string _targetString = "hi "; // Target string to generate a program to print.
+        private static string _targetString = "hi"; // Target string to generate a program to print.
         private static double _targetFitness = 0;
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace AIProgrammer
         /// <returns>IFitness</returns>
         private static IFitness GetFitnessMethod()
         {
-            return new HelloUserFitness(_ga, _maxIterationCount, _targetString);
+            return new StringOptimizedFitness(_ga, _maxIterationCount, _targetString);
         }
 
         #region Worker Methods
@@ -116,6 +117,9 @@ namespace AIProgrammer
             // Display the final program.
             Console.WriteLine(program);
             Console.WriteLine();
+
+            // Compile to executable.
+            Brainfuck.Compile(program, "output.exe", myFitness, _maxIterationCount);
 
             // Run the result for the user.
             string result = myFitness.RunProgram(program);
