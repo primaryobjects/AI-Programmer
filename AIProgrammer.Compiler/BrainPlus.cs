@@ -22,7 +22,8 @@ namespace AIProgrammer.Compiler
         /// <param name="pathName">Executable file path</param>
         /// <param name="fitness">IFitness</param>
         /// <param name="maxIterations">Max number of instructions that interpreter will execute</param>
-        public static void Compile(string program, string pathName, IFitness fitness, int maxIterations)
+        /// <param name="includeHeader">True to display the header (Brainfuck .NET Compiler 1.0, Created by ...).</param>
+        public static void Compile(string program, string pathName, IFitness fitness, int maxIterations, bool includeHeader = true)
         {
             Compile(program, pathName, fitness.GetType().Name, maxIterations);
         }
