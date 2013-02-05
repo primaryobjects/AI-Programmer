@@ -51,6 +51,7 @@ namespace AIProgrammer.Fitness.Concrete
                     case 1: name = "me"; break;
                     case 2: name = "jay"; break;
                     case 3: name = "kory"; break;
+                    case 4: name = "jamie"; break;
                 };
 
                 sb.Clear();

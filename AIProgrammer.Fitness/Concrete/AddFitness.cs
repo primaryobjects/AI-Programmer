@@ -17,7 +17,7 @@ namespace AIProgrammer.Fitness.Concrete
     {
         private int _trainingCount = 5;
 
-        public AddFitness(GA ga, int maxIterationCount, int maxTrainingCount)
+        public AddFitness(GA ga, int maxIterationCount, int maxTrainingCount = 5)
             : base(ga, maxIterationCount)
         {
             _trainingCount = maxTrainingCount;
@@ -44,6 +44,7 @@ namespace AIProgrammer.Fitness.Concrete
                     case 2: input1 = 5; input2 = 1; break;
                     case 3: input1 = 6; input2 = 2; break;
                     case 4: input1 = 3; input2 = 6; break;
+                    case 5: input1 = 2; input2 = 0; break;
                 };
 
                 try

@@ -21,11 +21,11 @@ namespace AIProgrammer.Compiler
         /// <param name="program">Brainfuck source code</param>
         /// <param name="pathName">Executable file path</param>
         /// <param name="fitness">IFitness</param>
-        /// <param name="maxIterations">Max number of instructions that interpreter will execute</param>
+        /// <param name="constructorParams">Parameters to pass to fitness method constructor, after GA.</param>
         /// <param name="includeHeader">True to display the header (Brainfuck .NET Compiler 1.0, Created by ...).</param>
-        public static void Compile(string program, string pathName, IFitness fitness, int maxIterations, bool includeHeader = true)
+        public static void Compile(string program, string pathName, IFitness fitness, string constructorParams, bool includeHeader = true)
         {
-            Compile(program, pathName, fitness.GetType().Name, maxIterations);
+            Compile(program, pathName, fitness.GetType().Name, constructorParams);
         }
 
         /// <summary>
@@ -34,9 +34,9 @@ namespace AIProgrammer.Compiler
         /// <param name="program">Brainfuck source code</param>
         /// <param name="pathName">Executable file path</param>
         /// <param name="fitnessMethod">string (HelloUserFitness, StringOptimizedFitness, etc)</param>
-        /// <param name="maxIterations">Max number of instructions that interpreter will execute</param>
+        /// <param name="constructorParams">Parameters to pass to fitness method constructor, after GA.</param>
         /// <param name="includeHeader">True to display the header (Brainfuck .NET Compiler 1.0, Created by ...).</param>
-        public static void Compile(string program, string pathName, string fitnessMethod, int maxIterations, bool includeHeader = true)
+        public static void Compile(string program, string pathName, string fitnessMethod, string constructorParams, bool includeHeader = true)
         {
             string sourceCode = @"
 using System;
@@ -47,7 +47,7 @@ class Program {
     public static void Main(string[] args)
     {
         string program = ""[SOURCE]"";
-        IFitness fitness = new [FITNESSMETHOD](null, [MAXITERATIONS], """");
+        IFitness fitness = new [FITNESSMETHOD](null, [PARAMETERS]);
 
         [HEADER]
 
@@ -81,7 +81,7 @@ class Program {
 
             sourceCode = sourceCode.Replace("[SOURCE]", program);
             sourceCode = sourceCode.Replace("[FITNESSMETHOD]", fitnessMethod);
-            sourceCode = sourceCode.Replace("[MAXITERATIONS]", maxIterations.ToString());
+            sourceCode = sourceCode.Replace("[PARAMETERS]", constructorParams);
 
             CompilerResults results = provider.CompileAssemblyFromSource(parameters, sourceCode);
 
