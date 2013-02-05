@@ -2,6 +2,7 @@
 using AIProgrammer.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,9 +25,12 @@ namespace AIProgrammer.Managers
                     setupFunc();
                 }
 
+                // Delete any existing dat file.
+                File.Delete(Directory.GetCurrentDirectory() + "\\my-genetic-algorithm.dat");
+
                 // Start a new genetic algorithm.
                 ga.GAParams.Elitism = true;
-                ga.GAParams.HistoryPath = System.IO.Directory.GetCurrentDirectory() + "\\history.txt";
+                ga.GAParams.HistoryPath = Directory.GetCurrentDirectory() + "\\history.txt";
                 ga.FitnessFunction = new GAFunction(fitnessFunc);
                 ga.OnGenerationFunction = new OnGeneration(generationFunc);
                 ga.Go();
