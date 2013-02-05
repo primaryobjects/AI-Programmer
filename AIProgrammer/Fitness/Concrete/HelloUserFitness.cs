@@ -23,7 +23,7 @@ namespace AIProgrammer.Fitness.Concrete
             _targetString = targetString;
             if (_targetFitness == 0)
             {
-                _targetFitness = ((_targetString.Length + 1) * 256) + ((_targetString.Length + 2) * 256) + ((_targetString.Length + 3) * 256);
+                _targetFitness = ((_targetString.Length + 1) * 256) + ((_targetString.Length + 2) * 256) + ((_targetString.Length + 3) * 256) + ((_targetString.Length + 4) * 256);
             }
         }
 
@@ -38,13 +38,14 @@ namespace AIProgrammer.Fitness.Concrete
             double penalty = 0;
             StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
                 switch (i)
                 {
                     case 0: name = "z"; break;
                     case 1: name = "yo"; break;
                     case 2: name = "mee"; break;
+                    case 3: name = "prep"; break;
                 };
 
                 sb.Clear();
@@ -110,6 +111,9 @@ namespace AIProgrammer.Fitness.Concrete
                     }
                 }
 
+                // Make the AI wait until a solution is found without the penalty (too many input characters).
+                Fitness -= penalty;
+
                 // Check for solution.
                 IsFitnessAchieved();
 
@@ -121,7 +125,7 @@ namespace AIProgrammer.Fitness.Concrete
 
             if (_fitness != Double.MaxValue)
             {
-                _fitness = Fitness + countBonus - penalty;
+                _fitness = Fitness + countBonus;
             }
 
             return _fitness;
