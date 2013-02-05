@@ -51,7 +51,7 @@ namespace AIProgrammer
         /// <returns>IFitness</returns>
         private static IFitness GetFitnessMethod()
         {
-            return new StringOptimizedFitness(_ga, _maxIterationCount, _targetString);
+            return new AddFitness(_ga, _maxIterationCount, 1);
         }
 
         #region Worker Methods
@@ -119,7 +119,7 @@ namespace AIProgrammer
             Console.WriteLine();
 
             // Compile to executable.
-            BrainPlus.Compile(program, "output.exe", myFitness, _maxIterationCount.ToString() + ", \"" + _targetString + "\"");
+            BrainPlus.Compile(program, "output.exe", myFitness);
 
             // Run the result for the user.
             string result = myFitness.RunProgram(program);

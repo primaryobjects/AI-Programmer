@@ -21,11 +21,10 @@ namespace AIProgrammer.Compiler
         /// <param name="program">Brainfuck source code</param>
         /// <param name="pathName">Executable file path</param>
         /// <param name="fitness">IFitness</param>
-        /// <param name="constructorParams">Parameters to pass to fitness method constructor, after GA.</param>
         /// <param name="includeHeader">True to display the header (Brainfuck .NET Compiler 1.0, Created by ...).</param>
-        public static void Compile(string program, string pathName, IFitness fitness, string constructorParams, bool includeHeader = true)
+        public static void Compile(string program, string pathName, IFitness fitness, bool includeHeader = true)
         {
-            Compile(program, pathName, fitness.GetType().Name, constructorParams);
+            Compile(program, pathName, fitness.GetType().Name, fitness.GetCompilationParameters());
         }
 
         /// <summary>

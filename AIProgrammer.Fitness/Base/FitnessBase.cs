@@ -80,9 +80,11 @@ namespace AIProgrammer.Fitness.Base
             return _console.ToString();
         }
 
+        public abstract string GetCompilationParameters();
+
         #endregion
 
-        public abstract double GetFitnessMethod(string program);
-        public abstract void RunProgramMethod(string program);
+        protected abstract double GetFitnessMethod(string program);
+        protected abstract void RunProgramMethod(string program);
     }
 }

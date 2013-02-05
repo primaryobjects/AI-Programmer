@@ -40,5 +40,15 @@
         /// <param name="program">string</param>
         /// <returns>string (output)</returns>
         string RunProgram(string program);
+
+        /// <summary>
+        /// Returns the compilation parameters required to instantiate the fitness constructor (not including GA).
+        /// Examples:
+        /// AddFitness: _maxIterationCount + ", " + _trainingCount
+        /// StringFitness: _maxIterationCount + ", \"" + _targetString + "\""
+        /// HelloUserFitness: _maxIterationCount + ", \"" + _targetString + "\", " + _trainingCount
+        /// </summary>
+        /// <returns></returns>
+        string GetCompilationParameters();
     }
 }

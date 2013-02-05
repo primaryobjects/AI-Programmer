@@ -27,7 +27,7 @@ namespace AIProgrammer.Fitness.Concrete
 
         #region FitnessBase Members
 
-        public override double GetFitnessMethod(string program)
+        protected override double GetFitnessMethod(string program)
         {
             // Run the source code.
             Output = RunProgram(program);
@@ -51,7 +51,7 @@ namespace AIProgrammer.Fitness.Concrete
             return _fitness;
         }
 
-        public override void RunProgramMethod(string program)
+        protected override void RunProgramMethod(string program)
         {
             try
             {
@@ -66,6 +66,11 @@ namespace AIProgrammer.Fitness.Concrete
             catch
             {
             }
+        }
+
+        public override string GetCompilationParameters()
+        {
+            return _maxIterationCount + ", \"" + _targetString + "\"";
         }
 
         #endregion

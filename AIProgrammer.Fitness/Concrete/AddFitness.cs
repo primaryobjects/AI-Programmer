@@ -29,7 +29,7 @@ namespace AIProgrammer.Fitness.Concrete
 
         #region FitnessBase Members
 
-        public override double GetFitnessMethod(string program)
+        protected override double GetFitnessMethod(string program)
         {
             byte input1 = 0, input2 = 0;
             int state = 0;
@@ -110,7 +110,7 @@ namespace AIProgrammer.Fitness.Concrete
             return _fitness;
         }
 
-        public override void RunProgramMethod(string program)
+        protected override void RunProgramMethod(string program)
         {
             for (int i = 0; i < 99; i++)
             {
@@ -153,6 +153,11 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                 }
             }
+        }
+
+        public override string GetCompilationParameters()
+        {
+            return _maxIterationCount + ", " + _trainingCount;
         }
 
         #endregion
