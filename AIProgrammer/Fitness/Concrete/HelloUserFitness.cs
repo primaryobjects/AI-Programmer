@@ -16,14 +16,20 @@ namespace AIProgrammer.Fitness.Concrete
     public class HelloUserFitness : FitnessBase
     {
         private string _targetString;
+        private int _trainingCount = 4;
 
-        public HelloUserFitness(GA ga, int maxIterationCount, string targetString)
+        public HelloUserFitness(GA ga, int maxIterationCount, string targetString, int maxTrainingCount = 4)
             : base(ga, maxIterationCount)
         {
             _targetString = targetString;
+            _trainingCount = maxTrainingCount;
             if (_targetFitness == 0)
             {
-                _targetFitness = ((_targetString.Length + 1) * 256) + ((_targetString.Length + 2) * 256) + ((_targetString.Length + 3) * 256) + ((_targetString.Length + 4) * 256);
+                //_targetFitness = ((_targetString.Length + 1) * 256) + ((_targetString.Length + 2) * 256) + ((_targetString.Length + 3) * 256) + ((_targetString.Length + 4) * 256);
+                for (int i=0; i<_trainingCount; i++)
+                {
+                    _targetFitness += (_targetString.Length + (i + 1)) * 256;
+                }
             }
         }
 
@@ -38,14 +44,14 @@ namespace AIProgrammer.Fitness.Concrete
             double penalty = 0;
             StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < _trainingCount; i++)
             {
                 switch (i)
                 {
-                    case 0: name = "z"; break;
-                    case 1: name = "yo"; break;
-                    case 2: name = "mee"; break;
-                    case 3: name = "prep"; break;
+                    case 0: name = "s"; break;
+                    case 1: name = "me"; break;
+                    case 2: name = "jay"; break;
+                    case 3: name = "kory"; break;
                 };
 
                 sb.Clear();
@@ -135,6 +141,12 @@ namespace AIProgrammer.Fitness.Concrete
         {
             for (int i = 0; i < 99; i++)
             {
+                // Get input from the user.
+                Console.WriteLine();
+                Console.Write(">: ");
+                string line = Console.ReadLine();
+                int index = 0;
+
                 _console.Clear();
 
                 try
@@ -142,18 +154,16 @@ namespace AIProgrammer.Fitness.Concrete
                     // Run the program.
                     Interpreter bf = new Interpreter(program, () =>
                     {
-                        Console.WriteLine();
-                        Console.Write(">: ");
-                        string line = Console.ReadLine();
                         byte b;
-                        if (string.IsNullOrEmpty(line))
+
+                        // Send the next character.
+                        if (index < line.Length)
                         {
-                            // User entered terminator character.
-                            b = 0;
+                            b = (byte)line[index++];
                         }
                         else
                         {
-                            b = (byte)line[0];
+                            b = 0;
                         }
 
                         return b;
