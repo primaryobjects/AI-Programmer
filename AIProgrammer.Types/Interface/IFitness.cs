@@ -49,6 +49,6 @@
         /// HelloUserFitness: _maxIterationCount + ", \"" + _targetString + "\", " + _trainingCount
         /// </summary>
         /// <returns></returns>
-        string GetCompilationParameters();
+        string GetConstructorParameters();
     }
 }

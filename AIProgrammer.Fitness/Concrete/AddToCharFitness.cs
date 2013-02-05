@@ -161,7 +161,7 @@ namespace AIProgrammer.Fitness.Concrete
             }
         }
 
-        public override string GetCompilationParameters()
+        public override string GetConstructorParameters()
         {
             return _maxIterationCount + ", " + _trainingCount;
         }

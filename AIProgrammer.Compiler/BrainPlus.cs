@@ -24,7 +24,7 @@ namespace AIProgrammer.Compiler
         /// <param name="includeHeader">True to display the header (Brainfuck .NET Compiler 1.0, Created by ...).</param>
         public static void Compile(string program, string pathName, IFitness fitness, bool includeHeader = true)
         {
-            Compile(program, pathName, fitness.GetType().Name, fitness.GetCompilationParameters());
+            Compile(program, pathName, fitness.GetType().Name, fitness.GetConstructorParameters());
         }
 
         /// <summary>

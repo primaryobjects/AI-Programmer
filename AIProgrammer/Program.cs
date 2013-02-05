@@ -51,7 +51,7 @@ namespace AIProgrammer
         /// <returns>IFitness</returns>
         private static IFitness GetFitnessMethod()
         {
-            return new AddFitness(_ga, _maxIterationCount, 1);
+            return new StringOptimizedFitness(_ga, _maxIterationCount, _targetString);
         }
 
         #region Worker Methods

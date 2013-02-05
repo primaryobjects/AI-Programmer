@@ -80,7 +80,7 @@ namespace AIProgrammer.Fitness.Base
             return _console.ToString();
         }
 
-        public abstract string GetCompilationParameters();
+        public abstract string GetConstructorParameters();
 
         #endregion
 
