@@ -43,6 +43,7 @@
     <Compile Include="Concrete\AddCleanFitness.cs" />
     <Compile Include="Concrete\AddFitness.cs" />
     <Compile Include="Concrete\AddToCharFitness.cs" />
+    <Compile Include="Concrete\ReverseStringFitness.cs" />
     <Compile Include="Concrete\HelloUserFitness.cs" />
     <Compile Include="Concrete\MultiplyFitness.cs" />
     <Compile Include="Concrete\StringFitness.cs" />
