@@ -34,7 +34,6 @@ namespace AIProgrammer.Fitness.Concrete
         protected override double GetFitnessMethod(string program)
         {
             string name = "";
-            string targetReversed = "";
             int state = 0;
             double countBonus = 0;
             double penalty = 0;
@@ -74,7 +73,7 @@ namespace AIProgrammer.Fitness.Concrete
                         else
                         {
                             // Not ready for input.
-                            penalty++;
+                            //penalty++;
 
                             return 255;
                         }
@@ -87,7 +86,7 @@ namespace AIProgrammer.Fitness.Concrete
                         if (state < name.Length + 1)
                         {
                             // Not ready for output.
-                            penalty++;
+                            //penalty++;
                         }
                     });
                     _bf.Run(_maxIterationCount);

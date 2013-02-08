@@ -67,6 +67,11 @@ namespace AIProgrammer
         private bool m_ExitLoop;
 
         /// <summary>
+        /// Holds the instruction pointer for the start of the loop. Used to bypass all inner-loops when searching for the end of the current loop.
+        /// </summary>
+        private int m_ExitLoopInstructionPointer;
+
+        /// <summary>
         /// Number of instructions executed.
         /// </summary>
         public int m_Ticks;
@@ -98,40 +103,43 @@ namespace AIProgrammer
             this.m_InstructionSet.Add('>', () => { if (!m_ExitLoop) this.m_DataPointer++; });
             this.m_InstructionSet.Add('<', () => { if (!m_ExitLoop) this.m_DataPointer--; });
 
+            this.m_InstructionSet.Add('.', () => { if (!m_ExitLoop) this.m_Output(this.m_Memory[this.m_DataPointer]); });
+            this.m_InstructionSet.Add(',', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = this.m_Input(); });
+
             this.m_InstructionSet.Add('[', () =>
             {
+                if (!m_ExitLoop && this.m_Memory[this.m_DataPointer] == 0)
+                {
+                    // Jump forward to the matching ] and exit this loop (skip over all inner loops).
+                    m_ExitLoop = true;
+
+                    // Remember this instruction pointer, so when we get past all inner loops and finally pop this one off the stack, we know we're done.
+                    m_ExitLoopInstructionPointer = this.m_InstructionPointer;
+                }
+
+                this.m_CallStack.Push(this.m_InstructionPointer);
+            });
+            this.m_InstructionSet.Add(']', () =>
+            {
+                var temp = this.m_CallStack.Pop();
+
                 if (!m_ExitLoop)
                 {
-                    if (this.m_Memory[this.m_DataPointer] == 0)
+                    this.m_InstructionPointer = this.m_Memory[this.m_DataPointer] != 0
+                        ? temp - 1
+                        : this.m_InstructionPointer;
+                }
+                else
+                {
+                    // Continue executing after loop.
+                    if (temp == m_ExitLoopInstructionPointer)
                     {
-                        m_ExitLoop = true;
-                    }
-                    else
-                    {
-                        this.m_CallStack.Push(this.m_InstructionPointer);
+                        // We've finally exited the loop.
+                        m_ExitLoop = false;
+                        m_ExitLoopInstructionPointer = 0;
                     }
                 }
             });
-            this.m_InstructionSet.Add(
-                ']',
-                () =>
-                {
-                    if (!m_ExitLoop)
-                    {
-                        var temp = this.m_CallStack.Pop() - 1;
-                        this.m_InstructionPointer = this.m_Memory[this.m_DataPointer] != 0
-                            ? temp
-                            : this.m_InstructionPointer;
-                    }
-                    else
-                    {
-                        // Continue executing after loop.
-                        m_ExitLoop = false;
-                    }
-                });
-
-            this.m_InstructionSet.Add('.', () => this.m_Output(this.m_Memory[this.m_DataPointer]));
-            this.m_InstructionSet.Add(',', () => this.m_Memory[this.m_DataPointer] = this.m_Input());
         }
 
         /// <summary>
