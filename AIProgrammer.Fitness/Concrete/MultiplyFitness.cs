@@ -16,7 +16,7 @@ namespace AIProgrammer.Fitness.Concrete
     {
         private int _trainingCount = 5;
 
-        public MultiplyFitness(GA ga, int maxIterationCount, int maxTrainingCount = 5)
+        public MultiplyFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3)
             : base(ga, maxIterationCount)
         {
             _trainingCount = maxTrainingCount;
