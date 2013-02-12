@@ -7,11 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AIProgrammer.Fitness.Concrete
+namespace AIProgrammer.Fitness.Concrete.Research
 {
     /// <summary>
     /// Calculates the Fibonacci sequence, starting at input1, input2.
-    /// Note, does not currently find a solution. Too many local maxima.
+    /// Not currently working.
     /// </summary>
     public class FibFitness : FitnessBase
     {

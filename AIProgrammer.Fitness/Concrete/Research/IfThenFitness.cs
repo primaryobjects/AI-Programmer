@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AIProgrammer.Fitness.Concrete
+namespace AIProgrammer.Fitness.Concrete.Research
 {
     /// <summary>
     /// If/Then example. Accepts input from the user (1 or 2) and prints out text, depending on the option selected.
+    /// Not currently working.
     /// </summary>
     public class IfThenFitness : FitnessBase
     {

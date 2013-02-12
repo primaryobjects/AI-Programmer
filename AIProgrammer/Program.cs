@@ -9,6 +9,7 @@ using AIProgrammer.Repository.Concrete;
 using AIProgrammer.Types;
 using AIProgrammer.Types.Interface;
 using AIProgrammer.Fitness.Concrete;
+using AIProgrammer.Fitness.Concrete.Research;
 using AIProgrammer.Managers;
 using AIProgrammer.Compiler;
 
@@ -43,15 +44,19 @@ namespace AIProgrammer
         /// <summary>
         /// Selects the type of fitness algorithm to use (Hello World solutions, Calculation solutions, etc).
         /// QUICK START GUIDE:
-        /// - Use the desired concrete Fitness class. For example, use StringOptimizedFitness() for a simple "Hello World" type of program.
-        /// - Set the _targetFitness according to the Fitness class selected.
-        /// - StringFitness and StringOptimizedFitness should have _targetFitness = _targetString.Length * 256
-        /// - AddFitness, SubtractFitness, MultiplyFitness should have _targetFitness = 1280 (or less, depending on how many for loop iterations you will train on, defined inside the Fitness class).
+        /// - Use the desired concrete Fitness class. For example: use StringOptimizedFitness() for a simple "Hello World" type of program.
+        /// 
+        ///   return new StringOptimizedFitness(_ga, _maxIterationCount, _targetString)
+        ///   return new AddFitness(_ga, _maxIterationCount)
+        ///   return new SubtractFitness(_ga, _maxIterationCount)
+        ///   return new ReverseStringFitness(_ga, _maxIterationCount)
+        ///   return new HelloUserFitness(_ga, _maxIterationCount, _targetString)
+        ///   
         /// </summary>
         /// <returns>IFitness</returns>
         private static IFitness GetFitnessMethod()
         {
-            return new StringOptimizedFitness(_ga, _maxIterationCount, _targetString);
+            return new IfThenFitness(_ga, _maxIterationCount);
         }
 
         #region Worker Methods

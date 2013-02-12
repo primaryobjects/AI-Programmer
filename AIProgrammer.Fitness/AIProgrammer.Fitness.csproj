@@ -42,12 +42,12 @@
     <Compile Include="Base\FitnessBase.cs" />
     <Compile Include="Concrete\AddCleanFitness.cs" />
     <Compile Include="Concrete\AddFitness.cs" />
-    <Compile Include="Concrete\AddToCharFitness.cs" />
-    <Compile Include="Concrete\IfThenFitness.cs" />
-    <Compile Include="Concrete\FibFitness.cs" />
+    <Compile Include="Concrete\Research\AddToCharFitness.cs" />
+    <Compile Include="Concrete\Research\IfThenFitness.cs" />
+    <Compile Include="Concrete\Research\FibFitness.cs" />
     <Compile Include="Concrete\ReverseStringFitness.cs" />
     <Compile Include="Concrete\HelloUserFitness.cs" />
-    <Compile Include="Concrete\MultiplyFitness.cs" />
+    <Compile Include="Concrete\Research\MultiplyFitness.cs" />
     <Compile Include="Concrete\StringFitness.cs" />
     <Compile Include="Concrete\StringOptimizedFitness.cs" />
     <Compile Include="Concrete\SubtractFitness.cs" />
