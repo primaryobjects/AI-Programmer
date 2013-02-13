@@ -7,24 +7,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AIProgrammer.Fitness.Concrete.Research
+namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
-    /// If/Then example. Accepts input from the user (1 or 2) and prints out text, depending on the option selected.
-    /// Not currently working.
+    /// If/Then example. Accepts input from the user (1, 2, 3) and prints out text, depending on the option selected.
+    /// Note, input is taken in byte value (not ASCII character).
     /// </summary>
     public class IfThenFitness : FitnessBase
     {
         private int _trainingCount = 5;
+        //private static Random r = new Random();
 
-        public IfThenFitness(GA ga, int maxIterationCount, int maxTrainingCount = 2)
+        public IfThenFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3)
             : base(ga, maxIterationCount)
         {
             _trainingCount = maxTrainingCount;
             if (_targetFitness == 0)
             {
-                _targetFitness += 2 + 256 * 2;
-                _targetFitness += 3 + 256 * 3;
+                _targetFitness += /*(256 * 5) +*/ 200 + 256 * 2;
+                _targetFitness += /*(256 * 5) +*/ 200 + 256 * 1;
+                _targetFitness += /*(256 * 5) +*/ 200 + 256 * 2;
             }
         }
 
@@ -37,13 +39,21 @@ namespace AIProgrammer.Fitness.Concrete.Research
             int state = 0;
             double countBonus = 0;
             double penalty = 0;
+            //int ii = r.Next(0, 3); // Randomize the input.
 
             for (int i = 0; i < _trainingCount; i++)
             {
+                /*if (ii >= _trainingCount)
+                {
+                    // Wrap.
+                    ii = 0;
+                }*/
+
                 switch (i)
                 {
                     case 0: input1 = 1; output1 = "hi"; break;
-                    case 1: input1 = 2; output1 = "bye"; break;
+                    case 1: input1 = 2; output1 = "a"; break;
+                    case 2: input1 = 3; output1 = "zz"; break;
                 };
 
                 try
@@ -64,6 +74,7 @@ namespace AIProgrammer.Fitness.Concrete.Research
                         else
                         {
                             // Not ready for input.
+                            penalty += 10;
                             return 0;
                         }
                     },
@@ -74,7 +85,7 @@ namespace AIProgrammer.Fitness.Concrete.Research
                         if (state == 0)
                         {
                             // Not ready for output.
-                            penalty++;
+                            penalty += 10;
                         }
                     });
                     _bf.Run(_maxIterationCount);
@@ -91,19 +102,21 @@ namespace AIProgrammer.Fitness.Concrete.Research
                 {
                     for (int j = 0; j < output1.Length; j++)
                     {
-                        Fitness += 256 - Math.Abs(_console[j] - output1[j]);
+                        double f = 256 - Math.Abs(_console[j] - output1[j]);
+
+                        /*// Bonus for matching the first character of the first case. Helps learning and avoiding local maximum?
+                        if (j == 0 && i == 0)
+                        {
+                            f *= 6;
+                        }*/
+
+                        Fitness += f;
                     }
                 }
 
-                // Length bonus.
-                if (i == 0)
-                {
-                    Fitness += 2 - Math.Abs(_console.Length - output1.Length);
-                }
-                else if (i == 1)
-                {
-                    Fitness += 3 - Math.Abs(_console.Length - output1.Length);
-                }
+                //if (_console.Length == output1.Length) Fitness += 10;
+                // Length bonus (percentage of 100).
+                Fitness += 200 * ((output1.Length - Math.Abs(_console.Length - output1.Length)) / output1.Length);
 
                 // Make the AI wait until a solution is found without the penalty (too many input characters).
                 Fitness -= penalty;
@@ -112,9 +125,11 @@ namespace AIProgrammer.Fitness.Concrete.Research
                 IsFitnessAchieved();
 
                 // Bonus for less operations to optimize the code.
-                countBonus += ((_maxIterationCount - _bf.m_Ticks) / 20.0);
+                countBonus += ((_maxIterationCount - _bf.m_Ticks) / 500.0);
 
                 Ticks += _bf.m_Ticks;
+
+                //ii++;
             }
 
             if (_fitness != Double.MaxValue)
@@ -141,7 +156,7 @@ namespace AIProgrammer.Fitness.Concrete.Research
                     // Run the program.
                     Interpreter bf = new Interpreter(program, () =>
                     {
-                        return (byte)line[0];
+                        return Byte.Parse(line[0].ToString());
                     },
                     (b) =>
                     {

@@ -24,7 +24,6 @@ namespace AIProgrammer.Fitness.Concrete
             _trainingCount = maxTrainingCount;
             if (_targetFitness == 0)
             {
-                //_targetFitness = ((_targetString.Length + 1) * 256) + ((_targetString.Length + 2) * 256) + ((_targetString.Length + 3) * 256) + ((_targetString.Length + 4) * 256);
                 for (int i=0; i<_trainingCount; i++)
                 {
                     _targetFitness += (_targetString.Length + (i + 1)) * 256;

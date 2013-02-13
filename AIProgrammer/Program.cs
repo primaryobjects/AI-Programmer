@@ -36,7 +36,7 @@ namespace AIProgrammer
 
         private static double _crossoverRate = 0.70; // Percentage chance that a child genome will use crossover of two parents.
         private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
-        private static int _genomeSize = 250; // Number of programming instructions in generated program (size of genome array).
+        private static int _genomeSize = 450; // Number of programming instructions in generated program (size of genome array).
         private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
         private static string _targetString = "hi"; // Target string to generate a program to print.
         private static double _targetFitness = 0;
