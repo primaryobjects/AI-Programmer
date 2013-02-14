@@ -11,12 +11,13 @@ namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
     /// If/Then example. Accepts input from the user (1, 2, 3) and prints out text, depending on the option selected.
+    /// This fitness encourages diversity by looking at the number of memory registers used and difference in output.
     /// Note, input is taken in byte value (not ASCII character).
     /// </summary>
     public class IfThenFitness : FitnessBase
     {
         private int _trainingCount = 5;
-        //private static Random r = new Random();
+        private string[] _trainingStrings = new string[] {"a", "z", "g"};
 
         public IfThenFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3)
             : base(ga, maxIterationCount)
@@ -24,9 +25,10 @@ namespace AIProgrammer.Fitness.Concrete
             _trainingCount = maxTrainingCount;
             if (_targetFitness == 0)
             {
-                _targetFitness += /*(256 * 5) +*/ 200 + 256 * 2;
-                _targetFitness += /*(256 * 5) +*/ 200 + 256 * 1;
-                _targetFitness += /*(256 * 5) +*/ 200 + 256 * 2;
+                for (int i = 0; i < maxTrainingCount; i++)
+                {
+                    _targetFitness += 256 * _trainingStrings[i].Length;
+                }
             }
         }
 
@@ -39,21 +41,17 @@ namespace AIProgrammer.Fitness.Concrete
             int state = 0;
             double countBonus = 0;
             double penalty = 0;
-            //int ii = r.Next(0, 3); // Randomize the input.
+            double lengthBonus = 0;
+            HashSet<int> memoryHash = new HashSet<int>();
+            HashSet<string> outputHash = new HashSet<string>();
 
             for (int i = 0; i < _trainingCount; i++)
             {
-                /*if (ii >= _trainingCount)
-                {
-                    // Wrap.
-                    ii = 0;
-                }*/
-
                 switch (i)
                 {
-                    case 0: input1 = 1; output1 = "hi"; break;
-                    case 1: input1 = 2; output1 = "a"; break;
-                    case 2: input1 = 3; output1 = "zz"; break;
+                    case 0: input1 = 1; output1 = "a"; break;
+                    case 1: input1 = 2; output1 = "z"; break;
+                    case 2: input1 = 3; output1 = "g"; break;
                 };
 
                 try
@@ -74,12 +72,17 @@ namespace AIProgrammer.Fitness.Concrete
                         else
                         {
                             // Not ready for input.
-                            penalty += 10;
                             return 0;
                         }
                     },
                     (b) =>
                     {
+                        if (_console.Length == 0)
+                        {
+                            // Record the memory register being used for this output. Used to support diversity.
+                            memoryHash.Add(_bf.m_CurrentDataPointer);
+                        }
+                        
                         _console.Append((char)b);
 
                         if (state == 0)
@@ -94,7 +97,8 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                 }
 
-                _output.Append(_console.ToString());
+                string console = _console.ToString();
+                _output.Append(console);
                 _output.Append(',');
 
                 // Order bonus.
@@ -103,38 +107,44 @@ namespace AIProgrammer.Fitness.Concrete
                     for (int j = 0; j < output1.Length; j++)
                     {
                         double f = 256 - Math.Abs(_console[j] - output1[j]);
-
-                        /*// Bonus for matching the first character of the first case. Helps learning and avoiding local maximum?
-                        if (j == 0 && i == 0)
-                        {
-                            f *= 6;
-                        }*/
-
                         Fitness += f;
                     }
                 }
 
-                //if (_console.Length == output1.Length) Fitness += 10;
                 // Length bonus (percentage of 100).
-                Fitness += 200 * ((output1.Length - Math.Abs(_console.Length - output1.Length)) / output1.Length);
+                lengthBonus += 200 * ((output1.Length - Math.Abs(_console.Length - output1.Length)) / output1.Length);
 
-                // Make the AI wait until a solution is found without the penalty (too many input characters).
+                // Diversity bonus. Ensure that outputs are not the same.
+                if (outputHash.Contains(console))
+                {
+                    penalty += 50;
+                }
+                else
+                {
+                    outputHash.Add(console);
+                }
+
+                // Bonus for less operations to optimize the code.
+                countBonus += ((_maxIterationCount - _bf.m_Ticks) / 500.0);
+
+                // Make the AI wait until a solution is found without the penalty.
                 Fitness -= penalty;
 
                 // Check for solution.
                 IsFitnessAchieved();
 
-                // Bonus for less operations to optimize the code.
-                countBonus += ((_maxIterationCount - _bf.m_Ticks) / 500.0);
-
                 Ticks += _bf.m_Ticks;
+            }
 
-                //ii++;
+            // Give a bonus for using multiple memory registers, supporting diversity.
+            if (memoryHash.Count > 1)
+            {
+                countBonus += memoryHash.Count * 200;
             }
 
             if (_fitness != Double.MaxValue)
             {
-                _fitness = Fitness + countBonus;
+                _fitness = Fitness + countBonus + lengthBonus;
             }
 
             return _fitness;
@@ -148,6 +158,7 @@ namespace AIProgrammer.Fitness.Concrete
                 Console.WriteLine();
                 Console.Write(">: ");
                 string line = Console.ReadLine();
+                int index = 0;
 
                 _console.Clear();
 
@@ -156,7 +167,14 @@ namespace AIProgrammer.Fitness.Concrete
                     // Run the program.
                     Interpreter bf = new Interpreter(program, () =>
                     {
-                        return Byte.Parse(line[0].ToString());
+                        if (index < line.Length)
+                        {
+                            return Byte.Parse(line[index++].ToString());
+                        }
+                        else
+                        {
+                            return 0;
+                        }
                     },
                     (b) =>
                     {

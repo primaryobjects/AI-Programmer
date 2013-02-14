@@ -82,6 +82,11 @@ namespace AIProgrammer
         public bool m_Stop;
 
         /// <summary>
+        /// Read-only access to the current data pointer index in memory.
+        /// </summary>
+        public int m_CurrentDataPointer { get { return m_DataPointer; } }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="programCode"></param>
