@@ -15,7 +15,7 @@ namespace AIProgrammer.Fitness.Concrete.Research
     /// </summary>
     public class MultiplyFitness : FitnessBase
     {
-        private int _trainingCount = 5;
+        private int _trainingCount;
 
         public MultiplyFitness(GA ga, int maxIterationCount, int maxTrainingCount = 4)
             : base(ga, maxIterationCount)

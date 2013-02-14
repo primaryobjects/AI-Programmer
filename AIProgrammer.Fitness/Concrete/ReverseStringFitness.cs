@@ -14,7 +14,7 @@ namespace AIProgrammer.Fitness.Concrete
     /// </summary>
     public class ReverseStringFitness : FitnessBase
     {
-        private int _trainingCount = 5;
+        private int _trainingCount;
 
         public ReverseStringFitness(GA ga, int maxIterationCount, int maxTrainingCount = 5)
             : base(ga, maxIterationCount)

@@ -16,7 +16,7 @@ namespace AIProgrammer.Fitness.Concrete
     /// </summary>
     public class AddCleanFitness : FitnessBase
     {
-        private int _trainingCount = 5;
+        private int _trainingCount;
 
         public AddCleanFitness(GA ga, int maxIterationCount, int maxTrainingCount = 5)
             : base(ga, maxIterationCount)

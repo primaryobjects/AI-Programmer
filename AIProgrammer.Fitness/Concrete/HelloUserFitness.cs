@@ -15,7 +15,7 @@ namespace AIProgrammer.Fitness.Concrete
     public class HelloUserFitness : FitnessBase
     {
         private string _targetString;
-        private int _trainingCount = 4;
+        private int _trainingCount;
 
         public HelloUserFitness(GA ga, int maxIterationCount, string targetString, int maxTrainingCount = 4)
             : base(ga, maxIterationCount)
