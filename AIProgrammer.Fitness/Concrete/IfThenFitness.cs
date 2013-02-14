@@ -17,7 +17,7 @@ namespace AIProgrammer.Fitness.Concrete
     public class IfThenFitness : FitnessBase
     {
         private int _trainingCount;
-        private string[] _trainingStrings = new string[] {"a", "z", "g"};
+        private string[] _trainingStrings = new string[] {"hi", "z", "bye"};
 
         public IfThenFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3)
             : base(ga, maxIterationCount)
@@ -121,7 +121,35 @@ namespace AIProgrammer.Fitness.Concrete
                 }
                 else
                 {
-                    outputHash.Add(console);
+                    bool foundInOutput = false;
+                    foreach (string o in outputHash)
+                    {
+                        if (console.IndexOf(o) != -1 || o.IndexOf(console) != -1)
+                        {
+                            foundInOutput = true;
+                        }
+                    }
+
+                    if (!foundInOutput)
+                    {
+                        // Try to prevent double characters of the same letter in the first two letters. This can indicate a tightly-bound couple.
+                        if (console.Length >= 2)
+                        {
+                            if (console[0] == console[1])
+                            {
+                                foundInOutput = true;
+                            }
+                        }
+                    }
+
+                    if (foundInOutput)
+                    {
+                        penalty += 50;
+                    }
+                    else
+                    {
+                        outputHash.Add(console);
+                    }
                 }
 
                 // Bonus for less operations to optimize the code.
