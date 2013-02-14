@@ -16,7 +16,7 @@ namespace AIProgrammer.Fitness.Concrete
     /// </summary>
     public class IfThenFitness : FitnessBase
     {
-        private int _trainingCount = 5;
+        private int _trainingCount;
         private string[] _trainingStrings = new string[] {"a", "z", "g"};
 
         public IfThenFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3)
@@ -47,12 +47,8 @@ namespace AIProgrammer.Fitness.Concrete
 
             for (int i = 0; i < _trainingCount; i++)
             {
-                switch (i)
-                {
-                    case 0: input1 = 1; output1 = "a"; break;
-                    case 1: input1 = 2; output1 = "z"; break;
-                    case 2: input1 = 3; output1 = "g"; break;
-                };
+                input1 = (byte)(i + 1); // 1, 2, 3
+                output1 = _trainingStrings[i];
 
                 try
                 {
@@ -80,7 +76,11 @@ namespace AIProgrammer.Fitness.Concrete
                         if (_console.Length == 0)
                         {
                             // Record the memory register being used for this output. Used to support diversity.
-                            memoryHash.Add(_bf.m_CurrentDataPointer);
+                            if (!memoryHash.Add(_bf.m_CurrentDataPointer))
+                            {
+                                // This register is already being used for output. Lack of diversity gets a penalty.
+                                penalty += 200;
+                            }
                         }
                         
                         _console.Append((char)b);
@@ -167,14 +167,19 @@ namespace AIProgrammer.Fitness.Concrete
                     // Run the program.
                     Interpreter bf = new Interpreter(program, () =>
                     {
+                        byte b;
+
+                        // Send the next character.
                         if (index < line.Length)
                         {
-                            return Byte.Parse(line[index++].ToString());
+                            b = Byte.Parse(line[index++].ToString());
                         }
                         else
                         {
-                            return 0;
+                            b = 0;
                         }
+
+                        return b;
                     },
                     (b) =>
                     {
