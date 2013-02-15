@@ -17,7 +17,7 @@ namespace AIProgrammer.Fitness.Concrete
     public class IfThenFitness : FitnessBase
     {
         private int _trainingCount;
-        private string[] _trainingStrings = new string[] {"hi", "z", "yo"};
+        private string[] _trainingStrings = new string[] {"hi", "z", "ok"};
 
         public IfThenFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3)
             : base(ga, maxIterationCount)
@@ -43,7 +43,7 @@ namespace AIProgrammer.Fitness.Concrete
             double penalty = 0;
             double lengthBonus = 0;
             HashSet<int> memoryHash = new HashSet<int>();
-            HashSet<string> outputHash = new HashSet<string>();
+            //HashSet<string> outputHash = new HashSet<string>();
             HashSet<int> printCommandHash = new HashSet<int>();
 
             for (int i = 0; i < _trainingCount; i++)
@@ -74,8 +74,8 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        // This is kind of cheating, but we need to force diversity by decoupling case 1 and 3. Force case 3 to use print statements not used by any other case.
-                        if (i == 2 && printCommandHash.Contains(_bf.m_CurrentInstructionPointer))
+                        // This is kind of cheating, but we need to force diversity by decoupling the cases. Force them to use unique print statements, not used by any other case.
+                        if (printCommandHash.Contains(_bf.m_CurrentInstructionPointer))
                         {
                             penalty += 200;
                         }
@@ -86,11 +86,11 @@ namespace AIProgrammer.Fitness.Concrete
                         if (_console.Length == 0)
                         {
                             // Record the memory register being used for this output. Used to support diversity.
-                            if (!memoryHash.Add(_bf.m_CurrentDataPointer))
+                            /*if (!*/memoryHash.Add(_bf.m_CurrentDataPointer);/*)
                             {
                                 // This register is already being used for output. Lack of diversity gets a penalty.
-                                penalty += 200;
-                            }
+                                //penalty += 200;
+                            }*/
                         }
                         
                         _console.Append((char)b);
@@ -116,15 +116,14 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                     for (int j = 0; j < output1.Length; j++)
                     {
-                        double f = 256 - Math.Abs(_console[j] - output1[j]);
-                        Fitness += f;
+                        Fitness += 256 - Math.Abs(_console[j] - output1[j]);
                     }
                 }
 
                 // Length bonus (percentage of 100).
                 lengthBonus += 200 * ((output1.Length - Math.Abs(_console.Length - output1.Length)) / output1.Length);
 
-                // Diversity bonus. Ensure that outputs are not the same.
+                /*// Diversity bonus. Ensure that outputs are not the same.
                 if (outputHash.Contains(console))
                 {
                     penalty += 50;
@@ -160,7 +159,7 @@ namespace AIProgrammer.Fitness.Concrete
                     {
                         outputHash.Add(console);
                     }
-                }
+                }*/
 
                 // Bonus for less operations to optimize the code.
                 countBonus += ((_maxIterationCount - _bf.m_Ticks) / 500.0);
