@@ -11,13 +11,13 @@ namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
     /// If/Then example. Accepts input from the user (1, 2, 3) and prints out text, depending on the option selected.
-    /// This fitness encourages diversity by looking at the number of memory registers used and difference in output.
+    /// This fitness encourages diversity by looking at the number of memory registers used and difference in output. This allows the printed statements to evolve independently of each other.
     /// Note, input is taken in byte value (not ASCII character).
     /// </summary>
     public class IfThenFitness : FitnessBase
     {
         private int _trainingCount;
-        private string[] _trainingStrings = new string[] {"hi", "z", "bye"};
+        private string[] _trainingStrings = new string[] {"hi", "z", "yo"};
 
         public IfThenFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3)
             : base(ga, maxIterationCount)
@@ -44,6 +44,7 @@ namespace AIProgrammer.Fitness.Concrete
             double lengthBonus = 0;
             HashSet<int> memoryHash = new HashSet<int>();
             HashSet<string> outputHash = new HashSet<string>();
+            HashSet<int> printCommandHash = new HashSet<int>();
 
             for (int i = 0; i < _trainingCount; i++)
             {
@@ -73,6 +74,15 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
+                        // This is kind of cheating, but we need to force diversity by decoupling case 1 and 3. Force case 3 to use print statements not used by any other case.
+                        if (i == 2 && printCommandHash.Contains(_bf.m_CurrentInstructionPointer))
+                        {
+                            penalty += 200;
+                        }
+
+                        // Record the instruction index being used for this print statement.
+                        printCommandHash.Add(_bf.m_CurrentInstructionPointer);
+
                         if (_console.Length == 0)
                         {
                             // Record the memory register being used for this output. Used to support diversity.

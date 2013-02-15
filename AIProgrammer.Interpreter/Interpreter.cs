@@ -87,6 +87,11 @@ namespace AIProgrammer
         public int m_CurrentDataPointer { get { return m_DataPointer; } }
 
         /// <summary>
+        /// Read-only access to the current instruction pointer index.
+        /// </summary>
+        public int m_CurrentInstructionPointer { get { return m_InstructionPointer; } }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="programCode"></param>
