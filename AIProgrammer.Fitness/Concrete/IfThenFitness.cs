@@ -11,13 +11,14 @@ namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
     /// If/Then example. Accepts input from the user (1, 2, 3) and prints out text, depending on the option selected.
-    /// This fitness encourages diversity by looking at the number of memory registers used and difference in output.
+    /// This fitness encourages diversity by looking at the number of memory registers used and difference in output. This allows the printed statements to evolve independently of each other.
     /// Note, input is taken in byte value (not ASCII character).
+    /// Recommend a genome size of 650 for 3 character strings.
     /// </summary>
     public class IfThenFitness : FitnessBase
     {
         private int _trainingCount;
-        private string[] _trainingStrings = new string[] {"hi", "z", "bye"};
+        private string[] _trainingStrings = new string[] { "hi", "z", "bye" };
 
         public IfThenFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3)
             : base(ga, maxIterationCount)
@@ -43,7 +44,7 @@ namespace AIProgrammer.Fitness.Concrete
             double penalty = 0;
             double lengthBonus = 0;
             HashSet<int> memoryHash = new HashSet<int>();
-            HashSet<string> outputHash = new HashSet<string>();
+            HashSet<int> printCommandHash = new HashSet<int>();
 
             for (int i = 0; i < _trainingCount; i++)
             {
@@ -73,19 +74,22 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        if (_console.Length == 0)
-                        {
-                            // Record the memory register being used for this output. Used to support diversity.
-                            if (!memoryHash.Add(_bf.m_CurrentDataPointer))
-                            {
-                                // This register is already being used for output. Lack of diversity gets a penalty.
-                                penalty += 200;
-                            }
-                        }
-                        
                         _console.Append((char)b);
 
-                        if (state == 0)
+                        // Record the instruction index being used for this print statement.
+                        if (!printCommandHash.Add(_bf.m_CurrentInstructionPointer))
+                        {
+                            // This is kind of cheating, but we need to force diversity by decoupling the cases. Force them to use unique print statements, not used by any other case.
+                            penalty += 200;
+                        }
+
+                        // Record the memory register being used for this output. Used to support diversity.
+                        if (state == 1 && _console.Length <= output1.Length)
+                        {
+                            // This is a valid output character to consider. Record the memory register of where its data is stored.
+                            memoryHash.Add(_bf.m_CurrentDataPointer);
+                        }
+                        else if (state == 0)
                         {
                             // Not ready for output.
                             penalty += 10;
@@ -106,51 +110,12 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                     for (int j = 0; j < output1.Length; j++)
                     {
-                        double f = 256 - Math.Abs(_console[j] - output1[j]);
-                        Fitness += f;
+                        Fitness += 256 - Math.Abs(_console[j] - output1[j]);
                     }
                 }
 
                 // Length bonus (percentage of 100).
                 lengthBonus += 200 * ((output1.Length - Math.Abs(_console.Length - output1.Length)) / output1.Length);
-
-                // Diversity bonus. Ensure that outputs are not the same.
-                if (outputHash.Contains(console))
-                {
-                    penalty += 50;
-                }
-                else
-                {
-                    bool foundInOutput = false;
-                    foreach (string o in outputHash)
-                    {
-                        if (console.IndexOf(o) != -1 || o.IndexOf(console) != -1)
-                        {
-                            foundInOutput = true;
-                        }
-                    }
-
-                    if (!foundInOutput)
-                    {
-                        // Try to prevent double characters of the same letter in the first two letters. This can indicate a tightly-bound couple.
-                        if (console.Length >= 2)
-                        {
-                            if (console[0] == console[1])
-                            {
-                                foundInOutput = true;
-                            }
-                        }
-                    }
-
-                    if (foundInOutput)
-                    {
-                        penalty += 50;
-                    }
-                    else
-                    {
-                        outputHash.Add(console);
-                    }
-                }
 
                 // Bonus for less operations to optimize the code.
                 countBonus += ((_maxIterationCount - _bf.m_Ticks) / 500.0);
@@ -167,7 +132,7 @@ namespace AIProgrammer.Fitness.Concrete
             // Give a bonus for using multiple memory registers, supporting diversity.
             if (memoryHash.Count > 1)
             {
-                countBonus += memoryHash.Count * 200;
+                countBonus += memoryHash.Count * 100;
             }
 
             if (_fitness != Double.MaxValue)

@@ -68,9 +68,11 @@ class Program {
             if (includeHeader)
             {
                 sourceCode = sourceCode.Replace("[HEADER]", @"
-                    Console.WriteLine(""BrainPlus .NET Compiler 1.0"");
+                    Console.WriteLine(""BrainPlus Compiler 1.0"");
                     Console.WriteLine(""Created by Kory Becker"");
                     Console.WriteLine(""http://www.primaryobjects.com/kory-becker.aspx"");
+                    Console.WriteLine(""Running program:"");
+                    Console.WriteLine(""" + program + @""");
                     Console.WriteLine();");
             }
             else
