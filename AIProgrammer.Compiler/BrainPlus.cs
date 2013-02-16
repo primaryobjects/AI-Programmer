@@ -48,13 +48,20 @@ class Program {
         string program = ""[SOURCE]"";
         IFitness fitness = new [FITNESSMETHOD](null, [PARAMETERS]);
 
-        [HEADER]
+        // Specify -s to supress header text.
+        if (args.Length == 0 || args[0] != ""-s"")
+        {
+            [HEADER]
+        }
 
         Console.WriteLine(fitness.RunProgram(program));
 
         Console.WriteLine();
-        Console.Write(""Press any key to continue.."");
-        Console.ReadKey();
+        if (args.Length == 0 || args[0] != ""-s"")
+        {
+            Console.Write(""Press any key to continue.."");
+            Console.ReadKey();
+        }
     }
 }";
 
