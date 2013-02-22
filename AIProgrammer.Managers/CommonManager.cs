@@ -3,17 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace AIProgrammer.Managers
 {
     public static class CommonManager
     {
+        private static int _brainfuckVersion = Int32.Parse(ConfigurationManager.AppSettings["BrainfuckVersion"]);
+
+        public static string ConvertDoubleArrayToBF(double[] array)
+        {
+            switch (_brainfuckVersion)
+            {
+                case 1: return ConvertDoubleArrayToBFClassic(array);
+                case 2: return ConvertDoubleArrayToBFExtended(array);
+                default: return ConvertDoubleArrayToBFClassic(array);
+            };
+        }
+
         /// <summary>
         /// Convert a genome (array of doubles) into a Brainfuck program.
         /// </summary>
         /// <param name="array">Array of double</param>
         /// <returns>string - Brainfuck program</returns>
-        public static string ConvertDoubleArrayToBF(double[] array)
+        private static string ConvertDoubleArrayToBFClassic(double[] array)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -37,7 +50,7 @@ namespace AIProgrammer.Managers
         /// </summary>
         /// <param name="array">Array of double</param>
         /// <returns>string - Brainfuck program</returns>
-        public static string ConvertDoubleArrayToBFExtendedType3(double[] array)
+        private static string ConvertDoubleArrayToBFExtended(double[] array)
         {
             StringBuilder sb = new StringBuilder();
 

@@ -13,7 +13,7 @@ namespace AIProgrammer.Fitness.Concrete
     /// If/Then example. Accepts input from the user (1, 2, 3) and prints out text, depending on the option selected.
     /// This fitness encourages diversity by looking at the number of memory registers used and difference in output. This allows the printed statements to evolve independently of each other.
     /// Note, input is taken in byte value (not ASCII character).
-    /// Recommend a genome size of 650 for 3 character strings.
+    /// Recommend a genome size of 650 for 3 character strings. If using Brainf-ck Extended Type 3 (via CommonManager.cs), a smaller genome size may be used.
     /// </summary>
     public class IfThenFitness : FitnessBase
     {

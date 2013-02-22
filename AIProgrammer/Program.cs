@@ -24,6 +24,8 @@ namespace AIProgrammer
     /// </summary>
     class Program
     {
+        #region Private Variables
+
         private static GA _ga = null; // Our genetic algorithm instance.
         private static double _bestFitness = 0; // Best fitness so far.
         private static double _bestTrueFitness = 0; // Best true fitness so far, used to determine when a solution is found.
@@ -33,13 +35,18 @@ namespace AIProgrammer
         private static int _bestTicks = 0; // Number of instructions executed by the best program.
         private static DateTime _bestLastChangeDate = DateTime.Now; // Time of last improved evolution.
         private static DateTime _startTime = DateTime.Now; // Time the program was started.
+        private static double _targetFitness = 0; // Used for displaying the tar
+
+        #endregion
+
+        #region Genetic Algorithm Settings
 
         private static double _crossoverRate = 0.70; // Percentage chance that a child genome will use crossover of two parents.
         private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
         private static int _genomeSize = 250; // Number of programming instructions in generated program (size of genome array).
         private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
-        private static string _targetString = "hi"; // Target string to generate a program to print.
-        private static double _targetFitness = 0;
+
+        #endregion
 
         /// <summary>
         /// Selects the type of fitness algorithm to use (Hello World solutions, Calculation solutions, etc).
@@ -56,7 +63,7 @@ namespace AIProgrammer
         /// <returns>IFitness</returns>
         private static IFitness GetFitnessMethod()
         {
-            return new StringOptimizedFitness(_ga, _maxIterationCount, _targetString);
+            return new StringOptimizedFitness(_ga, _maxIterationCount, "hi");
         }
 
         #region Worker Methods
