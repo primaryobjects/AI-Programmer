@@ -4,13 +4,13 @@ using AIProgrammer.Repository.Interface;
 using AIProgrammer.Database.Interface;
 using AIProgrammer.Database.Concrete;
 using AIProgrammer.Types;
+using System.IO;
 
-namespace RSSAutoGen.Repository.Concrete
+namespace AIProgrammer.Repository.Concrete
 {
     public class GARepository : IRepository<GAParams>
     {
-        private static string _folderName = "GA";
-        private readonly string _filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + _folderName + "\\";
+        private readonly string _filePath = Directory.GetCurrentDirectory() + "\\";
 
         private List<GAParams> _items = new List<GAParams>();
         private IDatabase<GAParams> _database;

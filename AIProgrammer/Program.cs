@@ -5,8 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using AIProgrammer.GeneticAlgorithm;
 using AIProgrammer.Repository.Interface;
-using RSSAutoGen.Repository.Concrete;
+using AIProgrammer.Repository.Concrete;
 using AIProgrammer.Types;
+using AIProgrammer.Types.Interface;
+using AIProgrammer.Fitness.Concrete;
+using AIProgrammer.Fitness.Concrete.Research;
+using AIProgrammer.Managers;
+using AIProgrammer.Compiler;
 
 namespace AIProgrammer
 {
@@ -19,21 +24,49 @@ namespace AIProgrammer
     /// </summary>
     class Program
     {
+        #region Private Variables
+
         private static GA _ga = null; // Our genetic algorithm instance.
         private static double _bestFitness = 0; // Best fitness so far.
+        private static double _bestTrueFitness = 0; // Best true fitness so far, used to determine when a solution is found.
         private static string _bestProgram = ""; // Best program so far.
         private static string _bestOutput = ""; // Best program output so far.
         private static int _bestIteration = 0; // Current iteration (generation) count.
         private static int _bestTicks = 0; // Number of instructions executed by the best program.
-        private static bool _bestNoErrors = false; // Indicator if the program had errors or not.
         private static DateTime _bestLastChangeDate = DateTime.Now; // Time of last improved evolution.
         private static DateTime _startTime = DateTime.Now; // Time the program was started.
+        private static double _targetFitness = 0; // Used for displaying the tar
+
+        #endregion
+
+        #region Genetic Algorithm Settings
 
         private static double _crossoverRate = 0.70; // Percentage chance that a child genome will use crossover of two parents.
         private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
-        private static int _genomeSize = 100; // Number of programming instructions in generated program (size of genome array).
+        private static int _genomeSize = 250; // Number of programming instructions in generated program (size of genome array).
         private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
-        private static string _targetString = "hi"; // Target string to generate a program to print.
+
+        #endregion
+
+        /// <summary>
+        /// Selects the type of fitness algorithm to use (Hello World solutions, Calculation solutions, etc).
+        /// QUICK START GUIDE:
+        /// - Use the desired concrete Fitness class. For example: use StringOptimizedFitness() for a simple "Hello World" type of program.
+        /// 
+        ///   return new StringOptimizedFitness(_ga, _maxIterationCount, _targetString)
+        ///   return new AddFitness(_ga, _maxIterationCount)
+        ///   return new SubtractFitness(_ga, _maxIterationCount)
+        ///   return new ReverseStringFitness(_ga, _maxIterationCount)
+        ///   return new HelloUserFitness(_ga, _maxIterationCount, _targetString)
+        ///   
+        /// </summary>
+        /// <returns>IFitness</returns>
+        private static IFitness GetFitnessMethod()
+        {
+            return new StringOptimizedFitness(_ga, _maxIterationCount, "hi");
+        }
+
+        #region Worker Methods
 
         /// <summary>
         /// Event handler that is called upon each generation. We use this opportunity to display some status info and save the current genetic algorithm in case of crashes etc.
@@ -43,7 +76,7 @@ namespace AIProgrammer
             if (_bestIteration++ > 1000)
             {
                 _bestIteration = 0;
-                Console.WriteLine("Best Fitness: " + _bestFitness + "/" + ga.GAParams.TargetFitness + " " + Math.Round(_bestFitness / ga.GAParams.TargetFitness * 100, 2) + "%, Ticks: " + _bestTicks + ", Running: " + Math.Round((DateTime.Now - _startTime).TotalMinutes) + "m, Best Output: " + _bestOutput + ", Changed: " + _bestLastChangeDate.ToString() + ", Program: " + _bestProgram);
+                Console.WriteLine("Best Fitness: " + _bestTrueFitness + "/" + _targetFitness + " " + Math.Round(_bestTrueFitness / _targetFitness * 100, 2) + "%, Ticks: " + _bestTicks + ", Running: " + Math.Round((DateTime.Now - _startTime).TotalMinutes) + "m, Best Output: " + _bestOutput + ", Changed: " + _bestLastChangeDate.ToString() + ", Program: " + _bestProgram);
 
                 ga.Save("my-genetic-algorithm.dat");
             }
@@ -56,114 +89,24 @@ namespace AIProgrammer
         /// <returns>double, indicating the score</returns>
         private static double fitnessFunction(double[] weights)
         {
-            double fitness = 0;
-            StringBuilder console = new StringBuilder();
-            bool noErrors = false;
-            Interpreter bf = null;
+            // Get the selected fitness type.
+            IFitness myFitness = GetFitnessMethod();
 
-            // Get the resulting Brainfuck program.
-            string program = ConvertDoubleArrayToBF(weights);
-
-            try
-            {
-                // Run the program.
-                bf = new Interpreter(program, null, (b) =>
-                {
-                    console.Append((char)b);
-
-                    // If we've printed out more than our target string, then kill the program. This saves us the time of running the remaining iterations. Ok maybe this is cheating, but at least it's still in the fitness function.
-                    if (console.Length >= _targetString.Length)
-                    {
-                        bf.m_Stop = true;
-                    }
-                });
-                bf.Run(_maxIterationCount);
-
-                // It runs!
-                noErrors = true;
-            }
-            catch
-            {
-            }
-
-            // Order bonus.
-            for (int i = 0; i < _targetString.Length; i++)
-            {
-                if (console.Length > i)
-                {
-                    fitness += 256 - Math.Abs(console[i] - _targetString[i]);
-                }
-            }
+            // Get the fitness score.
+            double fitness = myFitness.GetFitness(weights);
 
             // Is this a new best fitness?
             if (fitness > _bestFitness)
             {
                 _bestFitness = fitness;
-                _bestOutput = console.ToString();
-                _bestNoErrors = noErrors;
+                _bestTrueFitness = myFitness.Fitness;
+                _bestOutput = myFitness.Output;
                 _bestLastChangeDate = DateTime.Now;
-                _bestProgram = program;
-                _bestTicks = bf.m_Ticks;
+                _bestProgram = myFitness.Program;
+                _bestTicks = myFitness.Ticks;
             }
 
             return fitness;
-        }
-
-        /// <summary>
-        /// Convert a genome (array of doubles) into a Brainfuck program.
-        /// </summary>
-        /// <param name="array">Array of double</param>
-        /// <returns>string - Brainfuck program</returns>
-        private static string ConvertDoubleArrayToBF(double[] array)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            foreach (double d in array)
-            {
-                if (d <= 0.125) sb.Append('>');
-                else if (d <= 0.25) sb.Append('<');
-                else if (d <= 0.375) sb.Append('+');
-                else if (d <= 0.5) sb.Append('-');
-                else if (d <= 0.625) sb.Append('.');
-                else if (d <= 0.75) sb.Append(',');
-                else if (d <= 0.875) sb.Append('[');
-                else sb.Append(']');
-            }
-
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// Setup the genetic algorithm and run it.
-        /// </summary>
-        /// <returns>Array of double, the best brain's output</returns>
-        private static double[] Setup()
-        {
-            // Genetic algorithm setup.
-            _ga = new GA(_crossoverRate, _mutationRate, 100, 10000000, _genomeSize);
-
-            // Start a new genetic algorithm.
-            _ga.GAParams.Elitism = true;
-            _ga.GAParams.TargetFitness = _targetString.Length * 256;
-            _ga.GAParams.HistoryPath = System.IO.Directory.GetCurrentDirectory() + "\\history.txt";
-            _ga.FitnessFunction = new GAFunction(fitnessFunction);
-            _ga.OnGenerationFunction = new OnGeneration(OnGeneration);
-            _ga.Go();
-
-            // Load a saved genetic algorithm.
-            //_ga.Load("my-genetic-algorithm.dat");
-            //_ga.Resume(fitnessFunction, OnGeneration);
-
-            // Results.
-            double[] weights;
-            double fitness;
-            _ga.GetBest(out weights, out fitness);
-            Console.WriteLine("***** DONE! Best brain had a fitness of " + fitness);
-
-            // Save the result.
-            //_ga.Save("my-genetic-algorithm.dat");
-
-            return weights;
         }
 
         /// <summary>
@@ -171,30 +114,32 @@ namespace AIProgrammer
         /// </summary>
         static void Main(string[] args)
         {
+            // Get the selected fitness type.
+            IFitness myFitness = GetFitnessMethod();
+
+            // Genetic algorithm setup.
+            _ga = new GA(_crossoverRate, _mutationRate, 100, 10000000, _genomeSize);
+
+            // Get the target fitness for this method.
+            _targetFitness = myFitness.TargetFitness;
+
             // Run the genetic algorithm and get the best brain.
-            double[] output = Setup();
+            string program = GAManager.Run(_ga, fitnessFunction, OnGeneration);
 
-            // Convert the best brain's output into a program.
-            string program = ConvertDoubleArrayToBF(output);
+            // Display the final program.
             Console.WriteLine(program);
-            Console.WriteLine("------");
+            Console.WriteLine();
 
-            try
-            {
-                // Run the program.
-                Interpreter bf = new Interpreter(program, null, (b) =>
-                {
-                    Console.Write((char)b);
-                });
+            // Compile to executable.
+            BrainPlus.Compile(program, "output.exe", myFitness);
 
-                bf.Run(_maxIterationCount);
-            }
-            catch
-            {
-            }
-
+            // Run the result for the user.
+            string result = myFitness.RunProgram(program);
+            Console.WriteLine(result);
 
             Console.ReadKey();
         }
+
+        #endregion
     }
 }

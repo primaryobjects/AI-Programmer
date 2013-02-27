@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{632DBA3A-BAF8-458F-9C3D-DDFACCBEAD8E}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{2FA2525F-4FAA-45A6-8268-4D561F7C46F9}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AIProgrammer</RootNamespace>
-    <AssemblyName>AIProgrammer</AssemblyName>
+    <RootNamespace>AIProgrammer.Fitness</RootNamespace>
+    <AssemblyName>AIProgrammer.Fitness</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -41,21 +39,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Base\FitnessBase.cs" />
+    <Compile Include="Concrete\AddCleanFitness.cs" />
+    <Compile Include="Concrete\AddFitness.cs" />
+    <Compile Include="Concrete\Research\AddToCharFitness.cs" />
+    <Compile Include="Concrete\IfThenFitness.cs" />
+    <Compile Include="Concrete\Research\FibFitness.cs" />
+    <Compile Include="Concrete\Research\NumberGuessFitness.cs" />
+    <Compile Include="Concrete\ReverseStringFitness.cs" />
+    <Compile Include="Concrete\HelloUserFitness.cs" />
+    <Compile Include="Concrete\Research\MultiplyFitness.cs" />
+    <Compile Include="Concrete\StringFitness.cs" />
+    <Compile Include="Concrete\StringOptimizedFitness.cs" />
+    <Compile Include="Concrete\SubtractFitness.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AIProgrammer.Compiler\AIProgrammer.Compiler.csproj">
-      <Project>{5f99b6a4-5cb2-432b-8018-e2edfbb957f7}</Project>
-      <Name>AIProgrammer.Compiler</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AIProgrammer.Fitness\AIProgrammer.Fitness.csproj">
-      <Project>{2fa2525f-4faa-45a6-8268-4d561f7c46f9}</Project>
-      <Name>AIProgrammer.Fitness</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AIProgrammer.GA\AIProgrammer.GeneticAlgorithm.csproj">
       <Project>{8ec97de8-ddfd-437a-b216-91db8d1a3487}</Project>
       <Name>AIProgrammer.GeneticAlgorithm</Name>
@@ -68,16 +67,11 @@
       <Project>{06d57f9c-a784-433f-8ff3-0728fecf6f5c}</Project>
       <Name>AIProgrammer.Managers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AIProgrammer.Repository\AIProgrammer.Repository.csproj">
-      <Project>{bd558a71-1699-440f-9876-19322e658e88}</Project>
-      <Name>AIProgrammer.Repository</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AIProgrammer.Types\AIProgrammer.Types.csproj">
       <Project>{7bcc43b1-33a8-44c8-8f4d-752d89672180}</Project>
       <Name>AIProgrammer.Types</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
