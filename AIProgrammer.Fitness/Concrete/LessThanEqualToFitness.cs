@@ -55,6 +55,7 @@ namespace AIProgrammer.Fitness.Concrete
                         }
                         else
                         {
+                            penalty += 10;
                             return 0;
                         }
                     },
@@ -68,6 +69,11 @@ namespace AIProgrammer.Fitness.Concrete
                         }
 
                         _console.Append((char)b);
+
+                        if (state != 1)
+                        {
+                            penalty += 10;
+                        }
                     });
                     _bf.Run(_maxIterationCount);
                 }
