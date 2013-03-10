@@ -17,9 +17,19 @@ namespace AIProgrammer
     /// , 	Input a byte and store it in the byte at the pointer.
     /// [ 	Jump forward past the matching ] if the byte at the pointer is zero.
     /// ] 	Jump backward to the matching [ unless the byte at the pointer is zero.
+    /// 
+    /// Extended commands, included in BrainPlus.
+    /// !   Exits the program.
+    /// &   Defines a new function a,b,c .. z.
+    /// %   Return to last position in main program and restore state. Current memory value of function is set in current program memory value.
+    /// a,b Call function a - z.
+    /// 0-F Sets the value of the current memory pointer to a multiple of 16.
     /// </summary>
     public class Interpreter
     {
+        /// <summary>
+        /// Object used to swap state for a function call. This data is restored when the function terminates.
+        /// </summary>
         public class FunctionCallObj
         {
             public int InstructionPointer { get; set; }
@@ -95,6 +105,9 @@ namespace AIProgrammer
         /// </summary>
         private readonly Stack<FunctionCallObj> m_FunctionCallStack = new Stack<FunctionCallObj>();
 
+        /// <summary>
+        /// Pointer to the current call stack (m_FunctionCallStack or m_CallStack).
+        /// </summary>
         private Stack<int> m_CurrentCallStack;
 
         /// <summary>
@@ -183,6 +196,7 @@ namespace AIProgrammer
                 // Restore the instruction pointer.
                 this.m_InstructionPointer = temp.InstructionPointer;
             });
+
             for (char inst = 'a'; inst <= 'f'; inst++)
             {
                 char instruction = inst; // closure
