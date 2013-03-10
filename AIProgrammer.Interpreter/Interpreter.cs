@@ -183,7 +183,7 @@ namespace AIProgrammer
                 // Restore the instruction pointer.
                 this.m_InstructionPointer = temp.InstructionPointer;
             });
-            for (char inst = 'a'; inst <= 'b'; inst++)
+            for (char inst = 'a'; inst <= 'f'; inst++)
             {
                 char instruction = inst; // closure
                 this.m_InstructionSet.Add(instruction, () =>

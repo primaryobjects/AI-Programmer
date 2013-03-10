@@ -15,15 +15,21 @@ namespace AIProgrammer.Fitness.Concrete
     {
         private string _targetString;
 
-        public StringStrictFitness(GA ga, int maxIterationCount, string targetString)
-            : base(ga, maxIterationCount)
+        public StringStrictFitness(GA ga, int maxIterationCount, string targetString, string appendFunctions = null)
+            : base(ga, maxIterationCount, appendFunctions)
         {
             _targetString = targetString;
+
             if (_targetFitness == 0)
             {
                 _targetFitness = _targetString.Length * 256;
                 _targetFitness += 10;
             }
+        }
+
+        public void ResetTargetFitness()
+        {
+            _targetFitness = 0;
         }
 
         #region FitnessBase Members
@@ -89,8 +95,6 @@ namespace AIProgrammer.Fitness.Concrete
             catch
             {
             }
-
-            Console.WriteLine(_console.ToString());
         }
 
         public override string GetConstructorParameters()
