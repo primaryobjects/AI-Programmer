@@ -52,6 +52,7 @@
     <Compile Include="Concrete\Research\MultiplyFitness.cs" />
     <Compile Include="Concrete\StringFitness.cs" />
     <Compile Include="Concrete\StringOptimizedFitness.cs" />
+    <Compile Include="Concrete\StringStrictFitness.cs" />
     <Compile Include="Concrete\SubtractFitness.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

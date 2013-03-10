@@ -64,21 +64,25 @@ namespace AIProgrammer.Managers
                 else if (d <= 0.735) sb.Append(',');
                 else if (d <= 0.8575) sb.Append('[');
                 else if (d <= 0.98) sb.Append(']');
-                else if (d <= 0.98133) sb.Append('0');
-                else if (d <= 0.98266) sb.Append('1');
-                else if (d <= 0.98399) sb.Append('2');
-                else if (d <= 0.98533) sb.Append('3');
-                else if (d <= 0.98666) sb.Append('4');
-                else if (d <= 0.98799) sb.Append('5');
-                else if (d <= 0.98933) sb.Append('6');
-                else if (d <= 0.99066) sb.Append('7');
-                else if (d <= 0.99199) sb.Append('8');
+                
+                else if (d <= 0.98111) sb.Append('a');
+                else if (d <= 0.98222) sb.Append('b');
+                
+                else if (d <= 0.98333) sb.Append('0');
+                else if (d <= 0.98444) sb.Append('1');
+                else if (d <= 0.98555) sb.Append('2');
+                else if (d <= 0.98666) sb.Append('3');
+                else if (d <= 0.98777) sb.Append('4');
+                else if (d <= 0.98888) sb.Append('5');
+                else if (d <= 0.98999) sb.Append('6');
+                else if (d <= 0.99111) sb.Append('7');
+                else if (d <= 0.99222) sb.Append('8');
                 else if (d <= 0.99333) sb.Append('9');
-                else if (d <= 0.99466) sb.Append('A');
-                else if (d <= 0.99599) sb.Append('B');
-                else if (d <= 0.99733) sb.Append('C');
-                else if (d <= 0.99866) sb.Append('D');
-                else if (d <= 0.99999) sb.Append('E');
+                else if (d <= 0.99444) sb.Append('A');
+                else if (d <= 0.99555) sb.Append('B');
+                else if (d <= 0.99666) sb.Append('C');
+                else if (d <= 0.99777) sb.Append('D');
+                else if (d <= 0.99888) sb.Append('E');
                 else sb.Append('F');
             }
 

@@ -20,6 +20,15 @@ namespace AIProgrammer
     /// </summary>
     public class Interpreter
     {
+        public class FunctionCallObj
+        {
+            public int InstructionPointer { get; set; }
+            public int DataPointer { get; set; }
+            public Stack<int> CallStack { get; set; }
+            public bool ExitLoop { get; set; }
+            public int Ticks { get; set; }
+        };
+
         /// <summary>
         /// The "call stack"
         /// </summary>
@@ -72,6 +81,23 @@ namespace AIProgrammer
         private int m_ExitLoopInstructionPointer;
 
         /// <summary>
+        /// The list of functions and their starting instruction index.
+        /// </summary>
+        private readonly Dictionary<char, int> m_Functions = new Dictionary<char, int>(26);
+
+        /// <summary>
+        /// Identifier for next function. Will serve as the instruction to call this function.
+        /// </summary>
+        private char m_NextFunctionCharacter = 'a';
+
+        /// <summary>
+        /// The function "call stack".
+        /// </summary>
+        private readonly Stack<FunctionCallObj> m_FunctionCallStack = new Stack<FunctionCallObj>();
+
+        private Stack<int> m_CurrentCallStack;
+
+        /// <summary>
         /// Number of instructions executed.
         /// </summary>
         public int m_Ticks;
@@ -105,6 +131,8 @@ namespace AIProgrammer
             // Store the i/o delegates
             this.m_Input = input;
             this.m_Output = output;
+            
+            m_CurrentCallStack = m_CallStack;
 
             // Create the instruction set (lol)
             this.m_InstructionSet.Add('+', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer]++; });
@@ -133,6 +161,49 @@ namespace AIProgrammer
             this.m_InstructionSet.Add('E', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 224; });
             this.m_InstructionSet.Add('F', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 240; });
 
+            this.m_InstructionSet.Add('!', () => { this.m_Stop = true; });
+            this.m_InstructionSet.Add('&', () => { m_Functions.Add(m_NextFunctionCharacter++, this.m_InstructionPointer); });
+            this.m_InstructionSet.Add('%', () =>
+            {
+                var temp = m_FunctionCallStack.Pop();
+                
+                // Get the result from the function call.
+                var result = this.m_Memory[this.m_DataPointer];
+
+                // Restore the data pointer.
+                this.m_DataPointer = temp.DataPointer;
+                // Set the value of memory equal to the function result.
+                this.m_Memory[this.m_DataPointer] = result;
+                // Restore the call stack.
+                this.m_CurrentCallStack = temp.CallStack;
+                // Restore exit loop status.
+                this.m_ExitLoop = temp.ExitLoop;
+                // Restore ticks.
+                this.m_Ticks = temp.Ticks;
+                // Restore the instruction pointer.
+                this.m_InstructionPointer = temp.InstructionPointer;
+            });
+            for (char inst = 'a'; inst <= 'b'; inst++)
+            {
+                char instruction = inst; // closure
+                this.m_InstructionSet.Add(instruction, () =>
+                {
+                    // Store the current instruction pointer and data pointer before we move to the function.
+                    var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, Ticks = this.m_Ticks };
+                    this.m_FunctionCallStack.Push(functionCallObj);
+
+                    // Give the function a fresh call stack.
+                    this.m_CurrentCallStack = new Stack<int>();
+                    this.m_ExitLoop = false;
+
+                    // Set the data pointer to the functions starting memory address.
+                    this.m_DataPointer = 1000 * (instruction - 96); // each function gets a space of 1000 memory slots.
+
+                    // Set the instruction pointer to the beginning of the function.
+                    this.m_InstructionPointer = m_Functions[instruction];
+                });
+            }
+
             this.m_InstructionSet.Add('[', () =>
             {
                 if (!m_ExitLoop && this.m_Memory[this.m_DataPointer] == 0)
@@ -144,11 +215,11 @@ namespace AIProgrammer
                     m_ExitLoopInstructionPointer = this.m_InstructionPointer;
                 }
 
-                this.m_CallStack.Push(this.m_InstructionPointer);
+                this.m_CurrentCallStack.Push(this.m_InstructionPointer);
             });
             this.m_InstructionSet.Add(']', () =>
             {
-                var temp = this.m_CallStack.Pop();
+                var temp = this.m_CurrentCallStack.Pop();
 
                 if (!m_ExitLoop)
                 {
@@ -167,6 +238,8 @@ namespace AIProgrammer
                     }
                 }
             });
+
+            ScanFunctions(programCode);
         }
 
         /// <summary>
@@ -213,7 +286,19 @@ namespace AIProgrammer
                 // Have we exceeded the max instruction count?
                 if (maxInstructions > 0 && m_Ticks >= maxInstructions)
                 {
-                    break;
+                    if (m_FunctionCallStack.Count > 0)
+                    {
+                        // We're inside a function, but ran out of instructions. Exit the function, but continue.
+                        if (this.m_InstructionSet.TryGetValue('%', out action))
+                        {
+                            action();
+                            this.m_InstructionPointer++;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
 
                 m_Ticks++;
@@ -244,6 +329,30 @@ namespace AIProgrammer
 
                 m_Ticks++;
             }
+        }
+
+        /// <summary>
+        /// Pre-scan the program code to record function instruction pointers.
+        /// </summary>
+        private void ScanFunctions(string source)
+        {
+            this.m_InstructionPointer = source.IndexOf('&');
+            while (this.m_InstructionPointer > -1 && this.m_InstructionPointer < source.Length && !m_Stop)
+            {
+                // Fetch the next instruction
+                char instruction = this.m_Source[this.m_InstructionPointer];
+
+                Action action;
+                if (this.m_InstructionSet.TryGetValue(instruction, out action))
+                {
+                    // Store the function.
+                    action();
+                }
+
+                this.m_InstructionPointer = source.IndexOf('&', this.m_InstructionPointer + 1);
+            }
+
+            this.m_InstructionPointer = 0;
         }
     }
 }
