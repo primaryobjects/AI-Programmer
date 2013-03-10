@@ -18,13 +18,13 @@ namespace AIProgrammer.Managers
         #endregion
 
         private const double bfClassicTotal = 0.98; // Total range for classic instructions.
-        private const int bfClassicInstructionCount = 9; // Number of classic instructions.
+        private const int bfClassicInstructionCount = 8; // Number of classic instructions.
         private const double bfExtendedTotal = 0.02; // Total range for extended instructions.
         private const int bfExtendedInstructionCount = 22; // Number of extended instructions.
 
-        private static readonly double[] bfClassicRangeKeys = new double[] { bfClassicIncrement * 1, bfClassicIncrement * 2, bfClassicIncrement * 3, bfClassicIncrement * 4, bfClassicIncrement * 5, bfClassicIncrement * 6, bfClassicIncrement * 7, bfClassicIncrement * 8, bfClassicIncrement * 9,
+        private static readonly double[] bfClassicRangeKeys = new double[] { bfClassicIncrement * 1, bfClassicIncrement * 2, bfClassicIncrement * 3, bfClassicIncrement * 4, bfClassicIncrement * 5, bfClassicIncrement * 6, bfClassicIncrement * 7, bfClassicIncrement * 8,
                                                                              bfClassicTotal + bfExtendedIncrement * 1, bfClassicTotal + bfExtendedIncrement * 2, bfClassicTotal + bfExtendedIncrement * 3, bfClassicTotal + bfExtendedIncrement * 4, bfClassicTotal + bfExtendedIncrement * 5, bfClassicTotal + bfExtendedIncrement * 6, bfClassicTotal + bfExtendedIncrement * 7, bfClassicTotal + bfExtendedIncrement * 8, bfClassicTotal + bfExtendedIncrement * 9, bfClassicTotal + bfExtendedIncrement * 10, bfClassicTotal + bfExtendedIncrement * 11, bfClassicTotal + bfExtendedIncrement * 12, bfClassicTotal + bfExtendedIncrement * 13, bfClassicTotal + bfExtendedIncrement * 14, bfClassicTotal + bfExtendedIncrement * 15, bfClassicTotal + bfExtendedIncrement * 16, bfClassicTotal + bfExtendedIncrement * 17, bfClassicTotal + bfExtendedIncrement * 18, bfClassicTotal + bfExtendedIncrement * 19, bfClassicTotal + bfExtendedIncrement * 20, bfClassicTotal + bfExtendedIncrement * 21, bfClassicTotal + bfExtendedIncrement * 22 };
-        private static readonly char[] bfClassicRangeValues = new char[] { '>', '<', '+', '-', '.', ',', '[', ']', '!',
+        private static readonly char[] bfClassicRangeValues = new char[] { '>', '<', '+', '-', '.', ',', '[', ']',
                                                                            'a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
         private static int _brainfuckVersion = Int32.Parse(ConfigurationManager.AppSettings["BrainfuckVersion"]);

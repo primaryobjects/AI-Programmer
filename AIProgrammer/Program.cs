@@ -43,10 +43,12 @@ namespace AIProgrammer
 
         private static double _crossoverRate = 0.70; // Percentage chance that a child genome will use crossover of two parents.
         private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
-        private static int _genomeSize = 250; // Number of programming instructions in generated program (size of genome array).
+        private static int _genomeSize = 50; // Number of programming instructions in generated program (size of genome array).
         private static int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
 
         #endregion
+        private static string _targetString = "I love all humans";
+        private static string _appendCode = null;
 
         /// <summary>
         /// Selects the type of fitness algorithm to use (Hello World solutions, Calculation solutions, etc).
@@ -63,7 +65,7 @@ namespace AIProgrammer
         /// <returns>IFitness</returns>
         private static IFitness GetFitnessMethod()
         {
-            return new StringOptimizedFitness(_ga, _maxIterationCount, "hi");
+            return new StringStrictFitness(_ga, _maxIterationCount, _targetString, _appendCode);
         }
 
         #region Worker Methods
@@ -114,8 +116,59 @@ namespace AIProgrammer
         /// </summary>
         static void Main(string[] args)
         {
+            string originalTargetString = _targetString;
+            IFitness myFitness;
+            string program;
+            string appendCode = "!";
+
+            // Generate functions.
+            string[] parts = _targetString.Split(new char[] { ' ' });
+            for (int i = 0; i < parts.Length - 1; i++)
+            {
+                _targetString = parts[i];
+                if (i < parts.Length - 1)
+                {
+                    _targetString = _targetString + " ";
+                }
+
+                // Get the selected fitness type.
+                myFitness = GetFitnessMethod();
+
+                // Genetic algorithm setup.
+                _ga = new GA(_crossoverRate, _mutationRate, 100, 10000000, _genomeSize);
+
+                // Get the target fitness for this method.
+                _targetFitness = myFitness.TargetFitness;
+
+                // Run the genetic algorithm and get the best brain.
+                program = GAManager.Run(_ga, fitnessFunction, OnGeneration);
+
+                /*endIndex = program.IndexOf('!');
+                if (endIndex > -1)
+                {
+                    // Trim code.
+                    program = program.Substring(0, endIndex);
+                }*/
+
+                // For functions, replace ! with % return command.
+                appendCode += "&" + program.Replace('!', '%') + "%";
+
+                // Reset the target fitness.
+                ((StringStrictFitness)myFitness).ResetTargetFitness();
+                _bestFitness = 0;
+                _bestTrueFitness = 0;
+                _bestOutput = "";
+                _bestLastChangeDate = DateTime.Now;
+                _bestProgram = "";
+                _bestTicks = 0;
+            }
+
+            // Generate main program.
+            _targetString = originalTargetString;
+            _appendCode = appendCode;
+
             // Get the selected fitness type.
-            IFitness myFitness = GetFitnessMethod();
+            myFitness = GetFitnessMethod();
 
             // Genetic algorithm setup.
             _ga = new GA(_crossoverRate, _mutationRate, 100, 10000000, _genomeSize);
@@ -124,7 +177,8 @@ namespace AIProgrammer
             _targetFitness = myFitness.TargetFitness;
 
             // Run the genetic algorithm and get the best brain.
-            string program = GAManager.Run(_ga, fitnessFunction, OnGeneration);
+            program = GAManager.Run(_ga, fitnessFunction, OnGeneration);
+            program += _appendCode;
 
             // Display the final program.
             Console.WriteLine(program);
