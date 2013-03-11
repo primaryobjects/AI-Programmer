@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIProgrammer.Fitness", "AIP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIProgrammer.Managers", "AIProgrammer.Managers\AIProgrammer.Managers.csproj", "{06D57F9C-A784-433F-8FF3-0728FECF6F5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIProgrammer.Functions", "AIProgrammer.Functions\AIProgrammer.Functions.csproj", "{D1CE7F4D-5142-4FC9-A35B-89F0EDAA2936}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{06D57F9C-A784-433F-8FF3-0728FECF6F5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06D57F9C-A784-433F-8FF3-0728FECF6F5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06D57F9C-A784-433F-8FF3-0728FECF6F5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1CE7F4D-5142-4FC9-A35B-89F0EDAA2936}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1CE7F4D-5142-4FC9-A35B-89F0EDAA2936}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1CE7F4D-5142-4FC9-A35B-89F0EDAA2936}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1CE7F4D-5142-4FC9-A35B-89F0EDAA2936}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

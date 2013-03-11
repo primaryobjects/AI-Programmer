@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{06D57F9C-A784-433F-8FF3-0728FECF6F5C}</ProjectGuid>
+    <ProjectGuid>{D1CE7F4D-5142-4FC9-A35B-89F0EDAA2936}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AIProgrammer.Managers</RootNamespace>
-    <AssemblyName>AIProgrammer.Managers</AssemblyName>
+    <RootNamespace>AIProgrammer.Functions</RootNamespace>
+    <AssemblyName>AIProgrammer.Functions</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,7 +31,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -40,21 +39,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommonManager.cs" />
-    <Compile Include="GAManager.cs" />
+    <Compile Include="Concrete\StringFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AIProgrammer.Fitness\AIProgrammer.Fitness.csproj">
+      <Project>{2fa2525f-4faa-45a6-8268-4d561f7c46f9}</Project>
+      <Name>AIProgrammer.Fitness</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AIProgrammer.GA\AIProgrammer.GeneticAlgorithm.csproj">
       <Project>{8ec97de8-ddfd-437a-b216-91db8d1a3487}</Project>
       <Name>AIProgrammer.GeneticAlgorithm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AIProgrammer.Managers\AIProgrammer.Managers.csproj">
+      <Project>{06d57f9c-a784-433f-8ff3-0728fecf6f5c}</Project>
+      <Name>AIProgrammer.Managers</Name>
     </ProjectReference>
     <ProjectReference Include="..\AIProgrammer.Types\AIProgrammer.Types.csproj">
       <Project>{7bcc43b1-33a8-44c8-8f4d-752d89672180}</Project>
       <Name>AIProgrammer.Types</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

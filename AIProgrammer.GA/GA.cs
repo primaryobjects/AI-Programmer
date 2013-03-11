@@ -32,6 +32,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using AIProgrammer.Types.Interface;
 #endregion
 
 namespace AIProgrammer.GeneticAlgorithm
@@ -42,7 +43,7 @@ namespace AIProgrammer.GeneticAlgorithm
     /// <summary>
 	/// Genetic Algorithm class
 	/// </summary>
-	public class GA
+    public class GA : IGeneticAlgorithm
 	{
         public GAParams GAParams { get; set; }
         public bool Stop { get; set; }
@@ -110,6 +111,11 @@ namespace AIProgrammer.GeneticAlgorithm
                 GAParams.FitnessTable = new List<double>();
                 GAParams.ThisGeneration = new List<Genome>(GAParams.Generations);
                 GAParams.NextGeneration = new List<Genome>(GAParams.Generations);
+                GAParams.TotalFitness = 0;
+                GAParams.TargetFitness = 0;
+                GAParams.TargetFitnessCount = 0;
+                GAParams.CurrentGeneration = 0;
+                Stop = false;
 
                 CreateGenomes();
                 RankPopulation();
