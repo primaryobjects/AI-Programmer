@@ -65,7 +65,7 @@ namespace AIProgrammer.Functions.Concrete
                 appendCode += "&" + program.Replace('!', '%') + "%";
 
                 // Reset the target fitness.
-                ((StringStrictFitness)myFitness).ResetTargetFitness();
+                myFitness.ResetTargetFitness();
                 _bestStatus.Fitness = 0;
                 _bestStatus.TrueFitness = 0;
                 _bestStatus.Output = "";

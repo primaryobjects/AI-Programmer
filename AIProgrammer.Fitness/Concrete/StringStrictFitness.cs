@@ -27,11 +27,6 @@ namespace AIProgrammer.Fitness.Concrete
             }
         }
 
-        public void ResetTargetFitness()
-        {
-            _targetFitness = 0;
-        }
-
         #region FitnessBase Members
 
         protected override double GetFitnessMethod(string program)

@@ -88,6 +88,11 @@ namespace AIProgrammer.Fitness.Base
             return fitness;
         }
 
+        public void ResetTargetFitness()
+        {
+            _targetFitness = 0;
+        }
+
         public string RunProgram(string program)
         {
             RunProgramMethod(program);

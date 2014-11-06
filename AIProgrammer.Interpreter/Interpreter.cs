@@ -210,8 +210,14 @@ namespace AIProgrammer
                     this.m_CurrentCallStack = new Stack<int>();
                     this.m_ExitLoop = false;
 
+                    // Get current the memory value to use as input for the function.
+                    var inputValue = this.m_Memory[this.m_DataPointer];
+
                     // Set the data pointer to the functions starting memory address.
                     this.m_DataPointer = 1000 * (instruction - 96); // each function gets a space of 1000 memory slots.
+
+                    // Copy the input value to the function's starting memory address.
+                    this.m_Memory[this.m_DataPointer] = inputValue;
 
                     // Set the instruction pointer to the beginning of the function.
                     this.m_InstructionPointer = m_Functions[instruction];
