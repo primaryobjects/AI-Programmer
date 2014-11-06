@@ -38,20 +38,25 @@ namespace AIProgrammer.Functions.Concrete
 
         public string Generate(IGeneticAlgorithm ga)
         {
+            // Generate functions.
             IFitness myFitness;
             string originalTargetString = _targetParams.TargetString;
             string program;
             string appendCode = "!";
 
-            // Generate functions.
+            // Split string into terms.
             string[] parts = _targetParams.TargetString.Split(new char[] { ' ' });
-            for (int i = 0; i < parts.Length - 1; i++)
+
+            // Build corpus of unique terms to generate functions.
+            Dictionary<string, string> terms = new Dictionary<string, string>();
+            foreach (string part in parts)
             {
-                _targetParams.TargetString = parts[i];
-                if (i < parts.Length - 1)
-                {
-                    _targetParams.TargetString = _targetParams.TargetString + " ";
-                }
+                terms[part] = part;
+            }
+
+            foreach (string term in terms.Values)
+            {
+                _targetParams.TargetString = term;
 
                 // Get the target fitness for this method.
                 myFitness = _getFitnessFunc();

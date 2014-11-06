@@ -210,11 +210,14 @@ namespace AIProgrammer
                     this.m_CurrentCallStack = new Stack<int>();
                     this.m_ExitLoop = false;
 
-                    // Get current the memory value to use as input for the function.
+                    // Get current memory value to use as input for the function.
                     var inputValue = this.m_Memory[this.m_DataPointer];
 
                     // Set the data pointer to the functions starting memory address.
                     this.m_DataPointer = 1000 * (instruction - 96); // each function gets a space of 1000 memory slots.
+
+                    // Clear function memory.
+                    Array.Clear(this.m_Memory, this.m_DataPointer, 1000);
 
                     // Copy the input value to the function's starting memory address.
                     this.m_Memory[this.m_DataPointer] = inputValue;

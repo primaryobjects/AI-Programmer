@@ -21,7 +21,7 @@ namespace AIProgrammer
     /// This experiment uses a genetic algorithm to evolve a program in the programming language Brainfuck.
     /// The resulting program will print a target string.
     ///
-    /// Created by Kory Becker 01-Jan-2013 http://www.primaryobjects.com/kory-becker.aspx
+    /// Created by Kory Becker 01-Jan-2013 http://www.primaryobjects.com/kory-becker
     /// </summary>
     class Program
     {
