@@ -147,7 +147,7 @@ namespace AIProgrammer
             
             m_CurrentCallStack = m_CallStack;
 
-            // Create the instruction set (lol)
+            // Create the instruction set for Basic Brainfuck.
             this.m_InstructionSet.Add('+', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer]++; });
             this.m_InstructionSet.Add('-', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer]--; });
 
@@ -156,76 +156,6 @@ namespace AIProgrammer
 
             this.m_InstructionSet.Add('.', () => { if (!m_ExitLoop) this.m_Output(this.m_Memory[this.m_DataPointer]); });
             this.m_InstructionSet.Add(',', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = this.m_Input(); });
-
-            this.m_InstructionSet.Add('0', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 0; });
-            this.m_InstructionSet.Add('1', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 16; });
-            this.m_InstructionSet.Add('2', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 32; });
-            this.m_InstructionSet.Add('3', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 48; });
-            this.m_InstructionSet.Add('4', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 64; });
-            this.m_InstructionSet.Add('5', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 80; });
-            this.m_InstructionSet.Add('6', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 96; });
-            this.m_InstructionSet.Add('7', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 112; });
-            this.m_InstructionSet.Add('8', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 128; });
-            this.m_InstructionSet.Add('9', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 144; });
-            this.m_InstructionSet.Add('A', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 160; });
-            this.m_InstructionSet.Add('B', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 176; });
-            this.m_InstructionSet.Add('C', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 192; });
-            this.m_InstructionSet.Add('D', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 208; });
-            this.m_InstructionSet.Add('E', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 224; });
-            this.m_InstructionSet.Add('F', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 240; });
-
-            this.m_InstructionSet.Add('!', () => { this.m_Stop = true; });
-            this.m_InstructionSet.Add('&', () => { m_Functions.Add(m_NextFunctionCharacter++, this.m_InstructionPointer); });
-            this.m_InstructionSet.Add('%', () =>
-            {
-                var temp = m_FunctionCallStack.Pop();
-                
-                // Get the result from the function call.
-                var result = this.m_Memory[this.m_DataPointer];
-
-                // Restore the data pointer.
-                this.m_DataPointer = temp.DataPointer;
-                // Set the value of memory equal to the function result.
-                this.m_Memory[this.m_DataPointer] = result;
-                // Restore the call stack.
-                this.m_CurrentCallStack = temp.CallStack;
-                // Restore exit loop status.
-                this.m_ExitLoop = temp.ExitLoop;
-                // Restore ticks.
-                this.m_Ticks = temp.Ticks;
-                // Restore the instruction pointer.
-                this.m_InstructionPointer = temp.InstructionPointer;
-            });
-
-            for (char inst = 'a'; inst <= 'f'; inst++)
-            {
-                char instruction = inst; // closure
-                this.m_InstructionSet.Add(instruction, () =>
-                {
-                    // Store the current instruction pointer and data pointer before we move to the function.
-                    var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, Ticks = this.m_Ticks };
-                    this.m_FunctionCallStack.Push(functionCallObj);
-
-                    // Give the function a fresh call stack.
-                    this.m_CurrentCallStack = new Stack<int>();
-                    this.m_ExitLoop = false;
-
-                    // Get current memory value to use as input for the function.
-                    var inputValue = this.m_Memory[this.m_DataPointer];
-
-                    // Set the data pointer to the functions starting memory address.
-                    this.m_DataPointer = 1000 * (instruction - 96); // each function gets a space of 1000 memory slots.
-
-                    // Clear function memory.
-                    Array.Clear(this.m_Memory, this.m_DataPointer, 1000);
-
-                    // Copy the input value to the function's starting memory address.
-                    this.m_Memory[this.m_DataPointer] = inputValue;
-
-                    // Set the instruction pointer to the beginning of the function.
-                    this.m_InstructionPointer = m_Functions[instruction];
-                });
-            }
 
             this.m_InstructionSet.Add('[', () =>
             {
@@ -262,7 +192,81 @@ namespace AIProgrammer
                 }
             });
 
+            // Create the instruction set for Brainfuck Extended Type 3.
+            this.m_InstructionSet.Add('0', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 0; });
+            this.m_InstructionSet.Add('1', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 16; });
+            this.m_InstructionSet.Add('2', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 32; });
+            this.m_InstructionSet.Add('3', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 48; });
+            this.m_InstructionSet.Add('4', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 64; });
+            this.m_InstructionSet.Add('5', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 80; });
+            this.m_InstructionSet.Add('6', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 96; });
+            this.m_InstructionSet.Add('7', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 112; });
+            this.m_InstructionSet.Add('8', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 128; });
+            this.m_InstructionSet.Add('9', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 144; });
+            this.m_InstructionSet.Add('A', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 160; });
+            this.m_InstructionSet.Add('B', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 176; });
+            this.m_InstructionSet.Add('C', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 192; });
+            this.m_InstructionSet.Add('D', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 208; });
+            this.m_InstructionSet.Add('E', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 224; });
+            this.m_InstructionSet.Add('F', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 240; });
+
+            // Create the instruction set for BrainPlus.
+            this.m_InstructionSet.Add('!', () => { this.m_Stop = true; });
+            this.m_InstructionSet.Add('&', () => { m_Functions.Add(m_NextFunctionCharacter++, this.m_InstructionPointer); });
+            this.m_InstructionSet.Add('%', () =>
+            {
+                var temp = m_FunctionCallStack.Pop();
+                
+                // Get the result from the function call.
+                var result = this.m_Memory[this.m_DataPointer];
+
+                // Restore the data pointer.
+                this.m_DataPointer = temp.DataPointer;
+                // Set the value of memory equal to the function result.
+                this.m_Memory[this.m_DataPointer] = result;
+                // Restore the call stack.
+                this.m_CurrentCallStack = temp.CallStack;
+                // Restore exit loop status.
+                this.m_ExitLoop = temp.ExitLoop;
+                // Restore ticks.
+                this.m_Ticks = temp.Ticks;
+                // Restore the instruction pointer.
+                this.m_InstructionPointer = temp.InstructionPointer;
+            });
+
+            // Scan code for function definitions and store their starting memory addresses.
             ScanFunctions(programCode);
+
+            // If we found any functions, create the instruction set for them.
+            for (char inst = 'a'; inst < m_NextFunctionCharacter; inst++)
+            {
+                char instruction = inst; // closure
+                this.m_InstructionSet.Add(instruction, () =>
+                {
+                    // Store the current instruction pointer and data pointer before we move to the function.
+                    var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, Ticks = this.m_Ticks };
+                    this.m_FunctionCallStack.Push(functionCallObj);
+
+                    // Give the function a fresh call stack.
+                    this.m_CurrentCallStack = new Stack<int>();
+                    this.m_ExitLoop = false;
+
+                    // Get current memory value to use as input for the function.
+                    var inputValue = this.m_Memory[this.m_DataPointer];
+
+                    // Set the data pointer to the functions starting memory address.
+                    this.m_DataPointer = 1000 * (instruction - 96); // each function gets a space of 1000 memory slots.
+
+                    // Clear function memory.
+                    Array.Clear(this.m_Memory, this.m_DataPointer, 1000);
+
+                    // Copy the input value to the function's starting memory address.
+                    this.m_Memory[this.m_DataPointer] = inputValue;
+
+                    // Set the instruction pointer to the beginning of the function.
+                    this.m_InstructionPointer = m_Functions[instruction];
+                });
+            }
         }
 
         /// <summary>
