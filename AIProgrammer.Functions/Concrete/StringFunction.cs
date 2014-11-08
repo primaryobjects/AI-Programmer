@@ -42,7 +42,7 @@ namespace AIProgrammer.Functions.Concrete
             IFitness myFitness;
             string originalTargetString = _targetParams.TargetString;
             string program;
-            string appendCode = "!";
+            string appendCode = "";
 
             // Split string into terms.
             string[] parts = _targetParams.TargetString.Split(new char[] { ' ' });

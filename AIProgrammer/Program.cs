@@ -121,8 +121,8 @@ namespace AIProgrammer
 
             if (_functionGenerator != null)
             {
-                // Generation appendCode functions.
-                _appendCode = _functionGenerator.Generate(_ga);
+                // Generate additional functions.
+                _appendCode += _functionGenerator.Generate(_ga);
             }
 
             // Generate main program. Get the selected fitness type.
@@ -133,7 +133,12 @@ namespace AIProgrammer
 
             // Run the genetic algorithm and get the best brain.
             string program = GAManager.Run(_ga, fitnessFunction, OnGeneration);
-            program += _appendCode;
+
+            // Append any functions.
+            if (!string.IsNullOrEmpty(_appendCode))
+            {
+                program += "!" + _appendCode;
+            }
 
             // Display the final program.
             Console.WriteLine(program);

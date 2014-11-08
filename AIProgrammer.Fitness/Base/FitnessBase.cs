@@ -72,6 +72,7 @@ namespace AIProgrammer.Fitness.Base
             if (_appendFunctions != null)
             {
                 StringBuilder s = new StringBuilder(Program);
+                s.Append("!");
                 s.Append(_appendFunctions);
                 Program = s.ToString();
             }
