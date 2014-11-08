@@ -20,12 +20,13 @@ namespace AIProgrammer.Managers
         private const double bfClassicTotal = 0.98; // Total range for classic instructions.
         private const int bfClassicInstructionCount = 8; // Number of classic instructions.
         private const double bfExtendedTotal = 0.02; // Total range for extended instructions.
-        private const int bfExtendedInstructionCount = 22; // Number of extended instructions.
+        private const int bfExtendedInstructionCount = 42; // Number of extended instructions.
 
         private static readonly double[] bfClassicRangeKeys = new double[] { bfClassicIncrement * 1, bfClassicIncrement * 2, bfClassicIncrement * 3, bfClassicIncrement * 4, bfClassicIncrement * 5, bfClassicIncrement * 6, bfClassicIncrement * 7, bfClassicIncrement * 8,
-                                                                             bfClassicTotal + bfExtendedIncrement * 1, bfClassicTotal + bfExtendedIncrement * 2, bfClassicTotal + bfExtendedIncrement * 3, bfClassicTotal + bfExtendedIncrement * 4, bfClassicTotal + bfExtendedIncrement * 5, bfClassicTotal + bfExtendedIncrement * 6, bfClassicTotal + bfExtendedIncrement * 7, bfClassicTotal + bfExtendedIncrement * 8, bfClassicTotal + bfExtendedIncrement * 9, bfClassicTotal + bfExtendedIncrement * 10, bfClassicTotal + bfExtendedIncrement * 11, bfClassicTotal + bfExtendedIncrement * 12, bfClassicTotal + bfExtendedIncrement * 13, bfClassicTotal + bfExtendedIncrement * 14, bfClassicTotal + bfExtendedIncrement * 15, bfClassicTotal + bfExtendedIncrement * 16, bfClassicTotal + bfExtendedIncrement * 17, bfClassicTotal + bfExtendedIncrement * 18, bfClassicTotal + bfExtendedIncrement * 19, bfClassicTotal + bfExtendedIncrement * 20, bfClassicTotal + bfExtendedIncrement * 21, bfClassicTotal + bfExtendedIncrement * 22 };
+                                                                             bfClassicTotal + bfExtendedIncrement * 1, bfClassicTotal + bfExtendedIncrement * 2, bfClassicTotal + bfExtendedIncrement * 3, bfClassicTotal + bfExtendedIncrement * 4, bfClassicTotal + bfExtendedIncrement * 5, bfClassicTotal + bfExtendedIncrement * 6, bfClassicTotal + bfExtendedIncrement * 7, bfClassicTotal + bfExtendedIncrement * 8, bfClassicTotal + bfExtendedIncrement * 9, bfClassicTotal + bfExtendedIncrement * 10, bfClassicTotal + bfExtendedIncrement * 11, bfClassicTotal + bfExtendedIncrement * 12, bfClassicTotal + bfExtendedIncrement * 13, bfClassicTotal + bfExtendedIncrement * 14, bfClassicTotal + bfExtendedIncrement * 15, bfClassicTotal + bfExtendedIncrement * 16, bfClassicTotal + bfExtendedIncrement * 17, bfClassicTotal + bfExtendedIncrement * 18, bfClassicTotal + bfExtendedIncrement * 19, bfClassicTotal + bfExtendedIncrement * 20, bfClassicTotal + bfExtendedIncrement * 21, bfClassicTotal + bfExtendedIncrement * 22,
+                                                                             bfClassicTotal + bfExtendedIncrement * 23, bfClassicTotal + bfExtendedIncrement * 24, bfClassicTotal + bfExtendedIncrement * 25, bfClassicTotal + bfExtendedIncrement * 26, bfClassicTotal + bfExtendedIncrement * 27, bfClassicTotal + bfExtendedIncrement * 28, bfClassicTotal + bfExtendedIncrement * 29, bfClassicTotal + bfExtendedIncrement * 30, bfClassicTotal + bfExtendedIncrement * 31, bfClassicTotal + bfExtendedIncrement * 32, bfClassicTotal + bfExtendedIncrement * 33, bfClassicTotal + bfExtendedIncrement * 34, bfClassicTotal + bfExtendedIncrement * 35, bfClassicTotal + bfExtendedIncrement * 36, bfClassicTotal + bfExtendedIncrement * 37, bfClassicTotal + bfExtendedIncrement * 38, bfClassicTotal + bfExtendedIncrement * 39, bfClassicTotal + bfExtendedIncrement * 40, bfClassicTotal + bfExtendedIncrement * 41, bfClassicTotal + bfExtendedIncrement * 42 };
         private static readonly char[] bfClassicRangeValues = new char[] { '>', '<', '+', '-', '.', ',', '[', ']',
-                                                                           'a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+                                                                           'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
         private static int _brainfuckVersion = Int32.Parse(ConfigurationManager.AppSettings["BrainfuckVersion"]);
         /*private static Lazy<Dictionary<double, char>> bfClassicRanges = new Lazy<Dictionary<double,char>>(() =>
@@ -66,6 +67,18 @@ namespace AIProgrammer.Managers
 
             return list;
         });*/
+
+        /// <summary>
+        /// Pre-generated list of functions for each letter of the alphabet. Use in main program by setting _appendCode = CommonManager.AlphabetFunctions. Can give the GA a head-start, instead of learning how to generate letters, it can jump right to organizing them.
+        /// 
+        /// Generated using StringFunction() and StringStrictFitness() on the target string "a b c d e f g h i j k l m n o p q r s t u v w x y z".
+        /// Requires Brainfuck Extended Type 3. Set BrainfuckVersion=2 in the App.config.
+        /// Example of how it was generated via Program.cs:
+        /// private static IFunction _functionGenerator = new StringFunction(() => GetFitnessMethod(), _bestStatus, fitnessFunction, OnGeneration, _crossoverRate, _mutationRate, _genomeSize, _targetParams);
+        /// ...
+        /// return new StringStrictFitness(_ga, _maxIterationCount, _targetParams.TargetString, _appendCode);
+        /// </summary>
+        public static string AlphabetFunctions = "&6+.>>[->>>.+-++><<+.[-]><.<+-+[...-+[++.+-.<+]+<[-%&6-+++.->[[--..>->--<>+++.[[-.+.>.<.<.><[+,+.--<[<.%&>6+++.>-[+[.-[-[-][.-]+..+>--++>-].<>.>.->+[..]]-<%&---6++++.>-++-[>-+>++[[+-[-.[]<>..[<--]..<]<>>[-,.%&-7---+---------.>>[.<B>>>+.>.+>.>>.[+,>>.].>...-<-%&>>+-+[6+++[+++.[]]>[.]<.-.-.+<.<.]---<.>>[-+>[<+[.%&6++++++<<>>+.+[--[-]-]-[..][[[>-.-.[-<.]][]>..>.-,%&7--------<>.>[-..,.+-.+[[]...+++[++-<<++<+]<>]<>,[%&7-><------.[[+]+]]].....[[]+<[-><<>++[-[<-<].<<>->%&6++++++++><><++.+>-<->>[>>++>[-]>.>......-...[-,.[%&-7-----.>><>[<E...++.[-,-[-+<]+<<<-+[++<+]>-[-]-]]%&><7----.[]>.>....+.-<+.->+><-,-]]-+.+...<>.<+[]]8<%&6--7---.>->+-[>..->+>>.[<->-.-.....+<>+.[>>.>-[]->%&+>[,++<>+.+--.>>.>>....<.-->+[+<<[+]<>.-<.]]7--.-+%&>6+++++++++++++++.-++[-[-]-[+[-[+-+--+--]..<.,<[,>%&8----------------.>[+-[-<>.>++><]+<..[<-++]>[--],-%&><----[[[+]>1+[7+.--<[-[-[[++-,-+[+].<.[<<-+<<[[+,%&8[[++++[+-+7++.++>[]>+>><[>-.++.<+[+-.[+[<[[<++.+[%&8------------->+<>+<.[]->[>..-><.>..<[.->>[]-]]9<.%&7++><++.[]+-.>+.<[-[..[[-]<.].]+,-.++d-[d[>]-,-]+]%&<>-->+[>[+++.[][,][,]]7++<][-+<+.<>-[>+]+,+>[.-.w<%&>5>+7++++++.[].,.[+[.+--.<>-<-.<<-.<]->.[-+-+>]>1u%&8-------[--.++>-+>>+>++>][[+..<>..[..<<[.<+<<<]-.<%";//&>8-------+--[[.<[-...[+><><[.-..>[.[]]]>>>>].>,[><%&7><+++++++++.>[<.<<.-.+-.>[-+--[][.-.+[<,>0]>[[[->%&8---++--[--[+--.[->+>>->[<><>+[.++-++<+++]]-[[],,,%";
 
         public static string ConvertDoubleArrayToBF(double[] array)
         {
