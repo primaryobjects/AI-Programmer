@@ -42,6 +42,7 @@
     <Compile Include="Base\FitnessBase.cs" />
     <Compile Include="Concrete\AddCleanFitness.cs" />
     <Compile Include="Concrete\AddFitness.cs" />
+    <Compile Include="Concrete\CountdownFitness.cs" />
     <Compile Include="Concrete\LessThanEqualToFitness.cs" />
     <Compile Include="Concrete\Research\AddToCharFitness.cs" />
     <Compile Include="Concrete\IfThenFitness.cs" />
