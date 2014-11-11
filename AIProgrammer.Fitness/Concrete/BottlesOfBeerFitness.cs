@@ -10,25 +10,23 @@ using System.Threading.Tasks;
 namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
-    /// Outputs a countdown from an input number. Note, input is taken in byte value.
-    /// Example: input = 5: 543210
+    /// "Ninety Nine Bottles of Beer on the Wall", starting from any number.
+    /// The user is prompted for input of a starting number. The program outputs from the starting number "x bottles of beer on the wall" until it reaches 0.
+    /// Example: input = 5: 5 bottles of beer on the wall4 bottles of beer on the wall3 bottles of beer on the wall2 bottles of beer on the wall1 bottles of beer on the wall0 bottles of beer on the wall
+    /// Note, the final output will be in byte format (including text, ie. 98 = 'b'). To display the output for humans, we have to convert the text byte values to char and leave the numbers as byte. This will correctly display 598498398 as 5b4b3b, since (char)98 = 'b'.
     /// </summary>
-    public class CountdownFitness : FitnessBase
+    public class BottlesOfBeerFitness : FitnessBase
     {
-        private int _trainingCount;
-
-        public CountdownFitness(GA ga, int maxIterationCount, int maxTrainingCount = 4)
-            : base(ga, maxIterationCount)
+        public BottlesOfBeerFitness(GA ga, int maxIterationCount, string appendFunctions = null)
+            : base(ga, maxIterationCount, appendFunctions)
         {
-            _trainingCount = maxTrainingCount;
-
             if (_targetFitness == 0)
             {
-                // A * 256 => A = Number of numeric values in training example, 256 = 256 characters per byte.
-                _targetFitness += 6 * 256;
-                _targetFitness += 4 * 256;
-                _targetFitness += 3 * 256;
-                _targetFitness += 7 * 256;
+                // A * 28 * 256 => A = Number of numeric values in training example, 28 = number of characters in text, 256 = 256 characters per byte.
+                _targetFitness += 6 * 28 * 256;
+                _targetFitness += 4 * 28 * 256;
+                _targetFitness += 3 * 28 * 256;
+                _targetFitness += 7 * 28 * 256;
             }
         }
 
@@ -40,6 +38,8 @@ namespace AIProgrammer.Fitness.Concrete
                                       new byte[] { 3, 2, 1, 0 },
                                       new byte[] { 2, 1, 0 },
                                       new byte[] { 6, 5, 4, 3, 2, 1, 0 } };
+            string targetString = " bottles of beer on the wall";
+
             double countBonus = 0;
             double penalty = 0;
 
@@ -81,12 +81,27 @@ namespace AIProgrammer.Fitness.Concrete
                 _output.Append(_console.ToString());
                 _output.Append(",");
 
-                // Order bonus.
+                // Go through each sequence.
                 for (int j = 0; j < trainingExamples[i].Length; j++)
                 {
-                    if (_console.Length > j)
+                    int jj = j + j;
+
+                    // Go through each item (5 bottles of beer on the wall). 5b4b3b2b
+                    for (int k = 0; k < 2; k++)
                     {
-                        Fitness += 256 - Math.Abs((byte)_console[j] - trainingExamples[i][j]);
+                        if (_console.Length > jj + k)
+                        {
+                            if (k == 0)
+                            {
+                                // Verify digit.
+                                Fitness += 256 - Math.Abs((byte)_console[jj + k] - trainingExamples[i][j]);
+                            }
+                            else
+                            {
+                                // Verify text.
+                                Fitness += 256 - Math.Abs(_console[jj + k] - targetString[0]);
+                            }
+                        }
                     }
                 }
 
@@ -119,6 +134,7 @@ namespace AIProgrammer.Fitness.Concrete
                 Console.Write(">: ");
                 byte startingValue = Byte.Parse(Console.ReadLine());
                 int index = 0;
+                bool odd = true;
 
                 _console.Clear();
 
@@ -143,8 +159,19 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        // Append numeric byte value.
-                        _console.Append(b);
+                        // The program correctly solves the problem, however the output is in byte format. For example: 5b => 598 (where 98 = 'b'). We need to format the output for humans to read by leaving the numeric values as byte and the text values as char.
+                        if (odd)
+                        {
+                            // Append numeric byte value.
+                            _console.Append(b);
+                        }
+                        else
+                        {
+                            // Append text.
+                            _console.Append((char)b);
+                        }
+
+                        odd = !odd;
                     });
 
                     bf.Run(_maxIterationCount);
@@ -153,13 +180,13 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                 }
 
-                Console.WriteLine(_console);
+                Console.WriteLine(_console.ToString());
             }
         }
 
         public override string GetConstructorParameters()
         {
-            return _maxIterationCount + ", " + _trainingCount;
+            return _maxIterationCount.ToString();
         }
 
         #endregion
