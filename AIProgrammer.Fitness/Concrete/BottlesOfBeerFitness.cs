@@ -20,15 +20,14 @@ namespace AIProgrammer.Fitness.Concrete
     {
         private static byte[][] _trainingExamples = { new byte[] { 5, 4, 3, 2, 1, 0 },
                                       new byte[] { 3, 2, 1, 0 },
-                                      new byte[] { 2, 1, 0 }/*,
-                                      new byte[] { 6, 5, 4, 3, 2, 1, 0 }*/ };
-        private static string _targetString = "b";
+                                      new byte[] { 2, 1, 0 } };
+        private static string _targetString = "bottles of beer";
 
         /// <summary>
-        /// Previously generated BrainPlus functions for outputting the terms: bottles,of,beer,on,the,wall. This includes a 7th generated function that calls the other generated functions to output "bottles of beer". Generated using StrictStringFitness with StringFunction.
+        /// Previously generated BrainPlus functions for outputting the terms: bottles,of,beer,bottles of beer. Generated using StrictStringFitness with StringFunction.
         /// To use, set _appendCode = BottlesOfBeerFitness.BottlesOfBeerFunctions in main program.
         /// </summary>
-        public static string BottlesOfBeerFunctions = "&6++.+++++++++++++[.+++[++..--------.-------.++++++++++++++.-%&[]7[[-.---------.[][.+>[t[-]-[,]+>,>++<]<]],>[]><]],-<]++,><%&6++.+++..7++.[6+[+<>[>>-]>><>-.+.><><-]<.<].+]..+-<+]+.[...,%&+8[+[+]7-.-.>[22+[[-..[[<-...][,.,<<>,>,,.,,]+<<++,]+>+,+]>+%&6+t+++i++[++-+[+++++[+++++++.-----[-[--[--[--.[-+----+.-[[[>%&7++++++[+.------[--------[--------.+++++++-+++++..[+>+>[++[<%&1+++++++++++++>a---<+++.>.---------.<.c[>>>[<,,>+<[-],+<>.<,%&d2.[e2.f]--->2[>-]<[>]v-......<+[+<>+>]].,+,>[<++,>><,]-.>,+%";
+        public static string BottlesOfBeerFunctions = "&6++.+++++++++++++[.+++[++..--------.-------.++++++++++++++.-%&[]7[[-.---------.%&6++.+++..7++.%&1+++++++++++++>a---<+++.>.---------.<.c%";
 
         public BottlesOfBeerFitness(GA ga, int maxIterationCount, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
@@ -145,7 +144,7 @@ namespace AIProgrammer.Fitness.Concrete
                 Console.Write(">: ");
                 byte startingValue = Byte.Parse(Console.ReadLine());
                 int index = 0;
-                bool odd = true;
+                int index2 = 0;
 
                 _console.Clear();
 
@@ -171,7 +170,7 @@ namespace AIProgrammer.Fitness.Concrete
                     (b) =>
                     {
                         // The program correctly solves the problem, however the output is in byte format. For example: 5b => 598 (where 98 = 'b'). We need to format the output for humans to read by leaving the numeric values as byte and the text values as char.
-                        if (odd)
+                        if (index2++ % (_targetString.Length + 1) == 0)
                         {
                             // Append numeric byte value.
                             _console.Append(b);
@@ -181,8 +180,6 @@ namespace AIProgrammer.Fitness.Concrete
                             // Append text.
                             _console.Append((char)b);
                         }
-
-                        odd = !odd;
                     });
 
                     bf.Run(_maxIterationCount);

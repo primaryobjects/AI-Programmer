@@ -36,6 +36,7 @@ namespace AIProgrammer
             public int DataPointer { get; set; }
             public Stack<int> CallStack { get; set; }
             public bool ExitLoop { get; set; }
+            public int ExitLoopInstructionPointer { get; set; }
             public int Ticks { get; set; }
         };
 
@@ -93,7 +94,7 @@ namespace AIProgrammer
         /// <summary>
         /// The list of functions and their starting instruction index.
         /// </summary>
-        private readonly Dictionary<char, int> m_Functions = new Dictionary<char, int>(26);
+        private readonly Dictionary<char, int> m_Functions = new Dictionary<char, int>();
 
         /// <summary>
         /// Identifier for next function. Will serve as the instruction to call this function.
@@ -109,6 +110,11 @@ namespace AIProgrammer
         /// Pointer to the current call stack (m_FunctionCallStack or m_CallStack).
         /// </summary>
         private Stack<int> m_CurrentCallStack;
+
+        /// <summary>
+        /// Number of cells available to functions for memory. When a function is executed, an array of cells are allocated in upper-memory addresses (eg., 1000-1999, 2000-2999, etc.) for usage.
+        /// </summary>
+        private const int _memoryAvailableForFunctions = 255;
 
         /// <summary>
         /// Number of instructions executed.
@@ -228,6 +234,8 @@ namespace AIProgrammer
                 this.m_CurrentCallStack = temp.CallStack;
                 // Restore exit loop status.
                 this.m_ExitLoop = temp.ExitLoop;
+                // Restore exit loop instruction pointer.
+                this.m_ExitLoopInstructionPointer = temp.ExitLoopInstructionPointer;
                 // Restore ticks.
                 this.m_Ticks = temp.Ticks;
                 // Restore the instruction pointer.
@@ -244,21 +252,22 @@ namespace AIProgrammer
                 this.m_InstructionSet.Add(instruction, () =>
                 {
                     // Store the current instruction pointer and data pointer before we move to the function.
-                    var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, Ticks = this.m_Ticks };
+                    var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, ExitLoopInstructionPointer = this.m_ExitLoopInstructionPointer, Ticks = this.m_Ticks };
                     this.m_FunctionCallStack.Push(functionCallObj);
 
                     // Give the function a fresh call stack.
                     this.m_CurrentCallStack = new Stack<int>();
                     this.m_ExitLoop = false;
+                    this.m_ExitLoopInstructionPointer = 0;
 
                     // Get current memory value to use as input for the function.
                     var inputValue = this.m_Memory[this.m_DataPointer];
 
                     // Set the data pointer to the functions starting memory address.
-                    this.m_DataPointer = 1000 * (instruction - 96); // each function gets a space of 1000 memory slots.
+                    this.m_DataPointer = _memoryAvailableForFunctions * (instruction - 96); // each function gets a space of 1000 memory slots.
 
                     // Clear function memory.
-                    Array.Clear(this.m_Memory, this.m_DataPointer, 1000);
+                    Array.Clear(this.m_Memory, this.m_DataPointer, _memoryAvailableForFunctions);
 
                     // Copy the input value to the function's starting memory address.
                     this.m_Memory[this.m_DataPointer] = inputValue;

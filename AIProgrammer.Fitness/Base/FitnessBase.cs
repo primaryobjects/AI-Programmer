@@ -71,10 +71,7 @@ namespace AIProgrammer.Fitness.Base
             // Append any functions to the program.
             if (_appendFunctions != null)
             {
-                StringBuilder s = new StringBuilder(Program);
-                s.Append("!");
-                s.Append(_appendFunctions);
-                Program = s.ToString();
+                Program += "!" + _appendFunctions;
             }
 
             // Get the fitness.

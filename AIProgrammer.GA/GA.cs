@@ -47,6 +47,7 @@ namespace AIProgrammer.GeneticAlgorithm
 	{
         public GAParams GAParams { get; set; }
         public bool Stop { get; set; }
+        private DateTime _lastEpoch = DateTime.Now;
 
 		/// <summary>
 		/// Default constructor sets mutation rate to 5%, crossover to 80%, population to 100,
@@ -128,13 +129,15 @@ namespace AIProgrammer.GeneticAlgorithm
 
                 if (GAParams.CurrentGeneration % 100 == 0)
                 {
-                    Console.WriteLine("Generation " + GAParams.CurrentGeneration + ", Best Fitness: " + fitness);
+                    Console.WriteLine("Generation " + GAParams.CurrentGeneration + ", Time: " + Math.Round((DateTime.Now - _lastEpoch).TotalSeconds, 2) + "s, Best Fitness: " + fitness);
 
                     if (GAParams.HistoryPath != "")
                     {
                         // Record history timeline.
                         File.AppendAllText(GAParams.HistoryPath, DateTime.Now.ToString() + "," + fitness + "," + GAParams.TargetFitness + "," + GAParams.CurrentGeneration + "\r\n");
                     }
+
+                    _lastEpoch = DateTime.Now;
                 }
 
                 if (GAParams.TargetFitness > 0 && fitness >= GAParams.TargetFitness)
