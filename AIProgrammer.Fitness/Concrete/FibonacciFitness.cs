@@ -23,7 +23,7 @@ namespace AIProgrammer.Fitness.Concrete
         /// </summary>
         public static string FibonacciFunctions = "&,>,-[-<+>]<+.%";
 
-        public FibonacciFitness(GA ga, int maxIterationCount, string appendFunctions = null, int maxDigits = 3, int maxTrainingCount = 2)
+        public FibonacciFitness(GA ga, int maxIterationCount, int maxDigits = 3, int maxTrainingCount = 2, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
         {
             _maxDigits = maxDigits;
@@ -188,7 +188,7 @@ namespace AIProgrammer.Fitness.Concrete
 
         public override string GetConstructorParameters()
         {
-            return _maxIterationCount + ", " + _trainingCount;
+            return _maxIterationCount + ", " + _maxDigits + ", " + _trainingCount;
         }
 
         #endregion
