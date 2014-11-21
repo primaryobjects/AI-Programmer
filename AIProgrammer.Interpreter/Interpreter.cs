@@ -34,6 +34,7 @@ namespace AIProgrammer
         {
             public int InstructionPointer { get; set; }
             public int DataPointer { get; set; }
+            public int FunctionInputPointer { get; set; }
             public Stack<int> CallStack { get; set; }
             public bool ExitLoop { get; set; }
             public int ExitLoopInstructionPointer { get; set; }
@@ -112,6 +113,13 @@ namespace AIProgrammer
         private Stack<int> m_CurrentCallStack;
 
         /// <summary>
+        /// Pointer to a function's parent memory. When an input (,) command is executed from within a function, the function's current memory cell gets a copy of the value of the parent memory at this pointer. This allows passing multiple values as input to a function.
+        //  For example: ++>++++>+<<a.!&,>,-[-<+>]<+%
+        /// Parent memory contains: 2, 4, 1. Function will contain: 2, 4 and return a value of 6. Resulting parent memory contains: 6, 4, 1.
+        /// </summary>
+        private int m_FunctionInputPointer;
+
+        /// <summary>
         /// Number of cells available to functions for memory. When a function is executed, an array of cells are allocated in upper-memory addresses (eg., 1000-1999, 2000-2999, etc.) for usage.
         /// </summary>
         private const int _memoryAvailableForFunctions = 255;
@@ -161,7 +169,9 @@ namespace AIProgrammer
             this.m_InstructionSet.Add('<', () => { if (!m_ExitLoop) this.m_DataPointer--; });
 
             this.m_InstructionSet.Add('.', () => { if (!m_ExitLoop) this.m_Output(this.m_Memory[this.m_DataPointer]); });
-            this.m_InstructionSet.Add(',', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = this.m_Input(); });
+
+            // Prompt for input. If inside a function, pull input from parent memory, using the current FunctionInputPointer. Each call for input advances the parent memory cell that gets read from, allowing the passing of multiple values as input to a function.
+            this.m_InstructionSet.Add(',', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = m_FunctionCallStack.Count == 0 ? this.m_Input() : this.m_Memory[this.m_FunctionInputPointer++]; });
 
             this.m_InstructionSet.Add('[', () =>
             {
@@ -240,6 +250,8 @@ namespace AIProgrammer
                 this.m_Ticks = temp.Ticks;
                 // Restore the instruction pointer.
                 this.m_InstructionPointer = temp.InstructionPointer;
+                // Restore function input pointer.
+                this.m_FunctionInputPointer = temp.FunctionInputPointer;
             });
 
             // Scan code for function definitions and store their starting memory addresses.
@@ -252,7 +264,7 @@ namespace AIProgrammer
                 this.m_InstructionSet.Add(instruction, () =>
                 {
                     // Store the current instruction pointer and data pointer before we move to the function.
-                    var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, ExitLoopInstructionPointer = this.m_ExitLoopInstructionPointer, Ticks = this.m_Ticks };
+                    var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, FunctionInputPointer = this.m_FunctionInputPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, ExitLoopInstructionPointer = this.m_ExitLoopInstructionPointer, Ticks = this.m_Ticks };
                     this.m_FunctionCallStack.Push(functionCallObj);
 
                     // Give the function a fresh call stack.
@@ -260,17 +272,14 @@ namespace AIProgrammer
                     this.m_ExitLoop = false;
                     this.m_ExitLoopInstructionPointer = 0;
 
-                    // Get current memory value to use as input for the function.
-                    var inputValue = this.m_Memory[this.m_DataPointer];
+                    // Set the function input pointer to the parent's starting memory. Calls for input (,) from within the function will read from parent's memory, each call advances the parent memory cell that gets read from. This allows passing multiple values to a function.
+                    this.m_FunctionInputPointer = this.m_DataPointer;
 
                     // Set the data pointer to the functions starting memory address.
                     this.m_DataPointer = _memoryAvailableForFunctions * (instruction - 96); // each function gets a space of 1000 memory slots.
 
                     // Clear function memory.
                     Array.Clear(this.m_Memory, this.m_DataPointer, _memoryAvailableForFunctions);
-
-                    // Copy the input value to the function's starting memory address.
-                    this.m_Memory[this.m_DataPointer] = inputValue;
 
                     // Set the instruction pointer to the beginning of the function.
                     this.m_InstructionPointer = m_Functions[instruction];

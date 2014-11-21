@@ -47,7 +47,7 @@
     <Compile Include="Concrete\LessThanEqualToFitness.cs" />
     <Compile Include="Concrete\Research\AddToCharFitness.cs" />
     <Compile Include="Concrete\IfThenFitness.cs" />
-    <Compile Include="Concrete\Research\FibFitness.cs" />
+    <Compile Include="Concrete\FibonacciFitness.cs" />
     <Compile Include="Concrete\Research\NumberGuessFitness.cs" />
     <Compile Include="Concrete\ReverseStringFitness.cs" />
     <Compile Include="Concrete\HelloUserFitness.cs" />
