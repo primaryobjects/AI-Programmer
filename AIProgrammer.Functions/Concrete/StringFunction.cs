@@ -66,8 +66,7 @@ namespace AIProgrammer.Functions.Concrete
                 // Run the genetic algorithm and get the best brain.
                 program = GAManager.Run(ga, _fitnessFunc, _generationFunc);
                 
-                // For functions, replace ! with % return command.
-                appendCode += "&" + program.Replace('!', '%') + "%";
+                appendCode += program + "@";
 
                 // Reset the target fitness.
                 myFitness.ResetTargetFitness();

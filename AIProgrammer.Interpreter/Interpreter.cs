@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AIProgrammer
 {
     /// <summary>
-    /// This the brainfuck interpreter
+    /// This is the brainfuck interpreter.
     /// 
     /// > 	Increment the pointer.
     /// < 	Decrement the pointer.
@@ -19,9 +19,9 @@ namespace AIProgrammer
     /// ] 	Jump backward to the matching [ unless the byte at the pointer is zero.
     /// 
     /// Extended commands, included in BrainPlus.
-    /// !   Exits the program.
-    /// &   Defines a new function a,b,c .. z.
-    /// %   Return to last position in main program and restore state. Current memory value of function is set in current program memory value.
+    /// @   Exits the program or if inside a function, return to last position in main program and restore state.
+    /// $   Overwrites the byte in storage with the byte at the pointer.
+    /// !   Overwrites the byte at the pointer with the byte in storage.
     /// a,b Call function a - z.
     /// 0-F Sets the value of the current memory pointer to a multiple of 16.
     /// </summary>
@@ -114,15 +114,20 @@ namespace AIProgrammer
 
         /// <summary>
         /// Pointer to a function's parent memory. When an input (,) command is executed from within a function, the function's current memory cell gets a copy of the value of the parent memory at this pointer. This allows passing multiple values as input to a function.
-        //  For example: ++>++++>+<<a.!&,>,-[-<+>]<+%
-        /// Parent memory contains: 2, 4, 1. Function will contain: 2, 4 and return a value of 6. Resulting parent memory contains: 6, 4, 1.
+        /// For example: ++>++++>+<<a!.@,>,-[-<+>]<+$@
+        /// Parent memory contains: 2, 4, 1. Function will contain: 2, 4 and store a value of 6 in storage. Resulting parent memory remains: 2, 4, 1. Upon next command !, parent memory will contain: 6, 4, 1. The value 6 is then displayed as output.
         /// </summary>
         private int m_FunctionInputPointer;
 
         /// <summary>
-        /// Number of cells available to functions for memory. When a function is executed, an array of cells are allocated in upper-memory addresses (eg., 1000-1999, 2000-2999, etc.) for usage.
+        /// Number of cells available to functions. When a function is executed, an array of cells are allocated in upper-addresses (eg., 1000-1999, 2000-2999, etc.) for usage.
         /// </summary>
-        private const int _memoryAvailableForFunctions = 255;
+        private const int _functionSize = 256;
+
+        /// <summary>
+        /// Storage memory value. Usually used to hold return values from function calls.
+        /// </summary>
+        private byte m_Storage;
 
         /// <summary>
         /// Number of instructions executed.
@@ -225,34 +230,36 @@ namespace AIProgrammer
             this.m_InstructionSet.Add('D', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 208; });
             this.m_InstructionSet.Add('E', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 224; });
             this.m_InstructionSet.Add('F', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 240; });
-
-            // Create the instruction set for BrainPlus.
-            this.m_InstructionSet.Add('!', () => { this.m_Stop = true; });
-            this.m_InstructionSet.Add('&', () => { m_Functions.Add(m_NextFunctionCharacter++, this.m_InstructionPointer); });
-            this.m_InstructionSet.Add('%', () =>
+            this.m_InstructionSet.Add('@', () => 
             {
-                var temp = m_FunctionCallStack.Pop();
-                
-                // Get the result from the function call.
-                var result = this.m_Memory[this.m_DataPointer];
+                if (m_FunctionCallStack.Count > 0)
+                {
+                    // Exit function.
+                    var temp = m_FunctionCallStack.Pop();
 
-                // Restore the data pointer.
-                this.m_DataPointer = temp.DataPointer;
-                // Set the value of memory equal to the function result.
-                this.m_Memory[this.m_DataPointer] = result;
-                // Restore the call stack.
-                this.m_CurrentCallStack = temp.CallStack;
-                // Restore exit loop status.
-                this.m_ExitLoop = temp.ExitLoop;
-                // Restore exit loop instruction pointer.
-                this.m_ExitLoopInstructionPointer = temp.ExitLoopInstructionPointer;
-                // Restore ticks.
-                this.m_Ticks = temp.Ticks;
-                // Restore the instruction pointer.
-                this.m_InstructionPointer = temp.InstructionPointer;
-                // Restore function input pointer.
-                this.m_FunctionInputPointer = temp.FunctionInputPointer;
+                    // Restore the data pointer.
+                    this.m_DataPointer = temp.DataPointer;
+                    // Restore the call stack.
+                    this.m_CurrentCallStack = temp.CallStack;
+                    // Restore exit loop status.
+                    this.m_ExitLoop = temp.ExitLoop;
+                    // Restore exit loop instruction pointer.
+                    this.m_ExitLoopInstructionPointer = temp.ExitLoopInstructionPointer;
+                    // Restore ticks.
+                    this.m_Ticks = temp.Ticks;
+                    // Restore the instruction pointer.
+                    this.m_InstructionPointer = temp.InstructionPointer;
+                    // Restore function input pointer.
+                    this.m_FunctionInputPointer = temp.FunctionInputPointer;
+                }
+                else
+                {
+                    // Exit program.
+                    this.m_Stop = true;
+                }
             });
+            this.m_InstructionSet.Add('$', () => { this.m_Storage = this.m_Memory[this.m_DataPointer]; });
+            this.m_InstructionSet.Add('!', () => { this.m_Memory[this.m_DataPointer] = this.m_Storage; });
 
             // Scan code for function definitions and store their starting memory addresses.
             ScanFunctions(programCode);
@@ -276,10 +283,10 @@ namespace AIProgrammer
                     this.m_FunctionInputPointer = this.m_DataPointer;
 
                     // Set the data pointer to the functions starting memory address.
-                    this.m_DataPointer = _memoryAvailableForFunctions * (instruction - 96); // each function gets a space of 1000 memory slots.
+                    this.m_DataPointer = _functionSize * (instruction - 96); // each function gets a space of 1000 memory slots.
 
                     // Clear function memory.
-                    Array.Clear(this.m_Memory, this.m_DataPointer, _memoryAvailableForFunctions);
+                    Array.Clear(this.m_Memory, this.m_DataPointer, _functionSize);
 
                     // Set the instruction pointer to the beginning of the function.
                     this.m_InstructionPointer = m_Functions[instruction];
@@ -334,7 +341,7 @@ namespace AIProgrammer
                     if (m_FunctionCallStack.Count > 0)
                     {
                         // We're inside a function, but ran out of instructions. Exit the function, but continue.
-                        if (this.m_InstructionSet.TryGetValue('%', out action))
+                        if (this.m_InstructionSet.TryGetValue('@', out action))
                         {
                             action();
                             this.m_InstructionPointer++;
@@ -381,20 +388,13 @@ namespace AIProgrammer
         /// </summary>
         private void ScanFunctions(string source)
         {
-            this.m_InstructionPointer = source.IndexOf('&');
-            while (this.m_InstructionPointer > -1 && this.m_InstructionPointer < source.Length && !m_Stop)
+            this.m_InstructionPointer = source.IndexOf('@');
+            while (this.m_InstructionPointer > -1 && this.m_InstructionPointer < source.Length - 1 && !m_Stop)
             {
-                // Fetch the next instruction
-                char instruction = this.m_Source[this.m_InstructionPointer];
+                // Store the function.
+                m_Functions.Add(m_NextFunctionCharacter++, this.m_InstructionPointer);
 
-                Action action;
-                if (this.m_InstructionSet.TryGetValue(instruction, out action))
-                {
-                    // Store the function.
-                    action();
-                }
-
-                this.m_InstructionPointer = source.IndexOf('&', this.m_InstructionPointer + 1);
+                this.m_InstructionPointer = source.IndexOf('@', this.m_InstructionPointer + 1);
             }
 
             this.m_InstructionPointer = 0;

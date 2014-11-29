@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="CommonManager.cs" />
     <Compile Include="GAManager.cs" />
+    <Compile Include="LogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

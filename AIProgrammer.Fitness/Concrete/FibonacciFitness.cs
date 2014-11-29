@@ -16,14 +16,15 @@ namespace AIProgrammer.Fitness.Concrete
     {
         private int _trainingCount;
         private int _maxDigits; // number of fibonacci numbers to calculate.
+        private static int _functionCount; // number of functions in the appeneded code.
 
         /// <summary>
         /// Previously generated BrainPlus function for addition. Generated using AddFitness.
         /// To use, set _appendCode = FibonacciFitness.FibonacciFunctions in main program.
         /// </summary>
-        public static string FibonacciFunctions = "&,>,-[-<+>]<+.%";
+        public static string FibonacciFunctions = ",>,-[-<+>]<+.$@";
 
-        public FibonacciFitness(GA ga, int maxIterationCount, int maxDigits = 3, int maxTrainingCount = 2, string appendFunctions = null)
+        public FibonacciFitness(GA ga, int maxIterationCount, int maxDigits = 3, int maxTrainingCount = 3, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
         {
             _maxDigits = maxDigits;
@@ -32,6 +33,7 @@ namespace AIProgrammer.Fitness.Concrete
             if (_targetFitness == 0)
             {
                 _targetFitness = _trainingCount * 256 * _maxDigits;
+                _functionCount = CommonManager.GetFunctionCount(appendFunctions);
             }
         }
 
@@ -49,11 +51,9 @@ namespace AIProgrammer.Fitness.Concrete
             {
                 switch (i)
                 {
-                    case 0: input1 = 1; input2 = 1; break;
-                    case 1: input1 = 1; input2 = 2; break;
-                    case 2: input1 = 2; input2 = 3; break;
-                    case 3: input1 = 3; input2 = 5; break;
-                    case 4: input1 = 5; input2 = 8; break;
+                    case 0: input1 = 1; input2 = 2; break;
+                    case 1: input1 = 3; input2 = 5; break;
+                    case 2: input1 = 8; input2 = 13; break;
                 };
 
                 try
@@ -78,9 +78,9 @@ namespace AIProgrammer.Fitness.Concrete
                         else
                         {
                             // Not ready for input.
-                            //penalty++;
+                            penalty++;
 
-                            return 255;
+                            return 0;
                         }
                     },
                     (b) =>
@@ -90,11 +90,13 @@ namespace AIProgrammer.Fitness.Concrete
                             // Not ready for output.
                             penalty++;
                         }
+                        else
+                        {
+                            _console.Append(b);
+                            _console.Append(",");
 
-                        _console.Append(b);
-                        _console.Append(",");
-
-                        digits.Add(b);
+                            digits.Add(b);
+                        }
                     });
                     _bf.Run(_maxIterationCount);
                 }
@@ -129,6 +131,18 @@ namespace AIProgrammer.Fitness.Concrete
 
                 // Bonus for less operations to optimize the code.
                 countBonus += ((_maxIterationCount - _bf.m_Ticks) / 1000.0);
+
+                // Bonus for using functions.
+                if (_functionCount > 0)
+                {
+                    for (char functionName = 'a'; functionName < 'a' + _functionCount; functionName++)
+                    {
+                        if (program.Contains(functionName))
+                        {
+                            countBonus += 25;
+                        }
+                    }
+                }
 
                 Ticks += _bf.m_Ticks;
             }

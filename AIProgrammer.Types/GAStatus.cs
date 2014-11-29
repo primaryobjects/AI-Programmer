@@ -29,6 +29,10 @@ namespace AIProgrammer.Types
         /// </summary>
         public int Iteration = 0;
         /// <summary>
+        /// Count of status prompts.
+        /// </summary>
+        public int StatusCount = 0;
+        /// <summary>
         /// Number of instructions executed by the best program.
         /// </summary>
         public int Ticks = 0;

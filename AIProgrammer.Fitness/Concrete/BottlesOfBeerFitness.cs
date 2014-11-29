@@ -27,7 +27,7 @@ namespace AIProgrammer.Fitness.Concrete
         /// Previously generated BrainPlus functions for outputting the terms: bottles,of,beer,on,the,wall,bottles of beer,on the wall. The last two functions call sub-functions themselves. Generated using StrictStringFitness with StringFunction.
         /// To use, set _appendCode = BottlesOfBeerFitness.BottlesOfBeerFunctions in main program.
         /// </summary>
-        public static string BottlesOfBeerFunctions = "&6++.+++++++++++++[.+++[++..--------.-------.++++++++++++++.-%&[]7[[-.---------.%&6++.+++..7++.%&+8[+7-.-.%&6+t+++i++[++-+[+++++[+++++++.-----[-[--[--[--.[-+----+.%&7++++++[+.------[--------[--------.+++++++-+++++..%&1+++++++++++++>a---<+++.>.---------.<.c%&d2.e2.f%";
+        public static string BottlesOfBeerFunctions = "6++.+++++++++++++[.+++[++..--------.-------.++++++++++++++.-@[]7[[-.---------.@6++.+++..7++.@+8[+7-.-.@6+t+++i++[++-+[+++++[+++++++.-----[-[--[--[--.[-+----+.@7++++++[+.------[--------[--------.+++++++-+++++..@1+++++++++++++>a---<+++.>.---------.<.c@d2.e2.f@";
 
         public BottlesOfBeerFitness(GA ga, int maxIterationCount, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
