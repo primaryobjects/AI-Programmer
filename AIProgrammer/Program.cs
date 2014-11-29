@@ -75,7 +75,7 @@ namespace AIProgrammer
             {
                 _bestStatus.Iteration = 0;
                 Console.WriteLine("Best Fitness: " + _bestStatus.TrueFitness + "/" + _targetParams.TargetFitness + " " + Math.Round(_bestStatus.TrueFitness / _targetParams.TargetFitness * 100, 2) + "%, Ticks: " + _bestStatus.Ticks + ", Running: " + Math.Round((DateTime.Now - _startTime).TotalMinutes) + "m, Best Output: " + _bestStatus.Output + ", Changed: " + _bestStatus.LastChangeDate.ToString() + ", Program: " + _bestStatus.Program);
-
+                
                 ga.Save("my-genetic-algorithm.dat");
             }
         }
@@ -137,7 +137,7 @@ namespace AIProgrammer
             // Append any functions.
             if (!string.IsNullOrEmpty(_appendCode))
             {
-                program += "!" + _appendCode;
+                program += "@" + _appendCode;
             }
 
             // Display the final program.
