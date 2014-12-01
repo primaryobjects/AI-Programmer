@@ -10,29 +10,26 @@ using System.Threading.Tasks;
 namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
-    /// Calculates the Fibonacci sequence, starting at input1, input2.
+    /// Calculates input * 2. Example: 3 => 6, 5 => 10, etc. Input and output is a byte value (not ASCII character).
     /// </summary>
-    public class FibonacciFitness : FitnessBase
+    public class TimesTwoFitness : FitnessBase
     {
         private int _trainingCount;
-        private int _maxDigits; // number of fibonacci numbers to calculate.
         private static int _functionCount; // number of functions in the appeneded code.
 
         /// <summary>
         /// Previously generated BrainPlus function for addition. Generated using AddFitness.
-        /// To use, set _appendCode = FibonacciFitness.FibonacciFunctions in main program.
+        /// To use, set _appendCode = DoubleFitness.AddFunction in main program.
         /// </summary>
-        public static string FibonacciFunctions = ",>,-[-<+>]<+.$@";
+        public static string AddFunction = ",>,-[-<+>]<+.$@";
 
-        public FibonacciFitness(GA ga, int maxIterationCount, int maxDigits = 4, int maxTrainingCount = 3, string appendFunctions = null)
+        public TimesTwoFitness(GA ga, int maxIterationCount, int maxTrainingCount = 2, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
         {
-            _maxDigits = maxDigits;
             _trainingCount = maxTrainingCount;
-
             if (_targetFitness == 0)
             {
-                _targetFitness = _trainingCount * 256 * _maxDigits;
+                _targetFitness = _trainingCount * 256;
                 _functionCount = CommonManager.GetFunctionCount(appendFunctions);
             }
         }
@@ -41,26 +38,26 @@ namespace AIProgrammer.Fitness.Concrete
 
         protected override double GetFitnessMethod(string program)
         {
-            byte input1 = 0, input2 = 0;
+            byte input1 = 0;
             int state = 0;
             double countBonus = 0;
             double penalty = 0;
-            List<byte> digits = new List<byte>();
+            byte result = 0;
 
             for (int i = 0; i < _trainingCount; i++)
             {
                 switch (i)
                 {
-                    case 0: input1 = 1; input2 = 2; break;
-                    case 1: input1 = 3; input2 = 5; break;
-                    case 2: input1 = 8; input2 = 13; break;
+                    case 0: input1 = 4; break;
+                    case 1: input1 = 5; break;
+                    case 2: input1 = 8; break;
                 };
 
                 try
                 {
                     state = 0;
                     _console.Clear();
-                    digits.Clear();
+                    result = 0;
 
                     // Run the program.
                     _bf = new Interpreter(program, () =>
@@ -69,11 +66,6 @@ namespace AIProgrammer.Fitness.Concrete
                         {
                             state++;
                             return input1;
-                        }
-                        else if (state == 1)
-                        {
-                            state++;
-                            return input2;
                         }
                         else
                         {
@@ -85,17 +77,18 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        if (state < 2)
-                        {
-                            // Not ready for output.
-                            penalty++;
-                        }
-                        else
+                        if (state == 1)
                         {
                             _console.Append(b);
                             _console.Append(",");
 
-                            digits.Add(b);
+                            result = b;
+                            state++;
+                        }
+                        else
+                        {
+                            // Not ready for output.
+                            //penalty = 1;
                         }
                     });
                     _bf.Run(_maxIterationCount);
@@ -104,23 +97,13 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                 }
 
-                _output.Append(_console.ToString());
-                _output.Append("|");
-
-                // 0,1,1,2,3,5,8,13,21,34,55,89,144,233. Starting at 3 and verifying 10 digits.
-                int index = 0;
-                int targetValue = input1 + input2; // 1 + 2 = 3
-                int lastValue = input2; // 2
-                foreach (byte digit in digits)
+                // Order bonus.
+                if (_console.Length > 0)
                 {
-                    Fitness += 256 - Math.Abs(digit - targetValue);
+                    _output.Append(_console.ToString());
+                    _output.Append("|");
 
-                    int temp = lastValue; // 2
-                    lastValue = targetValue; // 3
-                    targetValue += temp; // 3 + 2 = 5
-
-                    if (++index >= _maxDigits)
-                        break;
+                    Fitness += 256 - Math.Abs(result - (input1 + input1));
                 }
 
                 // Make the AI wait until a solution is found without the penalty (too many input characters).
@@ -189,7 +172,7 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        Console.Write(b + ",");
+                        Console.Write(b);
                     });
 
                     bf.Run(_maxIterationCount);
@@ -202,7 +185,7 @@ namespace AIProgrammer.Fitness.Concrete
 
         public override string GetConstructorParameters()
         {
-            return _maxIterationCount + ", " + _maxDigits + ", " + _trainingCount;
+            return _maxIterationCount + ", " + _trainingCount;
         }
 
         #endregion

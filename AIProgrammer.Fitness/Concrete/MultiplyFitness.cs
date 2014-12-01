@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AIProgrammer.Fitness.Concrete.Research
+namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
     /// Calculates the product of various input integers and outputs the result as byte values (ie., 3 => 3, you would need to do a ToString() to display it on the console).
@@ -16,14 +16,22 @@ namespace AIProgrammer.Fitness.Concrete.Research
     public class MultiplyFitness : FitnessBase
     {
         private int _trainingCount;
+        private static int _functionCount; // number of functions in the appeneded code.
 
-        public MultiplyFitness(GA ga, int maxIterationCount, int maxTrainingCount = 4)
-            : base(ga, maxIterationCount)
+        /// <summary>
+        /// Previously generated BrainPlus function for addition. Generated using AddFitness.
+        /// To use, set _appendCode = MultiplyFitness.AddFunction in main program.
+        /// </summary>
+        public static string AddFunction = ",>,-[-<+>]<+.$@";
+
+        public MultiplyFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3, string appendFunctions = null)
+            : base(ga, maxIterationCount, appendFunctions)
         {
             _trainingCount = maxTrainingCount;
             if (_targetFitness == 0)
             {
                 _targetFitness = _trainingCount * 256;
+                _functionCount = CommonManager.GetFunctionCount(appendFunctions);
             }
         }
 
@@ -34,22 +42,25 @@ namespace AIProgrammer.Fitness.Concrete.Research
             byte input1 = 0, input2 = 0;
             int state = 0;
             double countBonus = 0;
+            double penalty = 0;
+            byte result = 0;
 
             for (int i = 0; i < _trainingCount; i++)
             {
                 switch (i)
                 {
-                    case 0: input1 = 2; input2 = 1; break;
-                    case 1: input1 = 4; input2 = 2; break;
-                    case 2: input1 = 5; input2 = 3; break;
-                    case 3: input1 = 6; input2 = 3; break;
-                    case 4: input1 = 7; input2 = 2; break;
+                    //case 0: input1 = 2; input2 = 1; break;
+                    case 0: input1 = 4; input2 = 2; break;
+                    case 1: input1 = 5; input2 = 3; break;
+                    case 2: input1 = 6; input2 = 4; break;
+                    //case 4: input1 = 7; input2 = 2; break;
                 };
 
                 try
                 {
                     state = 0;
                     _console.Clear();
+                    result = 0;
 
                     // Run the program.
                     _bf = new Interpreter(program, () =>
@@ -66,12 +77,27 @@ namespace AIProgrammer.Fitness.Concrete.Research
                         }
                         else
                         {
+                            // Not ready for input.
+                            penalty++;
+
                             return 0;
                         }
                     },
                     (b) =>
                     {
-                        _console.Append(b.ToString());
+                        if (state < 2)
+                        {
+                            // Not ready for output.
+                            penalty++;
+                        }
+                        else if (state == 2)
+                        {
+                            _console.Append(b);
+                            _console.Append(",");
+
+                            result = b;
+                            state++;
+                        }
                     });
                     _bf.Run(_maxIterationCount);
                 }
@@ -83,20 +109,31 @@ namespace AIProgrammer.Fitness.Concrete.Research
                 if (_console.Length > 0)
                 {
                     _output.Append(_console.ToString());
-                    _output.Append(",");
+                    _output.Append("|");
 
-                    int value;
-                    if (Int32.TryParse(_console.ToString(), out value))
-                    {
-                        Fitness += 256 - Math.Abs(value - (input1 * input2));
-                    }
+                    Fitness += 256 - Math.Abs(result - (input1 * input2));
                 }
+
+                // Make the AI wait until a solution is found without the penalty (too many input characters).
+                Fitness -= penalty;
 
                 // Check for solution.
                 IsFitnessAchieved();
 
                 // Bonus for less operations to optimize the code.
                 countBonus += ((_maxIterationCount - _bf.m_Ticks) / 1000.0);
+
+                // Bonus for using functions.
+                if (_functionCount > 0)
+                {
+                    for (char functionName = 'a'; functionName < 'a' + _functionCount; functionName++)
+                    {
+                        if (program.Contains(functionName))
+                        {
+                            countBonus += 25;
+                        }
+                    }
+                }
 
                 Ticks += _bf.m_Ticks;
             }
@@ -143,7 +180,7 @@ namespace AIProgrammer.Fitness.Concrete.Research
                     },
                     (b) =>
                     {
-                        Console.Write(b.ToString());
+                        Console.Write(b);
                     });
 
                     bf.Run(_maxIterationCount);
