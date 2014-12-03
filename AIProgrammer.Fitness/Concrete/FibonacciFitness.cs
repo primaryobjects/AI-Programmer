@@ -137,7 +137,7 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                     for (char functionName = 'a'; functionName < 'a' + _functionCount; functionName++)
                     {
-                        if (program.Contains(functionName))
+                        if (MainProgram.Contains(functionName))
                         {
                             countBonus += 25;
                         }

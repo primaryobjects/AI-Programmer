@@ -134,14 +134,31 @@ namespace AIProgrammer.Types
                         // Set random bit at mutation index.
                         m_genes[mutationIndex] = m_random.NextDouble();
 
-                        // Bump bits up by 1.
-                        for (int i = mutationIndex + 1; i < m_length; i++)
+                        // Bump bits up or down by 1.
+                        bool up = m_random.NextDouble() >= 0.5;
+                        if (up)
                         {
-                            double nextShiftBit = m_genes[i];
+                            // Bump bits up by 1.
+                            for (int i = mutationIndex + 1; i < m_length; i++)
+                            {
+                                double nextShiftBit = m_genes[i];
 
-                            m_genes[i] = shiftBit;
+                                m_genes[i] = shiftBit;
 
-                            shiftBit = nextShiftBit;
+                                shiftBit = nextShiftBit;
+                            }
+                        }
+                        else
+                        {
+                            // Bump bits down by 1.
+                            for (int i = mutationIndex - 1; i >= 0; i--)
+                            {
+                                double nextShiftBit = m_genes[i];
+
+                                m_genes[i] = shiftBit;
+
+                                shiftBit = nextShiftBit;
+                            }
                         }
                     }
                     else if (r <= 0.666)
@@ -150,14 +167,30 @@ namespace AIProgrammer.Types
                         // Get deletion index.
                         int mutationIndex = pos;
 
-                        // Bump bits down by 1.
-                        for (int i = mutationIndex; i < m_length - 1; i++)
+                        // Bump bits up or down by 1.
+                        bool up = m_random.NextDouble() >= 0.5;
+                        if (up)
                         {
-                            m_genes[i] = m_genes[i + 1];
-                        }
+                            // Bump bits up by 1.
+                            for (int i = mutationIndex; i > 0; i--)
+                            {
+                                m_genes[i] = m_genes[i - 1];
+                            }
 
-                        // Add a new mutation bit at end of genome to replace the deleted one.
-                        m_genes[m_length - 1] = m_random.NextDouble();
+                            // Add a new mutation bit at front of genome to replace the deleted one.
+                            m_genes[0] = m_random.NextDouble();
+                        }
+                        else
+                        {
+                            // Bump bits down by 1.
+                            for (int i = mutationIndex; i < m_length - 1; i++)
+                            {
+                                m_genes[i] = m_genes[i + 1];
+                            }
+
+                            // Add a new mutation bit at end of genome to replace the deleted one.
+                            m_genes[m_length - 1] = m_random.NextDouble();
+                        }
                     }
                     else
                     {

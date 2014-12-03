@@ -23,7 +23,7 @@ namespace AIProgrammer.Fitness.Concrete
         /// </summary>
         public static string AddFunction = ",>,-[-<+>]<+.$@";
 
-        public TimesTwoFitness(GA ga, int maxIterationCount, int maxTrainingCount = 2, string appendFunctions = null)
+        public TimesTwoFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
         {
             _trainingCount = maxTrainingCount;
@@ -120,7 +120,7 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                     for (char functionName = 'a'; functionName < 'a' + _functionCount; functionName++)
                     {
-                        if (program.Contains(functionName))
+                        if (MainProgram.Contains(functionName))
                         {
                             countBonus += 25;
                         }

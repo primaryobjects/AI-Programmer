@@ -12,6 +12,7 @@ namespace AIProgrammer.Fitness.Base
     public abstract class FitnessBase : IFitness
     {
         public string Program { get; set; } // Brainfuck source code.
+        public string MainProgram { get; set; } // Main program Brainfuck source code (not including any appended functions).
         public string Output { get; set; } // Program execution output.
         public double Fitness { get; set; } // Fitness used for determining solution fitness (ie., true fitness).
         public double TargetFitness { get { return _targetFitness; } } // Target fitness to achieve solution.
@@ -66,8 +67,8 @@ namespace AIProgrammer.Fitness.Base
         public double GetFitness(double[] weights)
         {
             // Get the resulting Brainfuck program.
-            Program = CommonManager.ConvertDoubleArrayToBF(weights);
-            
+            MainProgram = Program = CommonManager.ConvertDoubleArrayToBF(weights);
+
             // Append any functions to the program.
             if (_appendFunctions != null)
             {

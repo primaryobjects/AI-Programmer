@@ -19,10 +19,10 @@ namespace AIProgrammer.Fitness.Concrete
         private static int _functionCount; // number of functions in the appeneded code.
 
         /// <summary>
-        /// Previously generated BrainPlus function for addition. Generated using AddFitness.
+        /// Previously generated BrainPlus function for times two (input * 2). Generated using TimesTwoFitness.
         /// To use, set _appendCode = MultiplyFitness.AddFunction in main program.
         /// </summary>
-        public static string AddFunction = ",>,-[-<+>]<+.$@";
+        public static string AddFunction = ",>,-[-<+>]<+$@";
 
         public MultiplyFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
@@ -49,11 +49,11 @@ namespace AIProgrammer.Fitness.Concrete
             {
                 switch (i)
                 {
-                    //case 0: input1 = 2; input2 = 1; break;
                     case 0: input1 = 4; input2 = 2; break;
-                    case 1: input1 = 5; input2 = 3; break;
-                    case 2: input1 = 6; input2 = 4; break;
-                    //case 4: input1 = 7; input2 = 2; break;
+                    case 1: input1 = 5; input2 = 4; break;
+                    case 2: input1 = 8; input2 = 3; break;
+                    case 3: input1 = 3; input2 = 9; break;
+                    case 4: input1 = 7; input2 = 2; break;
                 };
 
                 try
@@ -85,18 +85,18 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        if (state < 2)
-                        {
-                            // Not ready for output.
-                            penalty++;
-                        }
-                        else if (state == 2)
+                        if (state == 2)
                         {
                             _console.Append(b);
                             _console.Append(",");
 
                             result = b;
                             state++;
+                        }
+                        else
+                        {
+                            // Not ready for output.
+                            //penalty = 1;
                         }
                     });
                     _bf.Run(_maxIterationCount);
@@ -121,14 +121,14 @@ namespace AIProgrammer.Fitness.Concrete
                 IsFitnessAchieved();
 
                 // Bonus for less operations to optimize the code.
-                countBonus += ((_maxIterationCount - _bf.m_Ticks) / 1000.0);
+                //countBonus += ((_maxIterationCount - _bf.m_Ticks) / 1000.0);
 
                 // Bonus for using functions.
                 if (_functionCount > 0)
                 {
                     for (char functionName = 'a'; functionName < 'a' + _functionCount; functionName++)
                     {
-                        if (program.Contains(functionName))
+                        if (MainProgram.Contains(functionName))
                         {
                             countBonus += 25;
                         }
