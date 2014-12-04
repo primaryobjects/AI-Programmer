@@ -258,8 +258,8 @@ namespace AIProgrammer
                     this.m_Stop = true;
                 }
             });
-            this.m_InstructionSet.Add('$', () => { this.m_Storage = this.m_Memory[this.m_DataPointer]; });
-            this.m_InstructionSet.Add('!', () => { this.m_Memory[this.m_DataPointer] = this.m_Storage; });
+            this.m_InstructionSet.Add('$', () => { if (!m_ExitLoop) this.m_Storage = this.m_Memory[this.m_DataPointer]; });
+            this.m_InstructionSet.Add('!', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = this.m_Storage; });
 
             // Scan code for function definitions and store their starting memory addresses.
             ScanFunctions(programCode);
@@ -270,26 +270,29 @@ namespace AIProgrammer
                 char instruction = inst; // closure
                 this.m_InstructionSet.Add(instruction, () =>
                 {
-                    // Store the current instruction pointer and data pointer before we move to the function.
-                    var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, FunctionInputPointer = this.m_FunctionInputPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, ExitLoopInstructionPointer = this.m_ExitLoopInstructionPointer, Ticks = this.m_Ticks };
-                    this.m_FunctionCallStack.Push(functionCallObj);
+                    if (!m_ExitLoop)
+                    {
+                        // Store the current instruction pointer and data pointer before we move to the function.
+                        var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, FunctionInputPointer = this.m_FunctionInputPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, ExitLoopInstructionPointer = this.m_ExitLoopInstructionPointer, Ticks = this.m_Ticks };
+                        this.m_FunctionCallStack.Push(functionCallObj);
 
-                    // Give the function a fresh call stack.
-                    this.m_CurrentCallStack = new Stack<int>();
-                    this.m_ExitLoop = false;
-                    this.m_ExitLoopInstructionPointer = 0;
+                        // Give the function a fresh call stack.
+                        this.m_CurrentCallStack = new Stack<int>();
+                        this.m_ExitLoop = false;
+                        this.m_ExitLoopInstructionPointer = 0;
 
-                    // Set the function input pointer to the parent's starting memory. Calls for input (,) from within the function will read from parent's memory, each call advances the parent memory cell that gets read from. This allows passing multiple values to a function.
-                    this.m_FunctionInputPointer = this.m_DataPointer;
+                        // Set the function input pointer to the parent's starting memory. Calls for input (,) from within the function will read from parent's memory, each call advances the parent memory cell that gets read from. This allows passing multiple values to a function.
+                        this.m_FunctionInputPointer = this.m_DataPointer;
 
-                    // Set the data pointer to the functions starting memory address.
-                    this.m_DataPointer = _functionSize * (instruction - 96); // each function gets a space of 1000 memory slots.
+                        // Set the data pointer to the functions starting memory address.
+                        this.m_DataPointer = _functionSize * (instruction - 96); // each function gets a space of 1000 memory slots.
 
-                    // Clear function memory.
-                    Array.Clear(this.m_Memory, this.m_DataPointer, _functionSize);
+                        // Clear function memory.
+                        Array.Clear(this.m_Memory, this.m_DataPointer, _functionSize);
 
-                    // Set the instruction pointer to the beginning of the function.
-                    this.m_InstructionPointer = m_Functions[instruction];
+                        // Set the instruction pointer to the beginning of the function.
+                        this.m_InstructionPointer = m_Functions[instruction];
+                    }
                 });
             }
         }
