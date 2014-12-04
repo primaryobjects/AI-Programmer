@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
-    /// Calculates input * 2. Example: 3 => 6, 5 => 10, etc. Input and output is a byte value (not ASCII character).
+    /// Calculates input * 3. Input and output is a byte value (not ASCII character).
     /// </summary>
-    public class TimesTwoFitness : FitnessBase
+    public class TimesThreeFitness : FitnessBase
     {
         private int _trainingCount;
         private static int _functionCount; // number of functions in the appeneded code.
@@ -21,9 +21,9 @@ namespace AIProgrammer.Fitness.Concrete
         /// Previously generated BrainPlus function for addition. Generated using AddFitness.
         /// To use, set _appendCode = DoubleFitness.AddFunction in main program.
         /// </summary>
-        public static string AddFunction = ",>,-[-<+>]<+.$@";
+        public static string AddFunction = ",>,-[-<+>]<+$@!>>>><c$,[$<!a[+!],$,[.,<[,<-]$@";
 
-        public TimesTwoFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3, string appendFunctions = null)
+        public TimesThreeFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
         {
             _trainingCount = maxTrainingCount;
@@ -103,7 +103,7 @@ namespace AIProgrammer.Fitness.Concrete
                     _output.Append(_console.ToString());
                     _output.Append("|");
 
-                    Fitness += 256 - Math.Abs(result - (input1 + input1));
+                    Fitness += 256 - Math.Abs(result - (input1 + input1 + input1));
                 }
 
                 // Make the AI wait until a solution is found without the penalty (too many input characters).
