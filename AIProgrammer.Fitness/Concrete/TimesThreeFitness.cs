@@ -18,10 +18,10 @@ namespace AIProgrammer.Fitness.Concrete
         private static int _functionCount; // number of functions in the appeneded code.
 
         /// <summary>
-        /// Previously generated BrainPlus function for addition. Generated using AddFitness.
-        /// To use, set _appendCode = DoubleFitness.AddFunction in main program.
+        /// Previously generated BrainPlus function for addition (a) and times two (b). Generated using AddFitness and TimesTwoFitness. Replaced first . with $ and trimmed remaining instructions.
+        /// To use, set _appendCode = TimesThreeFitness.Functions in main program.
         /// </summary>
-        public static string AddFunction = ",>,-[-<+>]<+$@!>>>><c$,[$<!a[+!],$,[.,<[,<-]$@";
+        public static string Functions = ",>,-[-<+>]<+$@++[+[>,$[-<-a!a!$@";
 
         public TimesThreeFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
