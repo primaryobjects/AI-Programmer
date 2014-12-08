@@ -150,6 +150,11 @@ namespace AIProgrammer
         public int m_CurrentInstructionPointer { get { return m_InstructionPointer; } }
 
         /// <summary>
+        /// List of executed functions in the main program. Used for reference purposes by the GA to determine which functions were executed in the program (not functions calling other functions).
+        /// </summary>
+        public HashSet<char> m_ExecutedFunctions = new HashSet<char>();
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="programCode"></param>
@@ -272,6 +277,12 @@ namespace AIProgrammer
                 {
                     if (!m_ExitLoop)
                     {
+                        // Record a list of executed function names from the main program (not a function calling another function).
+                        if (m_FunctionCallStack.Count == 0)
+                        {
+                            m_ExecutedFunctions.Add(instruction);
+                        }
+
                         // Store the current instruction pointer and data pointer before we move to the function.
                         var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, FunctionInputPointer = this.m_FunctionInputPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, ExitLoopInstructionPointer = this.m_ExitLoopInstructionPointer, Ticks = this.m_Ticks };
                         this.m_FunctionCallStack.Push(functionCallObj);

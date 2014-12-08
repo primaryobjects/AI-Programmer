@@ -51,6 +51,8 @@ namespace AIProgrammer.Fitness.Concrete
                     case 0: input1 = 4; break;
                     case 1: input1 = 5; break;
                     case 2: input1 = 8; break;
+                    case 3: input1 = 15; break;
+                    case 4: input1 = 50; break;
                 };
 
                 try
@@ -115,17 +117,8 @@ namespace AIProgrammer.Fitness.Concrete
                 // Bonus for less operations to optimize the code.
                 countBonus += ((_maxIterationCount - _bf.m_Ticks) / 1000.0);
 
-                // Bonus for using functions.
-                if (_functionCount > 0)
-                {
-                    for (char functionName = 'a'; functionName < 'a' + _functionCount; functionName++)
-                    {
-                        if (MainProgram.Contains(functionName))
-                        {
-                            countBonus += 25;
-                        }
-                    }
-                }
+                // Bonus for executing functions.
+                countBonus += _bf.m_ExecutedFunctions.Count * 25;
 
                 Ticks += _bf.m_Ticks;
             }
