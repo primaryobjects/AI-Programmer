@@ -19,10 +19,10 @@ namespace AIProgrammer.Fitness.Concrete
         private static int _functionCount; // number of functions in the appeneded code.
 
         /// <summary>
-        /// Previously generated BrainPlus function for addition (a) and times two (b). Generated using AddFitness and TimesTwoFitness.
+        /// Previously generated BrainPlus function for addition (a) and times two (b). Generated using AddFitness and TimesTwoFitness. Replaced first . with $ and trimmed remaining instructions.
         /// To use, set _appendCode = MultiplyFitness.Functions in main program.
         /// </summary>
-        public static string Functions = ",>,-[-<+>]<+$@!>>>><c$,[$<!a!$@";
+        public static string Functions = ",>,-[-<+>]<+$@++[+[>,$[-<-a!a!$@";
 
         public MultiplyFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
@@ -123,17 +123,8 @@ namespace AIProgrammer.Fitness.Concrete
                 // Bonus for less operations to optimize the code.
                 countBonus += ((_maxIterationCount - _bf.m_Ticks) / 1000.0);
 
-                // Bonus for using functions.
-                if (_functionCount > 0)
-                {
-                    for (char functionName = 'a'; functionName < 'a' + _functionCount; functionName++)
-                    {
-                        if (MainProgram.Contains(functionName))
-                        {
-                            countBonus += 25;
-                        }
-                    }
-                }
+                // Bonus for executing functions.
+                countBonus += _bf.m_ExecutedFunctions.Count * 25;
 
                 Ticks += _bf.m_Ticks;
             }
