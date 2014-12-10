@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AIProgrammer.Fitness.Concrete
+namespace AIProgrammer.Fitness.Concrete.Research
 {
     /// <summary>
     /// Calculates the product of various input integers and outputs the result as byte values (ie., 3 => 3, you would need to do a ToString() to display it on the console).
@@ -22,7 +22,7 @@ namespace AIProgrammer.Fitness.Concrete
         /// Previously generated BrainPlus function for addition (a) and times two (b). Generated using AddFitness and TimesTwoFitness. Replaced first . with $ and trimmed remaining instructions.
         /// To use, set _appendCode = MultiplyFitness.Functions in main program.
         /// </summary>
-        public static string Functions = ",>,-[-<+>]<+$@++[+[>,$[-<-a!a!$@";
+        public static string Functions = ",>,-[-<+>]<+$@++[+[>,$[-<-a!a!$@>->,b<!a+!$@";
 
         public MultiplyFitness(GA ga, int maxIterationCount, int maxTrainingCount = 3, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
@@ -44,16 +44,19 @@ namespace AIProgrammer.Fitness.Concrete
             double countBonus = 0;
             double penalty = 0;
             byte result = 0;
+            HashSet<int> memoryHash = new HashSet<int>();
+            HashSet<int> printCommandHash = new HashSet<int>();
 
             for (int i = 0; i < _trainingCount; i++)
             {
                 switch (i)
                 {
-                    case 0: input1 = 4; input2 = 2; break;
-                    case 1: input1 = 5; input2 = 4; break;
+                    case 0: input1 = 3; input2 = 1; break;
+                    case 1: input1 = 5; input2 = 2; break;
                     case 2: input1 = 8; input2 = 3; break;
-                    case 3: input1 = 3; input2 = 9; break;
-                    case 4: input1 = 7; input2 = 2; break;
+                    case 3: input1 = 9; input2 = 1; break;
+                    case 4: input1 = 4; input2 = 2; break;
+                    case 5: input1 = 6; input2 = 3; break;
                 };
 
                 try
@@ -92,6 +95,16 @@ namespace AIProgrammer.Fitness.Concrete
 
                             result = b;
                             state++;
+
+                            // Record the instruction index being used for this print statement.
+                            if (!printCommandHash.Add(_bf.m_CurrentInstructionPointer))
+                            {
+                                // This is kind of cheating, but we need to force diversity by decoupling the cases. Force them to use unique print statements, not used by any other case.
+                                penalty += 50;
+                            }
+
+                            // This is a valid output character to consider. Record the memory register of where its data is stored.
+                            memoryHash.Add(_bf.m_CurrentDataPointer);
                         }
                         else
                         {
@@ -127,6 +140,12 @@ namespace AIProgrammer.Fitness.Concrete
                 countBonus += _bf.m_ExecutedFunctions.Count * 25;
 
                 Ticks += _bf.m_Ticks;
+            }
+
+            // Give a bonus for using multiple memory registers, supporting diversity.
+            if (memoryHash.Count > 1)
+            {
+                countBonus += memoryHash.Count * 100;
             }
 
             if (_fitness != Double.MaxValue)

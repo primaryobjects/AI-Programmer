@@ -53,7 +53,7 @@
     <Compile Include="Concrete\Research\NumberGuessFitness.cs" />
     <Compile Include="Concrete\ReverseStringFitness.cs" />
     <Compile Include="Concrete\HelloUserFitness.cs" />
-    <Compile Include="Concrete\MultiplyFitness.cs" />
+    <Compile Include="Concrete\Research\MultiplyFitness.cs" />
     <Compile Include="Concrete\StringFitness.cs" />
     <Compile Include="Concrete\StringOptimizedFitness.cs" />
     <Compile Include="Concrete\StringStrictFitness.cs" />
