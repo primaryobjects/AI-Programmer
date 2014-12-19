@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -55,6 +56,10 @@
     <ProjectReference Include="..\AIProgrammer.Fitness\AIProgrammer.Fitness.csproj">
       <Project>{2fa2525f-4faa-45a6-8268-4d561f7c46f9}</Project>
       <Name>AIProgrammer.Fitness</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AIProgrammer.Functions\AIProgrammer.Functions.csproj">
+      <Project>{d1ce7f4d-5142-4fc9-a35b-89f0edaa2936}</Project>
+      <Name>AIProgrammer.Functions</Name>
     </ProjectReference>
     <ProjectReference Include="..\AIProgrammer.GA\AIProgrammer.GeneticAlgorithm.csproj">
       <Project>{8ec97de8-ddfd-437a-b216-91db8d1a3487}</Project>

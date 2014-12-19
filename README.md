@@ -2,26 +2,26 @@ AI-Programmer
 =========
 
 Read the full article at:
-http://www.primaryobjects.com/CMS/Article149.aspx
+http://www.primaryobjects.com/CMS/Article149
  
-AI-Programmer is an experiment with using artificial intelligence and genetic algorithms to automatically generate a program, in the Brainf*** programming language, that writes a specific phrase to the console. In short, it's an AI genetic algorithm implementation with self modifying code.
+AI-Programmer is an experiment with using artificial intelligence and genetic algorithms to automatically generate programs in the Brainf**k programming language. Successfully created programs by the AI include: hello world, hello <name>, addition, subtraction, reversing a string, fibonnaci sequence, 99 bottles of beer on the wall, and more. It's getting smarter. In short, it's an AI genetic algorithm implementation with self modifying code.
 
 ## Motivation
 
 Is it possible for a computer to write its own programs? Need a word processor? Let the computer create one for you. Need a screen capture tool? Let the computer create one for you. Take it a step further, and let the computer create programs that simplify your life, that you didn't even know you needed!
 
-This is the idea behind the AI-Programmer experiment. The goal is to ultimately create a computer program that can write its own computer programs to solve specific computational problems. While the capability of a computer deciding what type of program to write is beyond our current means, we can still have a computer generate programs to solve very specific tasks, such as outputting the text, "Hello World". First, we need to choose a target programming language. For this experiment, we'll choose [Brainf***](http://en.wikipedia.org/wiki/Brainfuck).
+This is the idea behind the AI-Programmer experiment. The goal is to ultimately create a computer program that can write its own computer programs to solve specific computational problems. While the capability of a computer deciding what type of program to write is beyond our current means, we can still have a computer generate programs to solve very specific tasks, such as outputting the text, "Hello World". First, we need to choose a target programming language. For this experiment, we'll choose [Brainf**k](http://en.wikipedia.org/wiki/Brainfuck).
 
 ## Details
 
-The Brainf*** programming language was selected due to the fact that it consists of only 8 instructions, while being Turing complete. Theoretically, it is capable of solving any computational problem. This makes it easy to develop an interpreter, capable of running the AI-generated programs in a simulated environment. In this manner, each generated program may be executed and its performance ranked as a fitness score. Since the AI is using a Turing complete programming language, the AI itself, is also theoretically capable of solving any computational problem. However, for this experiment, the AI will focus on outputting a simple string to the console.
+The Brainf**k programming language was selected due to the fact that it consists of only 8 instructions, while being Turing complete. Theoretically, it is capable of solving any computational problem. This makes it easy to develop an interpreter, capable of running the AI-generated programs in a simulated environment. In this manner, each generated program may be executed and its performance ranked as a fitness score. Since the AI is using a Turing complete programming language, the AI itself, is also theoretically capable of solving any computational problem. However, for this experiment, the AI will focus on outputting a simple string to the console.
 
 ## How It Works
 
 AI-Programmer works as follows:
 
 - A genome consists of an array of doubles.
-- Each gene corresponds to an instruction in the Brainf*** programming language.
+- Each gene corresponds to an instruction in the Brainf**k programming language.
 - Start with a population of random genomes.
 - Decode each genome into a resulting program by converting each double into its corresponding instruction and execute the program.
 - Get each program's fitness score, based upon the output it writes to the console (if any), and rank them.
@@ -30,7 +30,7 @@ AI-Programmer works as follows:
 
 ## The Fitness Method
 
-The fitness method works by scoring the output of the generated program. The score is calculated by looking at each character ouput by the program and subtracting its value from the desired character:
+The fitness method works by scoring the output of the generated program. The score is calculated by looking at each character output by the program and subtracting its value from the desired character:
 
 ```
 fitness += 256 - Math.Abs(console[i] - targetString[i]);
@@ -63,7 +63,7 @@ The AI successfully wrote a program to output "hi" after 5,700 generations in ab
 
 While the above code contains parsing errors, such as non-matching brackets, our simulation interpreter computes the result up until the program fails, so in the above case, the syntax error (which is later on in the code, after a solution is found) doesn't impact the fitness.
 
-You can try pasting the above code into a Brainf*** [interpreter](http://www.iamcal.com/misc/bf_debug/). Click "Start Debugger", ignore the warnings, then click Run To Breakpoint. Note the output.
+You can try pasting the above code into a Brainf**k [interpreter](http://www.iamcal.com/misc/bf_debug/). Click "Start Debugger", ignore the warnings, then click Run To Breakpoint. Note the output.
 
 If we trim off the excess code, we see the following syntactically-valid code:
 
@@ -99,13 +99,66 @@ The AI successfully wrote a program to output "I love all humans" after 6,057,20
 
 More complex programs could likely be generated while using faster PCs. Next steps include attempting to accept user input and process results.
 
+## Quick-Start Guide to Using the Code
+
+By default, the code is configured to use the Brainf**k Classic instruction set and to write a program to output a string. To change the string that is generated, simply expand the "Private Variables" section and change the text for TargetString to your desired value.
+
+```
+private static TargetParams _targetParams = new TargetParams { TargetString = "hello world" };
+```
+
+To change the type of program that the AI writes, change the fitness method inside GetFitnessMethod().
+
+```
+private static IFitness GetFitnessMethod()
+{
+	return new StringStrictFitness(_ga, _maxIterationCount, _targetParams.TargetString, _appendCode);
+}
+```
+
+You can change this to any class within the AI.Programmer.Fitness/Concrete project. Examples:
+
+```
+return new StringStrictFitness(_ga, _maxIterationCount, _targetParams.TargetString, _appendCode);
+return new AddFitness(_ga, _maxIterationCount);
+return new SubtractFitness(_ga, _maxIterationCount);
+return new ReverseStringFitness(_ga, _maxIterationCount);
+return new HelloUserFitness(_ga, _maxIterationCount, _targetString);
+```
+
+To use sub-routines, you'll need to enable functions. This will let the AI produce programs much faster. Uncomment the code for the functionGenerator, as follows:
+
+```
+private static IFunction _functionGenerator = new StringFunction(() => GetFitnessMethod(), _bestStatus, fitnessFunction, OnGeneration, _crossoverRate, _mutationRate, _genomeSize, _targetParams);
+```
+
+Set the App.config to use BrainPlus, so the AI has access to sub-routine instructions:
+
+```
+<appSettings>
+	<add key="BrainfuckVersion" value="2"/> <!-- 1 = Brainfuck Classic, 2 = BrainPlus (Brainfuck Extended Type 3, Functions, Faster) -->
+</appSettings>
+```
+
+When using sub-routines, less code is required. So, you can use a smaller genomeSize for speed. Expand the Genetic Algorithm Settings section and change the _genomeSize to a smaller value:
+
+```
+private static int _genomeSize = 50;
+```
+
+Experiment and have fun!
+
 ## Author
 
 Kory Becker
-http://www.primaryobjects.com/kory-becker.aspx
+http://www.primaryobjects.com/kory-becker
 
 Read @ Primary Objects
-http://www.primaryobjects.com/CMS/Article149.aspx
+Using Artificial Intelligence to Write Self-Modifying/Improving Programs
+http://www.primaryobjects.com/CMS/Article149
+
+Pushing the Limits of Self-Programming Artificial Intelligence
+http://www.primaryobjects.com/CMS/Article150
 
 View @ GitHub
 https://github.com/primaryobjects/ai-programmer

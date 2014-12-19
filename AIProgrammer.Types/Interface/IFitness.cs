@@ -50,5 +50,10 @@
         /// </summary>
         /// <returns></returns>
         string GetConstructorParameters();
+
+        /// <summary>
+        /// Resets the target fitness to 0.
+        /// </summary>
+        void ResetTargetFitness();
     }
 }

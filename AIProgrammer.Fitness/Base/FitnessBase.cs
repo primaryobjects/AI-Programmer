@@ -12,6 +12,7 @@ namespace AIProgrammer.Fitness.Base
     public abstract class FitnessBase : IFitness
     {
         public string Program { get; set; } // Brainfuck source code.
+        public string MainProgram { get; set; } // Main program Brainfuck source code (not including any appended functions).
         public string Output { get; set; } // Program execution output.
         public double Fitness { get; set; } // Fitness used for determining solution fitness (ie., true fitness).
         public double TargetFitness { get { return _targetFitness; } } // Target fitness to achieve solution.
@@ -20,6 +21,7 @@ namespace AIProgrammer.Fitness.Base
         protected double _fitness = 0; // Total fitness to return to genetic algorithm (may be variable, solution is not based upon this value, just the rank).
         protected static double _targetFitness = 0; // Target fitness to achieve. Static so we only evaluate this once across instantiations of the fitness class.
         protected int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).
+        protected string _appendFunctions = null; // Function code to append to program.
         protected StringBuilder _console = new StringBuilder(); // Used by classes to collect console output.
         protected StringBuilder _output = new StringBuilder(); // Used by classes to collect and concat output for assigning to Output.
         protected Interpreter _bf = null; // Brainfuck interpreter instance
@@ -31,6 +33,12 @@ namespace AIProgrammer.Fitness.Base
             _maxIterationCount = maxIterationCount;
             Output = "";
             Program = "";
+        }
+
+        public FitnessBase(GA ga, int maxIterationCount, string appendFunctions)
+            : this(ga, maxIterationCount)
+        {
+            _appendFunctions = appendFunctions;
         }
 
         protected bool IsFitnessAchieved()
@@ -59,7 +67,13 @@ namespace AIProgrammer.Fitness.Base
         public double GetFitness(double[] weights)
         {
             // Get the resulting Brainfuck program.
-            Program = CommonManager.ConvertDoubleArrayToBF(weights);
+            MainProgram = Program = CommonManager.ConvertDoubleArrayToBF(weights);
+
+            // Append any functions to the program.
+            if (_appendFunctions != null)
+            {
+                Program += "@" + _appendFunctions;
+            }
 
             // Get the fitness.
             double fitness = GetFitnessMethod(Program);
@@ -71,6 +85,11 @@ namespace AIProgrammer.Fitness.Base
             }
 
             return fitness;
+        }
+
+        public void ResetTargetFitness()
+        {
+            _targetFitness = 0;
         }
 
         public string RunProgram(string program)

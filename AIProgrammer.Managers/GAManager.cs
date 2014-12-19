@@ -1,4 +1,5 @@
 ﻿using AIProgrammer.GeneticAlgorithm;
+using AIProgrammer.Types.Interface;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,8 +15,10 @@ namespace AIProgrammer.Managers
         /// Setup the genetic algorithm and run it.
         /// </summary>
         /// <returns>Best brain's output source code</returns>
-        public static string Run(GA ga, GAFunction fitnessFunc, OnGeneration generationFunc, Action setupFunc = null, bool resume = false)
+        public static string Run(IGeneticAlgorithm iga, GAFunction fitnessFunc, OnGeneration generationFunc, Action setupFunc = null, bool resume = false)
         {
+            GA ga = (GA)iga;
+
             if (!resume)
             {
                 if (setupFunc != null)
