@@ -4,24 +4,24 @@ AI-Programmer
 Read the full article at:
 http://www.primaryobjects.com/CMS/Article149
  
-AI-Programmer is an experiment with using artificial intelligence and genetic algorithms to automatically generate programs in the Brainf**k programming language. Successfully created programs by the AI include: hello world, hello <name>, addition, subtraction, reversing a string, fibonnaci sequence, 99 bottles of beer on the wall, and more. It's getting smarter. In short, it's an AI genetic algorithm implementation with self modifying code.
+AI-Programmer is an experiment with using artificial intelligence and genetic algorithms to automatically generate programs in the Brainf**k programming language. Successfully created [programs](https://github.com/primaryobjects/AI-Programmer/tree/master/Results) by the AI include: hello world, hello <name>, addition, subtraction, reversing a string, fibonnaci sequence, 99 bottles of beer on the wall, and more. It's getting smarter. In short, it's an AI genetic algorithm implementation with self modifying code.
 
 ## Motivation
 
 Is it possible for a computer to write its own programs? Need a word processor? Let the computer create one for you. Need a screen capture tool? Let the computer create one for you. Take it a step further, and let the computer create programs that simplify your life, that you didn't even know you needed!
 
-This is the idea behind the AI-Programmer experiment. The goal is to ultimately create a computer program that can write its own computer programs to solve specific computational problems. While the capability of a computer deciding what type of program to write is beyond our current means, we can still have a computer generate programs to solve very specific tasks, such as outputting the text, "Hello World". First, we need to choose a target programming language. For this experiment, we'll choose [Brainf**k](http://en.wikipedia.org/wiki/Brainfuck).
+This is the idea behind the AI-Programmer experiment. The goal is to ultimately create a computer program that can write its own computer programs to solve specific computational problems. While the capability of a computer deciding what type of program to write is beyond our current means, we can still have a computer generate programs to solve very specific tasks, such as outputting the text, "Hello World". First, we need to choose a target programming language. For this experiment, we'll choose [Brainfuck](http://en.wikipedia.org/wiki/Brainfuck) (BF).
 
 ## Details
 
-The Brainf**k programming language was selected due to the fact that it consists of only 8 instructions, while being Turing complete. Theoretically, it is capable of solving any computational problem. This makes it easy to develop an interpreter, capable of running the AI-generated programs in a simulated environment. In this manner, each generated program may be executed and its performance ranked as a fitness score. Since the AI is using a Turing complete programming language, the AI itself, is also theoretically capable of solving any computational problem. However, for this experiment, the AI will focus on outputting a simple string to the console.
+The BF programming language was selected due to the fact that it consists of only 8 instructions, while being Turing complete. Theoretically, it is capable of solving any computational problem. This makes it easy to develop an interpreter, capable of running the AI-generated programs in a simulated environment. In this manner, each generated program may be executed and its performance ranked as a fitness score. Since the AI is using a Turing complete programming language, the AI itself, is also theoretically capable of solving any computational problem. However, for this experiment, the AI will focus on outputting a simple string to the console.
 
 ## How It Works
 
 AI-Programmer works as follows:
 
 - A genome consists of an array of doubles.
-- Each gene corresponds to an instruction in the Brainf**k programming language.
+- Each gene corresponds to an instruction in the BF programming language.
 - Start with a population of random genomes.
 - Decode each genome into a resulting program by converting each double into its corresponding instruction and execute the program.
 - Get each program's fitness score, based upon the output it writes to the console (if any), and rank them.
@@ -51,7 +51,7 @@ fitness += 256 - Math.Abs(console[i] - targetString[i]);
 
 ## Results?
 
-Keep in mind, this is a proof of concept. So far, the program has successfully written several programs in its target programming language. The tests were ran on an Intel Core 2 Quad 2.5GHz.
+Keep in mind, this is a proof of concept. So far, the program has successfully written several programs in its target programming language. You can view screenshots of all the results in the [/Results](https://github.com/primaryobjects/AI-Programmer/tree/master/Results) folder. These tests were ran on an Intel Core 2 Quad 2.5GHz.
 
 ## hi
 
@@ -63,7 +63,7 @@ The AI successfully wrote a program to output "hi" after 5,700 generations in ab
 
 While the above code contains parsing errors, such as non-matching brackets, our simulation interpreter computes the result up until the program fails, so in the above case, the syntax error (which is later on in the code, after a solution is found) doesn't impact the fitness.
 
-You can try pasting the above code into a Brainf**k [interpreter](http://www.iamcal.com/misc/bf_debug/). Click "Start Debugger", ignore the warnings, then click Run To Breakpoint. Note the output.
+You can try pasting the above code into a BF [interpreter](http://www.iamcal.com/misc/bf_debug/). Click "Start Debugger", ignore the warnings, then click Run To Breakpoint. Note the output.
 
 If we trim off the excess code, we see the following syntactically-valid code:
 
@@ -101,7 +101,7 @@ More complex programs could likely be generated while using faster PCs. Next ste
 
 ## Quick-Start Guide to Using the Code
 
-By default, the code is configured to use the Brainf**k Classic instruction set and to write a program to output a string. To change the string that is generated, simply expand the "Private Variables" section and change the text for TargetString to your desired value.
+By default, the code is configured to use the BF Classic instruction set and to write a program to output a string. To change the string that is generated, simply expand the "Private Variables" section and change the text for TargetString to your desired value.
 
 ```
 private static TargetParams _targetParams = new TargetParams { TargetString = "hello world" };
