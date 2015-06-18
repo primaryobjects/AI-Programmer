@@ -160,7 +160,7 @@ http://www.primaryobjects.com/CMS/Article149
 Pushing the Limits of Self-Programming Artificial Intelligence  
 http://www.primaryobjects.com/CMS/Article150
 
-[Self-Programming Artificial Intelligence Learns to Use Functions  
+Self-Programming Artificial Intelligence Learns to Use Functions  
 http://www.primaryobjects.com/CMS/Article163
 
 View @ GitHub
