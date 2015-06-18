@@ -153,7 +153,7 @@ Experiment and have fun!
 Kory Becker
 http://www.primaryobjects.com/kory-becker
 
-Read @ Primary Objects
+Read @ Primary Objects  
 Using Artificial Intelligence to Write Self-Modifying/Improving Programs  
 http://www.primaryobjects.com/CMS/Article149
 
