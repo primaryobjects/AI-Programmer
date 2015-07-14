@@ -11,6 +11,16 @@ namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
     /// Calculates the Fibonacci sequence, starting at input1, input2.
+    /// Usage:
+    /// In App.config:
+    /// <add key="BrainfuckVersion" value="2"/>
+    /// In Program.cs set:
+    /// private static string _appendCode = FibonacciFitness.FibonacciFunctions;
+    /// ...
+    /// private static IFitness GetFitnessMethod()
+    /// {
+    ///    return new FibonacciFitness(_ga, _maxIterationCount, 4, 3, _appendCode);
+    /// }
     /// </summary>
     public class FibonacciFitness : FitnessBase
     {

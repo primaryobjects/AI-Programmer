@@ -15,6 +15,17 @@ namespace AIProgrammer.Fitness.Concrete
     /// Example: input = 5: 5 bottles of beer on the wall4 bottles of beer on the wall3 bottles of beer on the wall2 bottles of beer on the wall1 bottles of beer on the wall0 bottles of beer on the wall
     /// Note, the final output will be in byte format (including text, ie. 98 = 'b'). To display the output for humans, we have to convert the text byte values to char and leave the numbers as byte. This will correctly display 598498398 as 5b4b3b, since (char)98 = 'b'.
     /// This class is best used with the BottlesOfBeerFunctions for appended code.
+    /// Usage:
+    /// In App.config:
+    /// <add key="BrainfuckVersion" value="2"/>
+    /// In Program.cs set:
+    /// private static string _appendCode = BottlesOfBeerFitness.BottlesOfBeerFunctions;
+    /// private static int _genomeSize = 30;
+    /// ...
+    /// private static IFitness GetFitnessMethod()
+    /// {
+    ///    return new BottlesOfBeerFitness(_ga, _maxIterationCount, _appendCode);
+    /// }
     /// </summary>
     public class BottlesOfBeerFitness : FitnessBase
     {

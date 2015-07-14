@@ -13,7 +13,10 @@ namespace AIProgrammer.Fitness.Concrete
     /// "Warning Countdown: 10Warning Countdown: 9Warning Countdown: 8Warning Countdown: 7...", starting from any number.
     /// The user is prompted for input of a starting number. The program outputs from the starting number "Warning Countdown: X" until it reaches 0.
     /// Note, the final output will be in byte format (including text, ie. 98 = 'b'). To display the output for humans, we have to convert the text byte values to char and leave the numbers as byte. This will correctly display 598498398 as 5b4b3b, since (char)98 = 'b'.
-    /// Usage In Program.cs set:
+    /// Usage:
+    /// In App.config:
+    /// <add key="BrainfuckVersion" value="2"/>
+    /// In Program.cs set:
     /// private static string _appendCode = WarningCountdownFitness.WarningCountdownFunctions;
     /// private static int _genomeSize = 30;
     /// ...
