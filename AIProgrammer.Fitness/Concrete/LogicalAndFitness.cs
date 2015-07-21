@@ -10,6 +10,7 @@ namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
     /// Performs a logical AND operation: 0, 0 = 0, 0, 1 = 0, 1, 0 = 0, 1, 1 = 1.
+    /// Note, input and output is in byte format (ie. 49 = '1').
     /// </summary>
     public class LogicalAndFitness : FitnessBase
     {
