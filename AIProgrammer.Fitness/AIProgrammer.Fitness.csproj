@@ -45,7 +45,6 @@
     <Compile Include="Concrete\LogicalXorFitness.cs" />
     <Compile Include="Concrete\LogicalOrFitness.cs" />
     <Compile Include="Concrete\LogicalAndFitness.cs" />
-    <Compile Include="Concrete\CsvSplitInputFitness.cs" />
     <Compile Include="Concrete\CsvSplitFitness.cs" />
     <Compile Include="Concrete\WarningCountdownFitness.cs" />
     <Compile Include="Concrete\BottlesOfBeerFitness.cs" />
