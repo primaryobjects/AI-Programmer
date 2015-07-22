@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("AIProgrammer.Compiler")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("AIProgrammer.Compiler")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("AIProgrammer.Compiler")]
