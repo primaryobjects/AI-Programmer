@@ -12,7 +12,7 @@ namespace AIProgrammer.Fitness.Concrete
 {
     public class XmlToJsonFitness : FitnessBase
     {
-        private static string[] _trainingExamples = { "<b>i</b>", "<i>One</i>", "<a>me</a>" };
+        private static string[] _trainingExamples = { "<b>i</b>", "<i>a</i>", "<a>7</a>" };
 //        private static string[] _trainingExamples = { "<me>i</me>", "<us>You</us>", "<her>it</her>" };
         private static string[] _trainingResults = new string[_trainingExamples.Length];
 
