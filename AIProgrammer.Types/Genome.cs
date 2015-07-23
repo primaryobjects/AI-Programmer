@@ -203,6 +203,47 @@ namespace AIProgrammer.Types
             }
         }
 
+        public void Expand(int size)
+        {
+            int originalSize = m_genes.Length;
+            int difference = size - originalSize;
+
+            // Resize the genome array.
+            double[] newGenes = new double[size];
+
+            if (difference > 0)
+            {
+                if (m_random.NextDouble() < 0.5)
+                {
+                    // Extend at front.
+                    Array.Copy(m_genes, 0, newGenes, difference, originalSize);
+
+                    for (int i = 0; i < difference; i++)
+                    {
+                        newGenes[i] = m_random.NextDouble();
+                    }
+                }
+                else
+                {
+                    // Extend at back.
+                    Array.Copy(m_genes, 0, newGenes, 0, originalSize);
+
+                    for (int i = originalSize; i < size; i++)
+                    {
+                        newGenes[i] = m_random.NextDouble();
+                    }
+                }
+
+                m_genes = newGenes;
+            }
+            else
+            {
+                Array.Resize(ref m_genes, size);
+            }
+
+            m_length = size;
+        }
+
         public double[] Genes()
         {
             return m_genes;
