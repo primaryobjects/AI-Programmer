@@ -27,7 +27,7 @@ namespace AIProgrammer.Fitness.Concrete
         /// You can test running the code with the following example program:
         /// myFitness.RunProgram(",>,>,>,>,>,>,>,>,>,>,>,>,>,>,>,<<<<<<<<<<<<<<<a@,>,[$,[>++!.$,<$>]@,.,.,.");
         /// Generated using InnerTextFitness with no appendFunctions, with the following settings:
-        /// return new InnerTextFitness(_ga, _maxIterationCount, null);
+        /// return new GuidingFunctionFitness(_ga, _maxIterationCount, null);
         /// </summary>
         public static string Function = ",>,[$,[>++!.$,<$>]@";
 
@@ -39,10 +39,6 @@ namespace AIProgrammer.Fitness.Concrete
                 for (int i = 0; i < _trainingExamples.Length; i++)
                 {
                     _trainingResults[i] = _trainingExamples[i].Replace(">", "").Replace("<", "");
-
-                    /*XmlDocument doc = new XmlDocument();
-                    doc.LoadXml(_trainingExamples[i]);
-                    _trainingResults[i] = doc.InnerText;*/
 
                     _targetFitness += _trainingResults[i].Length * 256;
                     _targetFitness += 10; // length fitness
