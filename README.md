@@ -165,3 +165,7 @@ http://www.primaryobjects.com/CMS/Article163
 
 View @ GitHub
 https://github.com/primaryobjects/ai-programmer
+
+## Copyright
+
+Copyright (c) 2015 Kory Becker http://primaryobjects.com/kory-becker
