@@ -12,7 +12,7 @@ namespace AIProgrammer.Fitness.Concrete
 {
     public class XmlToJsonFitness : FitnessBase
     {
-        private static string[] _trainingExamples = { "<b>i</b>", "<i>a</i>", "<a>7</a>" };
+        private static string[] _trainingExamples = { "<c>love</c>", "<b>i</b>", "<p>you</p>", "<i>ax</i>" };
 //        private static string[] _trainingExamples = { "<me>i</me>", "<us>You</us>", "<her>it</her>" };
         private static string[] _trainingResults = new string[_trainingExamples.Length];
 
@@ -26,7 +26,7 @@ namespace AIProgrammer.Fitness.Concrete
         /// ...
         /// return new StringStrictFitness(_ga, _maxIterationCount, _targetParams.TargetString, _appendCode);
         /// </summary>
-        public static string XmlToJsonFunctions = "8-----.@-[8[[---.@D+2++.@->4------.@";
+        public static string XmlToJsonFunctions = ",>,[$,[>++!.$,<$>]!,<!<>$]-!-.!>$---$]-]>-.[,>,6][+[,[<..,[>@8-----.@-[8[[---.@D+2++.@->4------.@";
 
         public XmlToJsonFitness(GA ga, int maxIterationCount, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
@@ -115,7 +115,7 @@ namespace AIProgrammer.Fitness.Concrete
                 //countBonus += _bf.m_ExecutedFunctions.Count * 25;
 
                 // Length bonus (percentage of 100).
-                //countBonus += 256 * ((_trainingResults[i].Length - Math.Abs(_console.Length - _trainingResults[i].Length)) / _trainingResults[i].Length);
+                countBonus += 200 * ((_trainingResults[i].Length - Math.Abs(_console.Length - _trainingResults[i].Length)) / _trainingResults[i].Length);
 
                 // Make the AI wait until a solution is found without the penalty (too many input characters).
                 Fitness -= penalty;
