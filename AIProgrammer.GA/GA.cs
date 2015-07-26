@@ -283,6 +283,18 @@ namespace AIProgrammer.GeneticAlgorithm
                     GAParams.NextGeneration.Add(g);
             }
 
+            // Expand genomes.
+            if (GAParams.NextGeneration[0].Length != GAParams.GenomeSize)
+            {
+                Parallel.ForEach(GAParams.NextGeneration, (genome) =>
+                {
+                    if (genome.Length != GAParams.GenomeSize)
+                    {
+                        genome.Expand(GAParams.GenomeSize);
+                    }
+                });
+            }
+
             GAParams.ThisGeneration = new List<Genome>(GAParams.NextGeneration);
             /*GAParams.m_thisGeneration.Clear();
             foreach (Genome ge in GAParams.m_nextGeneration)

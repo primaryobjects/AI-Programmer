@@ -10,37 +10,42 @@ using System.Xml;
 
 namespace AIProgrammer.Fitness.Concrete
 {
-    public class XmlToJsonFitness : FitnessBase
+    /// <summary>
+    /// Outputs the text inside arrow bracks (see trainingExamples).
+    /// This fitness is an example of guiding the GA to use a more complex function that requires many inputs.
+    /// The user inputs a string and the GA must figure out how to read the input characters, each into a separate memory cell, then set the correct starting memory cell as the starting parameter to send to the function.
+    /// The function is then called and reads the each input and outputs the result.
+    /// This fitness can run using an appendFunction or no function, but running with the appendFunction demonstrates guiding the GA.
+    /// </summary>
+    public class GuidingFunctionFitness : FitnessBase
     {
-        private static string[] _trainingExamples = { "<c>love</c>", "<b>i</b>", "<p>you</p>", "<i>ax</i>" };
-//        private static string[] _trainingExamples = { "<me>i</me>", "<us>You</us>", "<her>it</her>" };
+        private static string[] _trainingExamples = { ">i<", ">at<", ">you<", ">bake<", ">guide<" };
         private static string[] _trainingResults = new string[_trainingExamples.Length];
 
         /// <summary>
-        /// Previously generated BrainPlus functions for outputting json characters: { } " :
-        /// To use, set _appendCode = XmlToJsonFitness.XmlToJsonFunctions in main program.
-        /// 
-        /// Generated using StrictStringFitness with StringFunction with the following settings:
-        /// TargetString = "{ } \" :"
-        /// private static IFunction _functionGenerator = new StringFunction(() => GetFitnessMethod(), _bestStatus, fitnessFunction, OnGeneration, _crossoverRate, _mutationRate, _genomeSize, _targetParams);
-        /// ...
-        /// return new StringStrictFitness(_ga, _maxIterationCount, _targetParams.TargetString, _appendCode);
+        /// Function to print the text inside brackets, like: >text<
+        /// You can test running the code with the following example program:
+        /// myFitness.RunProgram(",>,>,>,>,>,>,>,>,>,>,>,>,>,>,>,<<<<<<<<<<<<<<<a@,>,[$,[>++!.$,<$>]@,.,.,.");
+        /// Generated using InnerTextFitness with no appendFunctions, with the following settings:
+        /// return new InnerTextFitness(_ga, _maxIterationCount, null);
         /// </summary>
-        public static string XmlToJsonFunctions = ",>,[$,[>++!.$,<$>]!,<!<>$]-!-.!>$---$]-]>-.[,>,6][+[,[<..,[>@8-----.@-[8[[---.@D+2++.@->4------.@";
+        public static string Function = ",>,[$,[>++!.$,<$>]@";
 
-        public XmlToJsonFitness(GA ga, int maxIterationCount, string appendFunctions = null)
+        public GuidingFunctionFitness(GA ga, int maxIterationCount, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
         {
             if (_targetFitness == 0)
             {
                 for (int i = 0; i < _trainingExamples.Length; i++)
                 {
-                    XmlDocument doc = new XmlDocument();
-                    doc.LoadXml(_trainingExamples[i]);
-                    string json = JsonConvert.SerializeXmlNode(doc);
+                    _trainingResults[i] = _trainingExamples[i].Replace(">", "").Replace("<", "");
 
-                    _trainingResults[i] = json;
-                    _targetFitness += json.Length * 256;
+                    /*XmlDocument doc = new XmlDocument();
+                    doc.LoadXml(_trainingExamples[i]);
+                    _trainingResults[i] = doc.InnerText;*/
+
+                    _targetFitness += _trainingResults[i].Length * 256;
+                    _targetFitness += 10; // length fitness
                 }
             }
         }
@@ -51,8 +56,7 @@ namespace AIProgrammer.Fitness.Concrete
         {
             double countBonus = 0;
             double penalty = 0;
-            //HashSet<int> memoryHash = new HashSet<int>();
-            //HashSet<int> printCommandHash = new HashSet<int>();
+            int startingDataPointer = 0;
 
             for (int i = 0; i < _trainingExamples.Length; i++)
             {
@@ -66,6 +70,12 @@ namespace AIProgrammer.Fitness.Concrete
                     {
                         if (state < _trainingExamples[i].Length)
                         {
+                            if (state == 0)
+                            {
+                                // Remember the data pointer position for the first input.
+                                startingDataPointer = _bf.m_CurrentDataPointer;
+                            }
+
                             // Send input.
                             return (byte)_trainingExamples[i][state++];
                         }
@@ -77,21 +87,22 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
+                        // We want the function to do the printing, so apply a penalty if the print comes from the main program.
+                        if (!string.IsNullOrEmpty(_appendFunctions) && _bf.m_FunctionCallStack.Count == 0)
+                        {
+                            penalty += 100;
+                        }
+
                         _console.Append((char)b);
-
-                        // Record the instruction index being used for this print statement.
-                        /*if (!printCommandHash.Add(_bf.m_CurrentInstructionPointer))
+                    },
+                    (function) =>
+                    {
+                        if (!string.IsNullOrEmpty(_appendFunctions) && function == 'a')
                         {
-                            // This is kind of cheating, but we need to force diversity by decoupling the cases. Force them to use unique print statements, not used by any other case.
-                            penalty += 200;
-                        }*/
-
-                        /*// Record the memory register being used for this output. Used to support diversity.
-                        if (state >= _trainingExamples[i].Length && _console.Length <= _trainingResults[i].Length)
-                        {
-                            // This is a valid output character to consider. Record the memory register of where its data is stored.
-                            memoryHash.Add(_bf.m_CurrentDataPointer);
-                        }*/
+                            // The function requires the starting memory pointer to be at the start of input on the '>' character for '>test<' (position 0).
+                            // Apply a penalty if the function is called and the memory pointer is anywhere else.
+                            penalty += Math.Abs(startingDataPointer - _bf.m_CurrentDataPointer) * 5;
+                        }
                     });
                     _bf.Run(_maxIterationCount);
                 }
@@ -111,29 +122,32 @@ namespace AIProgrammer.Fitness.Concrete
                     }
                 }
 
-                // Bonus for using functions.
-                //countBonus += _bf.m_ExecutedFunctions.Count * 25;
-
                 // Length bonus (percentage of 100).
-                countBonus += 200 * ((_trainingResults[i].Length - Math.Abs(_console.Length - _trainingResults[i].Length)) / _trainingResults[i].Length);
+                Fitness += 10 * ((_trainingResults[i].Length - Math.Abs(_console.Length - _trainingResults[i].Length)) / _trainingResults[i].Length);
 
-                // Make the AI wait until a solution is found without the penalty (too many input characters).
+                // Make the AI wait until a solution is found without the penalty.
                 Fitness -= penalty;
 
                 // Check for solution.
                 IsFitnessAchieved();
+
+                // Bonus for executing functions.
+                if (!string.IsNullOrEmpty(_appendFunctions) && _bf.m_ExecutedFunctions.ContainsKey('a'))
+                {
+                    countBonus += 100;
+
+                    // Take away some bonus if the function was called more than once.
+                    if (_bf.m_ExecutedFunctions['a'] > 1)
+                    {
+                        countBonus -= (_bf.m_ExecutedFunctions['a'] - 1) * 25;
+                    };
+                }
 
                 // Bonus for less operations to optimize the code.
                 countBonus += ((_maxIterationCount - _bf.m_Ticks) / 20.0);
 
                 Ticks += _bf.m_Ticks;
             }
-
-            /*// Give a bonus for using multiple memory registers, supporting diversity.
-            if (memoryHash.Count > 1)
-            {
-                countBonus += memoryHash.Count * 10;
-            }*/
 
             if (_fitness != Double.MaxValue)
             {

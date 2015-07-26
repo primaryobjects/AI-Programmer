@@ -106,11 +106,12 @@ namespace AIProgrammer.Types
         }
 
         /// <summary>
-        /// Mutation by insert, replace, delete.
+        /// Mutation by insert, replace, delete, shift.
         /// - An index is selected in the genome.
         /// - If inserting, a mutated bit is inserted at the position. The remaining bits are moved up by one index. The last bit is dropped off.
         /// - If replacing, a mutated bit is set at the position.
         /// - If deleting, all bits are shifted down at the position. A mutated bit is added at the end of the array.
+        /// - If shifting, all bits are shifted up or down, starting from position 0. If up, the last bit wraps to the front. If down, the first bit wraps to the end.
         /// </summary>
         public void Mutate()
         {
@@ -122,7 +123,7 @@ namespace AIProgrammer.Types
                 {
                     // Select a mutation type.
                     double r = m_random.NextDouble();
-                    if (r <= 0.333)
+                    if (r <= 0.25)
                     {
                         // Insertion mutation.
                         // Get shift index.
@@ -161,7 +162,7 @@ namespace AIProgrammer.Types
                             }
                         }
                     }
-                    else if (r <= 0.666)
+                    else if (r <= 0.5)
                     {
                         // Deletion mutation.
                         // Get deletion index.
@@ -192,6 +193,62 @@ namespace AIProgrammer.Types
                             m_genes[m_length - 1] = m_random.NextDouble();
                         }
                     }
+                    else if (r <= 0.75)
+                    {
+                        // Shift/rotation mutation.
+                        // Bump bits up or down by 1.
+                        bool up = m_random.NextDouble() >= 0.5;
+                        if (up)
+                        {
+                            // Bump bits up by 1. 1, 2, 3 => 3, 1, 2
+                            double shiftBit = m_genes[0];
+
+                            for (int i = 0; i < m_length; i++)
+                            {
+                                if (i > 0)
+                                {
+                                    // Make a copy of the current bit.
+                                    double temp = m_genes[i];
+
+                                    // Set the current bit to the previous one.
+                                    m_genes[i] = shiftBit;
+
+                                    // Select the next bit to be copied.
+                                    shiftBit = temp;
+                                }
+                                else
+                                {
+                                    // Wrap last bit to front.
+                                    m_genes[i] = m_genes[m_length - 1];
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Bump bits down by 1. 1, 2, 3 => 2, 3, 1
+                            double shiftBit = m_genes[m_length - 1];
+
+                            for (int i = m_length - 1; i >= 0; i--)
+                            {
+                                if (i < m_length - 1)
+                                {
+                                    // Make a copy of the current bit.
+                                    double temp = m_genes[i];
+
+                                    // Set the current bit to the previous one.
+                                    m_genes[i] = shiftBit;
+
+                                    // Select the next bit to be copied.
+                                    shiftBit = temp;
+                                }
+                                else
+                                {
+                                    // Wrap first bit to end.
+                                    m_genes[i] = m_genes[0];
+                                }
+                            }
+                        }
+                    }
                     else
                     {
                         // Replacement mutation.
@@ -201,6 +258,47 @@ namespace AIProgrammer.Types
                     }
                 }
             }
+        }
+
+        public void Expand(int size)
+        {
+            int originalSize = m_genes.Length;
+            int difference = size - originalSize;
+
+            // Resize the genome array.
+            double[] newGenes = new double[size];
+
+            if (difference > 0)
+            {
+                if (m_random.NextDouble() < 0.5)
+                {
+                    // Extend at front.
+                    Array.Copy(m_genes, 0, newGenes, difference, originalSize);
+
+                    for (int i = 0; i < difference; i++)
+                    {
+                        newGenes[i] = m_random.NextDouble();
+                    }
+                }
+                else
+                {
+                    // Extend at back.
+                    Array.Copy(m_genes, 0, newGenes, 0, originalSize);
+
+                    for (int i = originalSize; i < size; i++)
+                    {
+                        newGenes[i] = m_random.NextDouble();
+                    }
+                }
+
+                m_genes = newGenes;
+            }
+            else
+            {
+                Array.Resize(ref m_genes, size);
+            }
+
+            m_length = size;
         }
 
         public double[] Genes()
