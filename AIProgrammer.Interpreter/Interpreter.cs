@@ -105,7 +105,7 @@ namespace AIProgrammer
         /// <summary>
         /// The function "call stack".
         /// </summary>
-        private readonly Stack<FunctionCallObj> m_FunctionCallStack = new Stack<FunctionCallObj>();
+        public readonly Stack<FunctionCallObj> m_FunctionCallStack = new Stack<FunctionCallObj>();
 
         /// <summary>
         /// Pointer to the current call stack (m_FunctionCallStack or m_CallStack).
@@ -122,7 +122,7 @@ namespace AIProgrammer
         /// <summary>
         /// Number of cells available to functions. When a function is executed, an array of cells are allocated in upper-addresses (eg., 1000-1999, 2000-2999, etc.) for usage.
         /// </summary>
-        private const int _functionSize = 256;
+        private const int _functionSize = 300;
 
         /// <summary>
         /// Storage memory value. Usually used to hold return values from function calls.
@@ -152,7 +152,7 @@ namespace AIProgrammer
         /// <summary>
         /// List of executed functions in the main program. Used for reference purposes by the GA to determine which functions were executed in the program (not functions calling other functions).
         /// </summary>
-        public HashSet<char> m_ExecutedFunctions = new HashSet<char>();
+        public Dictionary<char, int> m_ExecutedFunctions = new Dictionary<char, int>();
 
         /// <summary>
         /// Constructor
@@ -160,7 +160,7 @@ namespace AIProgrammer
         /// <param name="programCode"></param>
         /// <param name="input"></param>
         /// <param name="output"></param>
-        public Interpreter(string programCode, Func<byte> input, Action<byte> output)
+        public Interpreter(string programCode, Func<byte> input, Action<byte> output, Action<char> function = null)
         {
             // Save the program code
             this.m_Source = programCode.ToCharArray();
@@ -181,7 +181,7 @@ namespace AIProgrammer
             this.m_InstructionSet.Add('.', () => { if (!m_ExitLoop) this.m_Output(this.m_Memory[this.m_DataPointer]); });
 
             // Prompt for input. If inside a function, pull input from parent memory, using the current FunctionInputPointer. Each call for input advances the parent memory cell that gets read from, allowing the passing of multiple values as input to a function.
-            this.m_InstructionSet.Add(',', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = m_FunctionCallStack.Count == 0 ? this.m_Input() : this.m_Memory[this.m_FunctionInputPointer++]; });
+            this.m_InstructionSet.Add(',', () => { if (!m_ExitLoop) m_Memory[this.m_DataPointer] = m_FunctionCallStack.Count == 0 ? this.m_Input() : this.m_Memory[this.m_FunctionInputPointer++]; });
 
             this.m_InstructionSet.Add('[', () =>
             {
@@ -280,7 +280,19 @@ namespace AIProgrammer
                         // Record a list of executed function names from the main program (not a function calling another function).
                         if (m_FunctionCallStack.Count == 0)
                         {
-                            m_ExecutedFunctions.Add(instruction);
+                            if (m_ExecutedFunctions.ContainsKey(instruction))
+                            {
+                                m_ExecutedFunctions[instruction]++;
+                            }
+                            else
+                            {
+                                m_ExecutedFunctions.Add(instruction, 1);
+                            }
+                        }
+
+                        if (function != null)
+                        {
+                            function(instruction);
                         }
 
                         // Store the current instruction pointer and data pointer before we move to the function.
