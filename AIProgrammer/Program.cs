@@ -30,7 +30,7 @@ namespace AIProgrammer
         private static GA _ga = null; // Our genetic algorithm instance.
         private static GAStatus _bestStatus = new GAStatus(); // Holds values for displaying best generation statistics.
         private static DateTime _startTime = DateTime.Now; // Time the program was started.
-        private static string _appendCode = GuidingFunctionFitness.Function; // Program code, containing functions, that will be appended to main program code
+        private static string _appendCode = null; // Program code, containing functions, that will be appended to main program code
         private static TargetParams _targetParams = new TargetParams { TargetString = "hi" }; // Used for displaying the target fitness
 
         #endregion
@@ -39,7 +39,7 @@ namespace AIProgrammer
 
         private static double _crossoverRate = 0.70; // Percentage chance that a child genome will use crossover of two parents.
         private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
-        private static int _genomeSize = 40; // Number of programming instructions in generated program (size of genome array).
+        private static int _genomeSize = 250; // Number of programming instructions in generated program (size of genome array). loops).        private static int _maxGenomeSize = 150; // The max length a genome may grow to (only applicable if _expandAmount > 0).
         private static int _maxGenomeSize = 150; // The max length a genome may grow to (only applicable if _expandAmount > 0).
         private static int _maxIterationCount = 5000; // Max iterations a program may run before being killed (prevents infinite loops).
         private static int _expandAmount = 0; // The max genome size will expand by this amount, every _expandRate iterations (may help learning). Set to 0 to disable.
@@ -64,7 +64,7 @@ namespace AIProgrammer
         /// <returns>IFitness</returns>
         private static IFitness GetFitnessMethod()
         {
-            return new GuidingFunctionFitness(_ga, _maxIterationCount, _appendCode);
+            return new StringStrictFitness(_ga, _maxIterationCount, _targetParams.TargetString, _appendCode);
         }
 
         #region Worker Methods
@@ -138,8 +138,6 @@ namespace AIProgrammer
 
             // Generate main program. Get the selected fitness type.
             IFitness myFitness = GetFitnessMethod();
-//myFitness.RunProgram(",>,>,>,>,>,>,>,>,>,>,>,>,>,>,>,<<<<<<<<<<<<<<<a@,>,[$,[>++!.$,<$>]!,<!<>$]-!-.!>$---$]-]>-.[,>,6][+[,[<..,[>@,.,.,.");
-//return;
 
             // Get the target fitness for this method.
             _targetParams.TargetFitness = myFitness.TargetFitness;
