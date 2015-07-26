@@ -12,13 +12,12 @@ namespace AIProgrammer.Fitness.Concrete
 {
     public class XmlToJsonFitness : FitnessBase
     {
-        private static string[] _trainingExamples = { "<c>love</c>", "<b>i</b>", "<p>you</p>", "<i>ax</i>" };
-//        private static string[] _trainingExamples = { "<me>i</me>", "<us>You</us>", "<her>it</her>" };
+        private static string[] _trainingExamples = { "<a>boy</a>", "<p>cat</p>" };
         private static string[] _trainingResults = new string[_trainingExamples.Length];
 
         /// <summary>
         /// Previously generated BrainPlus functions for outputting json characters: { } " :
-        /// To use, set _appendCode = XmlToJsonFitness.XmlToJsonFunctions in main program.
+        /// To use, set _appendCode = XmlToJsonFitness.Function in main program.
         /// 
         /// Generated using StrictStringFitness with StringFunction with the following settings:
         /// TargetString = "{ } \" :"
@@ -26,7 +25,7 @@ namespace AIProgrammer.Fitness.Concrete
         /// ...
         /// return new StringStrictFitness(_ga, _maxIterationCount, _targetParams.TargetString, _appendCode);
         /// </summary>
-        public static string XmlToJsonFunctions = ",>,[$,[>++!.$,<$>]!,<!<>$]-!-.!>$---$]-]>-.[,>,6][+[,[<..,[>@8-----.@-[8[[---.@D+2++.@->4------.@";
+        public static string Function = "8-----.@-[8[[---.@D+2++.@->4------.@";
 
         public XmlToJsonFitness(GA ga, int maxIterationCount, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
@@ -51,8 +50,6 @@ namespace AIProgrammer.Fitness.Concrete
         {
             double countBonus = 0;
             double penalty = 0;
-            //HashSet<int> memoryHash = new HashSet<int>();
-            //HashSet<int> printCommandHash = new HashSet<int>();
 
             for (int i = 0; i < _trainingExamples.Length; i++)
             {
@@ -78,20 +75,6 @@ namespace AIProgrammer.Fitness.Concrete
                     (b) =>
                     {
                         _console.Append((char)b);
-
-                        // Record the instruction index being used for this print statement.
-                        /*if (!printCommandHash.Add(_bf.m_CurrentInstructionPointer))
-                        {
-                            // This is kind of cheating, but we need to force diversity by decoupling the cases. Force them to use unique print statements, not used by any other case.
-                            penalty += 200;
-                        }*/
-
-                        /*// Record the memory register being used for this output. Used to support diversity.
-                        if (state >= _trainingExamples[i].Length && _console.Length <= _trainingResults[i].Length)
-                        {
-                            // This is a valid output character to consider. Record the memory register of where its data is stored.
-                            memoryHash.Add(_bf.m_CurrentDataPointer);
-                        }*/
                     });
                     _bf.Run(_maxIterationCount);
                 }
@@ -111,9 +94,6 @@ namespace AIProgrammer.Fitness.Concrete
                     }
                 }
 
-                // Bonus for using functions.
-                //countBonus += _bf.m_ExecutedFunctions.Count * 25;
-
                 // Length bonus (percentage of 100).
                 countBonus += 200 * ((_trainingResults[i].Length - Math.Abs(_console.Length - _trainingResults[i].Length)) / _trainingResults[i].Length);
 
@@ -128,12 +108,6 @@ namespace AIProgrammer.Fitness.Concrete
 
                 Ticks += _bf.m_Ticks;
             }
-
-            /*// Give a bonus for using multiple memory registers, supporting diversity.
-            if (memoryHash.Count > 1)
-            {
-                countBonus += memoryHash.Count * 10;
-            }*/
 
             if (_fitness != Double.MaxValue)
             {
