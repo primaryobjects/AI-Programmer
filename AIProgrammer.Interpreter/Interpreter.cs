@@ -39,6 +39,8 @@ namespace AIProgrammer
             public bool ExitLoop { get; set; }
             public int ExitLoopInstructionPointer { get; set; }
             public int Ticks { get; set; }
+            public char Instruction { get; set; }
+            public byte Storage { get; set; }
         };
 
         /// <summary>
@@ -252,6 +254,8 @@ namespace AIProgrammer
                     this.m_ExitLoopInstructionPointer = temp.ExitLoopInstructionPointer;
                     // Restore ticks.
                     this.m_Ticks = temp.Ticks;
+                    // Restore global storage.
+                    this.m_Storage = temp.Storage;
                     // Restore the instruction pointer.
                     this.m_InstructionPointer = temp.InstructionPointer;
                     // Restore function input pointer.
@@ -263,7 +267,25 @@ namespace AIProgrammer
                     this.m_Stop = true;
                 }
             });
-            this.m_InstructionSet.Add('$', () => { if (!m_ExitLoop) this.m_Storage = this.m_Memory[this.m_DataPointer]; });
+            this.m_InstructionSet.Add('$', () => 
+            {
+                if (!m_ExitLoop)
+                {
+                    // If we're inside a function, use the function's own global storage (separate from the main program).
+                    // However, if this is the last storage command in the function code, then use the main/calling-function storage, to allow returning a value.
+                    if (m_FunctionCallStack.Count > 0 && this.m_Source[m_InstructionPointer + 1] == '@')
+                    {
+                        // Replace the value in global storage for the parent caller (to be set when function exits).
+                        m_FunctionCallStack.Peek().Storage = this.m_Memory[this.m_DataPointer];
+                    }
+                    else
+                    {
+                        // Set global storage for this main program or function.
+                        this.m_Storage = this.m_Memory[this.m_DataPointer];
+                    }
+                }
+            });
+
             this.m_InstructionSet.Add('!', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = this.m_Storage; });
 
             // Scan code for function definitions and store their starting memory addresses.
@@ -296,13 +318,16 @@ namespace AIProgrammer
                         }
 
                         // Store the current instruction pointer and data pointer before we move to the function.
-                        var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, FunctionInputPointer = this.m_FunctionInputPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, ExitLoopInstructionPointer = this.m_ExitLoopInstructionPointer, Ticks = this.m_Ticks };
+                        var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, FunctionInputPointer = this.m_FunctionInputPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, ExitLoopInstructionPointer = this.m_ExitLoopInstructionPointer, Ticks = this.m_Ticks, Instruction = instruction, Storage = this.m_Storage };
                         this.m_FunctionCallStack.Push(functionCallObj);
 
                         // Give the function a fresh call stack.
                         this.m_CurrentCallStack = new Stack<int>();
                         this.m_ExitLoop = false;
                         this.m_ExitLoopInstructionPointer = 0;
+
+                        // Initialize the function global storage.
+                        this.m_Storage = 0;
 
                         // Set the function input pointer to the parent's starting memory. Calls for input (,) from within the function will read from parent's memory, each call advances the parent memory cell that gets read from. This allows passing multiple values to a function.
                         this.m_FunctionInputPointer = this.m_DataPointer;

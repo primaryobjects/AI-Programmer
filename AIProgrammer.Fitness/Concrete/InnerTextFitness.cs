@@ -10,31 +10,15 @@ using System.Xml;
 
 namespace AIProgrammer.Fitness.Concrete
 {
-    public class XmlToJsonFitness : FitnessBase
+    /// <summary>
+    /// Outputs the text inside HTML (see trainingExamples). Use with genomeSize = 100.
+    /// </summary>
+    public class InnerTextFitness : FitnessBase
     {
-        private static string[] _trainingExamples = { "<a>boy</a>", "<p>cat</p>", "<i>me</i>" };
+        private static string[] _trainingExamples = { "<a>i</a>", "<i>at</i>", "<p>you</p>", "<m>she</m>", "<z>p</z>", "<z>t</z>" };
         private static string[] _trainingResults = new string[_trainingExamples.Length];
 
-        /// <summary>
-        /// Previously generated BrainPlus functions for outputting json characters: { } " :
-        /// Also, the last function outputs InnerText of HTML (for 1-3 characters).
-        /// To use, set _appendCode = XmlToJsonFitness.Function in main program.
-        /// 
-        /// The json characters were generated using StrictStringFitness with StringFunction with the following settings:
-        /// TargetString = "{ } \" :"
-        /// private static IFunction _functionGenerator = new StringFunction(() => GetFitnessMethod(), _bestStatus, fitnessFunction, OnGeneration, _crossoverRate, _mutationRate, _genomeSize, _targetParams);
-        /// ...
-        /// return new StringStrictFitness(_ga, _maxIterationCount, _targetParams.TargetString, _appendCode);
-        /// 
-        /// The InnerText of HTML function was generated using:
-        /// return new InnerTextFitness(_ga, _maxIterationCount, null);
-        /// 
-        /// Example hand-coded program of XmlToJson:
-        /// ,>,$>,>,>,>,>,>,>,>,ac>!.<cdc<<<<<<<<<ecb@8-----.@-[8[[---.@D+2++.@->4------.@>>+>,,,,.,$[-<,>,>,,[[!.,<+>[>[,!>,>]$[[[.+!].,!<>>][$+<$!]][]+!+$<-<$!<-+-[+$$.$++$$[-$++$$$[,->]>-@
-        /// </summary>
-        public static string Function = "8-----.@-[8[[---.@D+2++.@->4------.@>>+>,,,,.,$[-<,>,>,,[[!.,<+>[>[,!>,>]$[[[.+!].,!<>>][$+<$!]][]+!+$<-<$!<-+-[+$$.$++$$[-$++$$$[,->]>-@";
-
-        public XmlToJsonFitness(GA ga, int maxIterationCount, string appendFunctions = null)
+        public InnerTextFitness(GA ga, int maxIterationCount, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
         {
             if (_targetFitness == 0)
@@ -43,10 +27,10 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                     XmlDocument doc = new XmlDocument();
                     doc.LoadXml(_trainingExamples[i]);
-                    string json = JsonConvert.SerializeXmlNode(doc);
+                    _trainingResults[i] = doc.InnerText;
 
-                    _trainingResults[i] = json;
-                    _targetFitness += json.Length * 256;
+                    _targetFitness += _trainingResults[i].Length * 256;
+                    _targetFitness += 100; // length fitness
                 }
             }
         }
@@ -57,7 +41,6 @@ namespace AIProgrammer.Fitness.Concrete
         {
             double countBonus = 0;
             double penalty = 0;
-            int startingDataPointer = 0;
 
             for (int i = 0; i < _trainingExamples.Length; i++)
             {
@@ -71,12 +54,6 @@ namespace AIProgrammer.Fitness.Concrete
                     {
                         if (state < _trainingExamples[i].Length)
                         {
-                            if (state == 0)
-                            {
-                                // Remember the data pointer position for the first input.
-                                startingDataPointer = _bf.m_CurrentDataPointer;
-                            }
-
                             // Send input.
                             return (byte)_trainingExamples[i][state++];
                         }
@@ -89,26 +66,6 @@ namespace AIProgrammer.Fitness.Concrete
                     (b) =>
                     {
                         _console.Append((char)b);
-
-                        // We want the function to do the printing (at least for the first case), so apply a penalty if the print comes from the main program. {"a":"boy"}
-                        if (!string.IsNullOrEmpty(_appendFunctions) && _console.Length >= 7 && _console.Length <= 9 && (_bf.m_FunctionCallStack.Count == 0 || _bf.m_FunctionCallStack.Peek().Instruction != 'e'))
-                        {
-                            penalty += 150;
-                        }
-                    },
-                    (function) =>
-                    {
-                        if (!string.IsNullOrEmpty(_appendFunctions) && function == 'e')
-                        {
-                            // The function requires the starting memory pointer to be at the start of input on the '<a>' (position 0).
-                            // Apply a penalty if the function is called and the memory pointer is anywhere else.
-                            penalty += Math.Abs(startingDataPointer - _bf.m_CurrentDataPointer) * 5;
-
-                            if (state < _trainingExamples[i].Length)
-                            {
-                                penalty += 25;
-                            }
-                        }
                     });
                     _bf.Run(_maxIterationCount);
                 }
@@ -129,25 +86,13 @@ namespace AIProgrammer.Fitness.Concrete
                 }
 
                 // Length bonus (percentage of 100).
-                countBonus += (!string.IsNullOrEmpty(_appendFunctions) ? 10 : 200) * ((_trainingResults[i].Length - Math.Abs(_console.Length - _trainingResults[i].Length)) / _trainingResults[i].Length);
+                Fitness += 100 * ((_trainingResults[i].Length - Math.Abs(_console.Length - _trainingResults[i].Length)) / _trainingResults[i].Length);
 
-                // Make the AI wait until a solution is found without the penalty (too many input characters).
+                // Make the AI wait until a solution is found without the penalty.
                 Fitness -= penalty;
 
                 // Check for solution.
                 IsFitnessAchieved();
-
-                // Bonus for executing functions.
-                if (!string.IsNullOrEmpty(_appendFunctions) && _bf.m_ExecutedFunctions.ContainsKey('e'))
-                {
-                    countBonus += 150;
-
-                    // Take away some bonus if the function was called more than once.
-                    if (_bf.m_ExecutedFunctions['e'] > 1)
-                    {
-                        countBonus -= (_bf.m_ExecutedFunctions['e'] - 1) * 25;
-                    };
-                }
 
                 // Bonus for less operations to optimize the code.
                 countBonus += ((_maxIterationCount - _bf.m_Ticks) / 20.0);
