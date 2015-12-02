@@ -91,6 +91,16 @@ namespace AIProgrammer.Managers
             };
         }
 
+        public static double[] ConvertBFToDoubleArray(string code)
+        {
+            switch (_brainfuckVersion)
+            {
+                case 1: return ConvertBFClassicToDoubleArray(code);
+                case 2: return ConvertBFExtendedToDoubleArray(code);
+                default: return ConvertBFClassicToDoubleArray(code);
+            };
+        }
+        
         /// <summary>
         /// Convert a genome (array of doubles) into a Brainfuck program.
         /// </summary>
@@ -185,6 +195,54 @@ namespace AIProgrammer.Managers
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Convert a brainfuck string into a genome (array of doubles).
+        /// </summary>
+        /// <param name="code">string - Brainfuck program</param>
+        /// <returns>Array of double</returns>
+        private static double[] ConvertBFClassicToDoubleArray(string code)
+        {
+            double[] array = new double[code.Length];
+
+            for (int i = 0; i < code.Length; i++)
+            {
+                char ch = code[i];
+
+                if (ch == '>') array[i] = 0.125;
+                if (ch == '<') array[i] = 0.25;
+                if (ch == '+') array[i] = 0.375;
+                if (ch == '-') array[i] = 0.5;
+                if (ch == '.') array[i] = 0.625;
+                if (ch == ',') array[i] = 0.75;
+                if (ch == '[') array[i] = 0.875;
+                if (ch == ']') array[i] = 1;
+            }
+
+            return array;
+        }
+
+        /// <summary>
+        /// Convert a brainfuck string into a genome (array of doubles) using Extended Type 3.
+        /// </summary>
+        /// <param name="code">string - Brainfuck program</param>
+        /// <returns>Array of double</returns>
+        private static double[] ConvertBFExtendedToDoubleArray(string code)
+        {
+            double[] array = new double[code.Length];
+            List<char> values = bfClassicRangeValues.ToList();
+
+            for (int i = 0; i < code.Length; i++)
+            {
+                // Find the index within our array of this brainfuck command.
+                int index = values.IndexOf(code[i]);
+
+                // We now know the max threshold value for this command.
+                array[i] = bfClassicRangeKeys[index];
+            }
+
+            return array;
         }
 
         /// <summary>
