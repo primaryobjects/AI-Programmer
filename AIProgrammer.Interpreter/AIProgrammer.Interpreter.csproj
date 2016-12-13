@@ -42,6 +42,12 @@
     <Compile Include="Interpreter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AIProgrammer.Types\AIProgrammer.Types.csproj">
+      <Project>{7BCC43B1-33A8-44C8-8F4D-752D89672180}</Project>
+      <Name>AIProgrammer.Types</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

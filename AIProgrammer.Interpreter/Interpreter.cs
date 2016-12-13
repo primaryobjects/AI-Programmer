@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AIProgrammer.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -132,6 +133,11 @@ namespace AIProgrammer
         private byte m_Storage;
 
         /// <summary>
+        /// Options for the interpreter.
+        /// </summary>
+        private InterpreterOptions m_Options = new InterpreterOptions();
+
+        /// <summary>
         /// Number of instructions executed.
         /// </summary>
         public int m_Ticks;
@@ -160,9 +166,11 @@ namespace AIProgrammer
         /// Constructor
         /// </summary>
         /// <param name="programCode"></param>
-        /// <param name="input"></param>
-        /// <param name="output"></param>
-        public Interpreter(string programCode, Func<byte> input, Action<byte> output, Action<char> function = null)
+        /// <param name="input">Function to call when input command (,) is executed.</param>
+        /// <param name="output">Function to call when output command (.) is executed.</param>
+        /// <param name="function">Callback handler to notify that a function is being executed: callback(instruction).</param>
+        /// <param name="options">Additional interpreter options.</param>
+        public Interpreter(string programCode, Func<byte> input, Action<byte> output, Action<char> function = null, InterpreterOptions options = null)
         {
             // Save the program code
             this.m_Source = programCode.ToCharArray();
@@ -170,7 +178,13 @@ namespace AIProgrammer
             // Store the i/o delegates
             this.m_Input = input;
             this.m_Output = output;
-            
+
+            // Set any additional options.
+            if (options != null)
+            {
+                this.m_Options = options;
+            }
+
             m_CurrentCallStack = m_CallStack;
 
             // Create the instruction set for Basic Brainfuck.
@@ -314,6 +328,7 @@ namespace AIProgrammer
 
                         if (function != null)
                         {
+                            // Notify caller of a function being executed.
                             function(instruction);
                         }
 
@@ -330,7 +345,9 @@ namespace AIProgrammer
                         this.m_Storage = 0;
 
                         // Set the function input pointer to the parent's starting memory. Calls for input (,) from within the function will read from parent's memory, each call advances the parent memory cell that gets read from. This allows passing multiple values to a function.
-                        this.m_FunctionInputPointer = this.m_DataPointer;
+                        // Note, if we set the starting m_FunctionInputPointer to 0, functions will read from the first input position (0).
+                        // If we set it to m_DataPointer, functions will read input from the current position in the parent memory (n). This is trickier for the GA to figure out, because it may have to downshift the memory back to 0 before calling the function so that the function gets all input. Setting this to 0 makes it easier for the function to get the input.
+                        this.m_FunctionInputPointer = this.m_Options.ReadFunctionInputAtMemoryStart ? 0 : this.m_DataPointer;
 
                         // Set the data pointer to the functions starting memory address.
                         this.m_DataPointer = _functionSize * (instruction - 96); // each function gets a space of 1000 memory slots.

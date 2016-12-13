@@ -46,6 +46,7 @@
     <Compile Include="Base\FitnessBase.cs" />
     <Compile Include="Concrete\AddCleanFitness.cs" />
     <Compile Include="Concrete\AddFitness.cs" />
+    <Compile Include="Concrete\ExtractInQuotesFitness.cs" />
     <Compile Include="Concrete\InnerTextFitness.cs" />
     <Compile Include="Concrete\LogicalXorFitness.cs" />
     <Compile Include="Concrete\LogicalOrFitness.cs" />
