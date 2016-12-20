@@ -21,13 +21,55 @@ namespace AIProgrammer.Fitness.Concrete
         private static string[] _trainingExamples = { "\"inside\"", "\"test\"", "\"foresting\"" };
         private static string[] _trainingResults = new string[] { "inside", "test", "foresting" };
 
+        #region Settings
+
         /// <summary>
         /// Previously generated BrainPlus code for FindQuoteFitness. The function returns 0 if the current memory value is a quote and a positive value otherwise.
         /// Note, the function was not actually used in the solution.
         /// Another potential useful function: removing first and last character from a string (starts at memory location 0): +>!+!>++>,>$[...+.!,.<>..<]$,>$-,[<.>>,]@
         /// Usage in main program: _appendCode = ExtractInQuotesFitness.Function
         /// </summary>
-        public static string Function = ",$+*+[[$---][!][]+>+[$<$>+,>,+-*++$+!<><>$-<*<>>,],<!!s++4+$*!+*+$-+$-+<!]+*>+<!**<*-<*>**!!<,,,![[,@";
+        public override string AppendCode
+        {
+            get
+            {
+                return ",$+*+[[$---][!][]+>+[$<$>+,>,+-*++$+!<><>$-<*<>>,],<!!s++4+$*!+*+$-+$-+<!]+*>+<!**<*-<*>**!!<,,,![[,@";
+            }
+        }
+
+        public override int? GenomeSize
+        {
+            get
+            {
+                return 5;
+            }
+        }
+
+        public override int? MaxGenomeSize
+        {
+            get
+            {
+                return 100;
+            }
+        }
+
+        public override int? ExpandAmount
+        {
+            get
+            {
+                return 2;
+            }
+        }
+
+        public override int? ExpandRate
+        {
+            get
+            {
+                return 5000;
+            }
+        }
+
+        #endregion
 
         public ExtractInQuotesFitness(GA ga, int maxIterationCount, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)

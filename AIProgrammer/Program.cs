@@ -39,8 +39,8 @@ namespace AIProgrammer
 
         private static double _crossoverRate = 0.70; // Percentage chance that a child genome will use crossover of two parents.
         private static double _mutationRate = 0.01; // Percentage chance that a child genome will mutate a gene.
-        private static int _genomeSize = 250; // Number of programming instructions in generated program (size of genome array). loops).        private static int _maxGenomeSize = 150; // The max length a genome may grow to (only applicable if _expandAmount > 0).
-        private static int _maxGenomeSize = 150; // The max length a genome may grow to (only applicable if _expandAmount > 0).
+        private static int _genomeSize = 100; // Number of programming instructions in generated program (size of genome array). loops).
+        private static int _maxGenomeSize = 100; // The max length a genome may grow to (only applicable if _expandAmount > 0).
         private static int _maxIterationCount = 5000; // Max iterations a program may run before being killed (prevents infinite loops).
         private static int _expandAmount = 0; // The max genome size will expand by this amount, every _expandRate iterations (may help learning). Set to 0 to disable.
         private static int _expandRate = 5000; // The max genome size will expand by _expandAmount, at this interval of generations.
@@ -78,7 +78,7 @@ namespace AIProgrammer
             {
                 _bestStatus.Iteration = 0;
                 Console.WriteLine("Best Fitness: " + _bestStatus.TrueFitness + "/" + _targetParams.TargetFitness + " " + Math.Round(_bestStatus.TrueFitness / _targetParams.TargetFitness * 100, 2) + "%, Ticks: " + _bestStatus.Ticks + ", Running: " + Math.Round((DateTime.Now - _startTime).TotalMinutes) + "m, Size: " + _genomeSize + ", Best Output: " + _bestStatus.Output + ", Changed: " + _bestStatus.LastChangeDate.ToString() + ", Program: " + _bestStatus.Program);
-                
+
                 ga.Save("my-genetic-algorithm.dat");
             }
 
@@ -136,8 +136,8 @@ namespace AIProgrammer
                 _appendCode += _functionGenerator.Generate(_ga);
             }
 
-            // Generate main program. Get the selected fitness type.
-            IFitness myFitness = GetFitnessMethod();
+            // Generate main program. Instantiate the fitness method.
+            IFitness myFitness = GetFitness();
 
             // Get the target fitness for this method.
             _targetParams.TargetFitness = myFitness.TargetFitness;
@@ -163,6 +163,28 @@ namespace AIProgrammer
             Console.WriteLine(result);
 
             Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Instantiates a fitness method.
+        /// This includes initializing any custom GA settings, as specified by the fitness.
+        /// This allows for reuse of the same GA settings when running a fitness method.
+        /// </summary>
+        /// <returns>IFitness</returns>
+        private static IFitness GetFitness()
+        {
+            IFitness fitness = GetFitnessMethod();
+
+            _appendCode += fitness.AppendCode;
+            _ga.GAParams.CrossoverRate = _crossoverRate = fitness.CrossoverRate.HasValue ? fitness.CrossoverRate.Value : _ga.GAParams.CrossoverRate;
+            _ga.GAParams.MutationRate = _mutationRate = fitness.MutationRate.HasValue ? fitness.MutationRate.Value : _ga.GAParams.MutationRate;
+            _ga.GAParams.GenomeSize = _genomeSize = fitness.GenomeSize.HasValue ? fitness.GenomeSize.Value : _ga.GAParams.GenomeSize;
+            _maxGenomeSize = fitness.MaxGenomeSize.HasValue ? fitness.MaxGenomeSize.Value : _maxGenomeSize;
+            _maxIterationCount = fitness.MaxIterationCount.HasValue ? fitness.MaxIterationCount.Value : _maxIterationCount;
+            _expandAmount = fitness.ExpandAmount.HasValue ? fitness.ExpandAmount.Value : _expandAmount;
+            _expandRate = fitness.ExpandRate.HasValue ? fitness.ExpandRate.Value : _expandRate;
+
+            return fitness;
         }
 
         #endregion

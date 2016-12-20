@@ -18,6 +18,43 @@ namespace AIProgrammer.Fitness.Base
         public double TargetFitness { get { return _targetFitness; } } // Target fitness to achieve solution.
         public int Ticks { get; set; } // Number of instructions executed by the best program.
 
+        #region Settings
+
+        /// <summary>
+        /// Program code, containing functions, that will be appended to main program code.
+        /// </summary>
+        public virtual string AppendCode { get; }
+        /// <summary>
+        /// Percentage chance that a child genome will use crossover of two parents. Default 0.7
+        /// </summary>
+        public virtual double? CrossoverRate { get; }
+        /// <summary>
+        /// Percentage chance that a child genome will mutate a gene. Default 0.01
+        /// </summary>
+        public virtual double? MutationRate { get; }
+        /// <summary>
+        /// Number of programming instructions in generated program (size of genome array). loops). Default 100
+        /// </summary>
+        public virtual int? GenomeSize { get; }
+        /// <summary>
+        /// The max length a genome may grow to (only applicable if _expandAmount > 0). Default 100
+        /// </summary>
+        public virtual int? MaxGenomeSize { get; }
+        /// <summary>
+        /// Max iterations a program may run before being killed (prevents infinite loops). Default 5000
+        /// </summary>
+        public virtual int? MaxIterationCount { get; }
+        /// <summary>
+        /// The max genome size will expand by this amount, every _expandRate iterations (may help learning). Set to 0 to disable. Default 0
+        /// </summary>
+        public virtual int? ExpandAmount { get; }
+        /// <summary>
+        /// The max genome size will expand by _expandAmount, at this interval of generations. Default 5000
+        /// </summary>
+        public virtual int? ExpandRate { get; }
+        
+        #endregion
+        
         protected double _fitness = 0; // Total fitness to return to genetic algorithm (may be variable, solution is not based upon this value, just the rank).
         protected static double _targetFitness = 0; // Target fitness to achieve. Static so we only evaluate this once across instantiations of the fitness class.
         protected int _maxIterationCount = 2000; // Max iterations a program may run before being killed (prevents infinite loops).

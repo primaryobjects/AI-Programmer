@@ -27,6 +27,43 @@
         /// </summary>
         int Ticks { get; set; }
 
+        #region Settings
+
+        /// <summary>
+        /// Program code, containing functions, that will be appended to main program code.
+        /// </summary>
+        string AppendCode { get; }
+        /// <summary>
+        /// Percentage chance that a child genome will use crossover of two parents. Default 0.7
+        /// </summary>
+        double? CrossoverRate { get; }
+        /// <summary>
+        /// Percentage chance that a child genome will mutate a gene. Default 0.01
+        /// </summary>
+        double? MutationRate { get; }
+        /// <summary>
+        /// Number of programming instructions in generated program (size of genome array). loops). Default 100
+        /// </summary>
+        int? GenomeSize { get; }
+        /// <summary>
+        /// The max length a genome may grow to (only applicable if _expandAmount > 0). Default 100
+        /// </summary>
+        int? MaxGenomeSize { get; }
+        /// <summary>
+        /// Max iterations a program may run before being killed (prevents infinite loops). Default 5000
+        /// </summary>
+        int? MaxIterationCount { get; }
+        /// <summary>
+        /// The max genome size will expand by this amount, every _expandRate iterations (may help learning). Set to 0 to disable. Default 0
+        /// </summary>
+        int? ExpandAmount { get; }
+        /// <summary>
+        /// The max genome size will expand by _expandAmount, at this interval of generations. Default 5000
+        /// </summary>
+        int? ExpandRate { get; }
+
+        #endregion
+
         /// <summary>
         /// Gets the fitness for the weights. Converts the weights into program code, executes the code, ranks the result.
         /// </summary>
