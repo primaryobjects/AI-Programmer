@@ -14,31 +14,19 @@ using System.Xml;
 namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
-    /// Outputs the text inside quotes. Use with genomeSize = 100.
+    /// Outputs value 0 if the input is a quote, and a positive value otherwise. Intended to be used as a function, where the last output is the return value.
     /// </summary>
-    public class ExtractInQuotesFitness : FitnessBase
+    public class FindQuoteFitness : FitnessBase
     {
-        private static string[] _trainingExamples = { "\"inside\"", "\"test\"", "\"foresting\"" };
-        private static string[] _trainingResults = new string[] { "inside", "test", "foresting" };
+        private static char[] _trainingExamples = "abcdefg123 \"\"\"\"\"\"\"\"\"\"\"".ToCharArray();
 
-        /// <summary>
-        /// Previously generated BrainPlus code for FindQuoteFitness. The function returns 0 if the current memory value is a quote and a positive value otherwise.
-        /// Note, the function was not actually used in the solution.
-        /// Another potential useful function: removing first and last character from a string (starts at memory location 0): +>!+!>++>,>$[...+.!,.<>..<]$,>$-,[<.>>,]@
-        /// Usage in main program: _appendCode = ExtractInQuotesFitness.Function
-        /// </summary>
-        public static string Function = ",$+*+[[$---][!][]+>+[$<$>+,>,+-*++$+!<><>$-<*<>>,],<!!s++4+$*!+*+$-+$-+<!]+*>+<!**<*-<*>**!!<,,,![[,@";
-
-        public ExtractInQuotesFitness(GA ga, int maxIterationCount, string appendFunctions = null)
+        public FindQuoteFitness(GA ga, int maxIterationCount, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
         {
             if (_targetFitness == 0)
             {
-                for (int i = 0; i < _trainingExamples.Length; i++)
-                {
-                    _targetFitness += _trainingResults[i].Length * 256;
-                    _targetFitness += 100; // length fitness
-                }
+                _targetFitness = _trainingExamples.Length * 256;
+                //_targetFitness += _trainingExamples.Length * 10; // length
             }
         }
 
@@ -48,6 +36,7 @@ namespace AIProgrammer.Fitness.Concrete
         {
             double countBonus = 0;
             double penalty = 0;
+            int result = -1;
 
             for (int i = 0; i < _trainingExamples.Length; i++)
             {
@@ -59,10 +48,12 @@ namespace AIProgrammer.Fitness.Concrete
                     // Run the program.
                     _bf = new Interpreter(program, () =>
                     {
-                        if (state < _trainingExamples[i].Length)
+                        if (state == 0)
                         {
+                            state++;
+
                             // Send input.
-                            return (byte)_trainingExamples[i][state++];
+                            return (byte)_trainingExamples[i];
                         }
                         else
                         {
@@ -72,7 +63,8 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        _console.Append((char)b);
+                        result = b;
+                        _console.Append(b);
                     });
                     _bf.Run(_maxIterationCount);
                 }
@@ -84,16 +76,28 @@ namespace AIProgrammer.Fitness.Concrete
                 _output.Append("|");
 
                 // Check result.
-                for (int j = 0; j < _trainingResults[i].Length; j++)
+                int expectedValue = -1;
+                if (_trainingExamples[i] == '\"')
                 {
-                    if (_console.Length > j)
+                    expectedValue = 0;
+                }
+
+                if (result != -1)
+                {
+                    if (expectedValue == 0)
                     {
-                        Fitness += 256 - Math.Abs(_console[j] - _trainingResults[i][j]);
+                        // We expect the value to be 0.
+                        Fitness += 256 - Math.Abs(result - expectedValue);
+                    }
+                    else if (result != 0)
+                    {
+                        // The value can be anything except 0.
+                        Fitness += 256;
                     }
                 }
 
                 // Length bonus (percentage of 10).
-                Fitness += 100 * ((_trainingResults[i].Length - Math.Abs(_console.Length - _trainingResults[i].Length)) / _trainingResults[i].Length);
+                countBonus += 10 * ((1 - Math.Abs(_console.Length - 1)) / 1);
 
                 // Make the AI wait until a solution is found without the penalty.
                 Fitness -= penalty;
@@ -119,36 +123,31 @@ namespace AIProgrammer.Fitness.Concrete
         {
             for (int i = 0; i < 99; i++)
             {
-                // Get input from the user.
-                Console.WriteLine();
-                Console.Write(">: ");
-                string line = Console.ReadLine();
-                int index = 0;
-
                 _console.Clear();
 
                 try
                 {
+                    int state = 0;
+
                     // Run the program.
                     Interpreter bf = new Interpreter(program, () =>
                     {
-                        byte b;
-
-                        // Send the next character.
-                        if (index < line.Length)
+                        if (state++ == 0)
                         {
-                            b = (byte)line[index++];
+                            // Get input from the user.
+                            Console.WriteLine();
+                            Console.Write(">: ");
+                            byte b = (byte)Console.ReadLine()[0];
+                            return b;
                         }
                         else
                         {
-                            b = 0;
+                            return 0;
                         }
-
-                        return b;
                     },
                     (b) =>
                     {
-                        _console.Append((char)b);
+                        Console.Write(b + " ");
                     });
 
                     bf.Run(_maxIterationCount);
@@ -156,8 +155,6 @@ namespace AIProgrammer.Fitness.Concrete
                 catch
                 {
                 }
-
-                Console.WriteLine(_console.ToString());
             }
         }
 

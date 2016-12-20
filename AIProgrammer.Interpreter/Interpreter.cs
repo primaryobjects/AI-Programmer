@@ -42,6 +42,7 @@ namespace AIProgrammer
             public int Ticks { get; set; }
             public char Instruction { get; set; }
             public byte Storage { get; set; }
+            public byte? ReturnValue { get; set; }
         };
 
         /// <summary>
@@ -131,6 +132,11 @@ namespace AIProgrammer
         /// Storage memory value. Usually used to hold return values from function calls.
         /// </summary>
         private byte m_Storage;
+
+        /// <summary>
+        /// Function return value. Set by using * command (instead of print . command).
+        /// </summary>
+        private byte? m_ReturnValue;
 
         /// <summary>
         /// Options for the interpreter.
@@ -251,6 +257,7 @@ namespace AIProgrammer
             this.m_InstructionSet.Add('D', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 208; });
             this.m_InstructionSet.Add('E', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 224; });
             this.m_InstructionSet.Add('F', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 240; });
+            this.m_InstructionSet.Add('*', () => { if (!m_ExitLoop) this.m_ReturnValue = this.m_Memory[this.m_DataPointer]; });
             this.m_InstructionSet.Add('@', () => 
             {
                 if (m_FunctionCallStack.Count > 0)
@@ -260,6 +267,12 @@ namespace AIProgrammer
 
                     // Restore the data pointer.
                     this.m_DataPointer = temp.DataPointer;
+
+                    /*if (this.m_ReturnValue.HasValue)
+                    {
+                        this.m_Memory[this.m_DataPointer] = this.m_ReturnValue.Value;
+                    }*/
+
                     // Restore the call stack.
                     this.m_CurrentCallStack = temp.CallStack;
                     // Restore exit loop status.
@@ -269,7 +282,9 @@ namespace AIProgrammer
                     // Restore ticks.
                     this.m_Ticks = temp.Ticks;
                     // Restore global storage.
-                    this.m_Storage = temp.Storage;
+                    this.m_Storage = this.m_ReturnValue.HasValue ? this.m_ReturnValue.Value : temp.Storage;
+                    // Restore parent return value.
+                    this.m_ReturnValue = temp.ReturnValue;
                     // Restore the instruction pointer.
                     this.m_InstructionPointer = temp.InstructionPointer;
                     // Restore function input pointer.
@@ -289,8 +304,8 @@ namespace AIProgrammer
                     // However, if this is the last storage command in the function code, then use the main/calling-function storage, to allow returning a value.
                     if (m_FunctionCallStack.Count > 0 && this.m_Source[m_InstructionPointer + 1] == '@')
                     {
-                        // Replace the value in global storage for the parent caller (to be set when function exits).
-                        m_FunctionCallStack.Peek().Storage = this.m_Memory[this.m_DataPointer];
+                        // Set function return value.
+                        this.m_ReturnValue = this.m_Memory[this.m_DataPointer];
                     }
                     else
                     {
@@ -333,7 +348,7 @@ namespace AIProgrammer
                         }
 
                         // Store the current instruction pointer and data pointer before we move to the function.
-                        var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, FunctionInputPointer = this.m_FunctionInputPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, ExitLoopInstructionPointer = this.m_ExitLoopInstructionPointer, Ticks = this.m_Ticks, Instruction = instruction, Storage = this.m_Storage };
+                        var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, FunctionInputPointer = this.m_FunctionInputPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, ExitLoopInstructionPointer = this.m_ExitLoopInstructionPointer, Ticks = this.m_Ticks, Instruction = instruction, Storage = this.m_Storage, ReturnValue = this.m_ReturnValue };
                         this.m_FunctionCallStack.Push(functionCallObj);
 
                         // Give the function a fresh call stack.
@@ -343,6 +358,7 @@ namespace AIProgrammer
 
                         // Initialize the function global storage.
                         this.m_Storage = 0;
+                        this.m_ReturnValue = null;
 
                         // Set the function input pointer to the parent's starting memory. Calls for input (,) from within the function will read from parent's memory, each call advances the parent memory cell that gets read from. This allows passing multiple values to a function.
                         // Note, if we set the starting m_FunctionInputPointer to 0, functions will read from the first input position (0).
@@ -354,6 +370,9 @@ namespace AIProgrammer
 
                         // Clear function memory.
                         Array.Clear(this.m_Memory, this.m_DataPointer, _functionSize);
+
+                        // Set ticks to 0.
+                        this.m_Ticks = 0;
 
                         // Set the instruction pointer to the beginning of the function.
                         this.m_InstructionPointer = m_Functions[instruction];
