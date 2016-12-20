@@ -120,6 +120,32 @@ namespace AIProgrammer
 
         #endregion
 
+        #region Utility Methods
+
+        /// <summary>
+        /// Instantiates a fitness method.
+        /// This includes initializing any custom GA settings, as specified by the fitness.
+        /// This allows for reuse of the same GA settings when running a fitness method.
+        /// </summary>
+        /// <returns>IFitness</returns>
+        private static IFitness GetFitness()
+        {
+            IFitness fitness = GetFitnessMethod();
+
+            _appendCode += fitness.AppendCode;
+            _ga.GAParams.CrossoverRate = _crossoverRate = fitness.CrossoverRate.HasValue ? fitness.CrossoverRate.Value : _ga.GAParams.CrossoverRate;
+            _ga.GAParams.MutationRate = _mutationRate = fitness.MutationRate.HasValue ? fitness.MutationRate.Value : _ga.GAParams.MutationRate;
+            _ga.GAParams.GenomeSize = _genomeSize = fitness.GenomeSize.HasValue ? fitness.GenomeSize.Value : _ga.GAParams.GenomeSize;
+            _maxGenomeSize = fitness.MaxGenomeSize.HasValue ? fitness.MaxGenomeSize.Value : _maxGenomeSize;
+            _maxIterationCount = fitness.MaxIterationCount.HasValue ? fitness.MaxIterationCount.Value : _maxIterationCount;
+            _expandAmount = fitness.ExpandAmount.HasValue ? fitness.ExpandAmount.Value : _expandAmount;
+            _expandRate = fitness.ExpandRate.HasValue ? fitness.ExpandRate.Value : _expandRate;
+
+            return fitness;
+        }
+
+        #endregion
+
         #region Main Program
 
         /// <summary>
@@ -163,28 +189,6 @@ namespace AIProgrammer
             Console.WriteLine(result);
 
             Console.ReadKey();
-        }
-
-        /// <summary>
-        /// Instantiates a fitness method.
-        /// This includes initializing any custom GA settings, as specified by the fitness.
-        /// This allows for reuse of the same GA settings when running a fitness method.
-        /// </summary>
-        /// <returns>IFitness</returns>
-        private static IFitness GetFitness()
-        {
-            IFitness fitness = GetFitnessMethod();
-
-            _appendCode += fitness.AppendCode;
-            _ga.GAParams.CrossoverRate = _crossoverRate = fitness.CrossoverRate.HasValue ? fitness.CrossoverRate.Value : _ga.GAParams.CrossoverRate;
-            _ga.GAParams.MutationRate = _mutationRate = fitness.MutationRate.HasValue ? fitness.MutationRate.Value : _ga.GAParams.MutationRate;
-            _ga.GAParams.GenomeSize = _genomeSize = fitness.GenomeSize.HasValue ? fitness.GenomeSize.Value : _ga.GAParams.GenomeSize;
-            _maxGenomeSize = fitness.MaxGenomeSize.HasValue ? fitness.MaxGenomeSize.Value : _maxGenomeSize;
-            _maxIterationCount = fitness.MaxIterationCount.HasValue ? fitness.MaxIterationCount.Value : _maxIterationCount;
-            _expandAmount = fitness.ExpandAmount.HasValue ? fitness.ExpandAmount.Value : _expandAmount;
-            _expandRate = fitness.ExpandRate.HasValue ? fitness.ExpandRate.Value : _expandRate;
-
-            return fitness;
         }
 
         #endregion
