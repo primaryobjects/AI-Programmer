@@ -18,7 +18,7 @@ namespace AIProgrammer.Fitness.Concrete
     /// </summary>
     public class ExtractInQuotesFitness : FitnessBase
     {
-        private static string[] _trainingExamples = { "one \"inside\"", "a \"test\"", "something \"foresting\"" };
+        private static string[] _trainingExamples = { "\"inside\"", "\"test\"", "\"foresting\"" };
         private static string[] _trainingResults = new string[] { "inside", "test", "foresting" };
 
         #region Settings
@@ -33,7 +33,7 @@ namespace AIProgrammer.Fitness.Concrete
         {
             get
             {
-                return ",$+*+[[$---][!][]+>+[$<$>+,>,+-*++$+!<><>$-<*<>>,],<!!s++4+$*!+*+$-+$-+<!]+*>+<!**<*-<*>**!!<,,,![[,@-+,>,<,[$,>+-.!<]<][!+[<[[+$+[[+<[[>$+[[-+$,->!>>$<$[+-,>6,$.-><-[!-[$>,+,,[,!+>!,,[$![!5@";
+                return ",$+*+[[$---][!][]+>+[$<$>+,>,+-*++$+!<><>$-<*<>>,],<!!s++4+$*!+*+$-+$-+<!]+*>+<!**<*-<*>**!!<,,,![[,@";
             }
         }
 
@@ -41,7 +41,7 @@ namespace AIProgrammer.Fitness.Concrete
         {
             get
             {
-                return 30;
+                return 5;
             }
         }
 
@@ -96,9 +96,6 @@ namespace AIProgrammer.Fitness.Concrete
                 try
                 {
                     int state = 0;
-                    int startingDataPointer = -1;
-                    HashSet<int> memoryHash = new HashSet<int>();
-
                     _console.Clear();
 
                     // Run the program.
@@ -106,15 +103,6 @@ namespace AIProgrammer.Fitness.Concrete
                     {
                         if (state < _trainingExamples[i].Length)
                         {
-                            if (startingDataPointer == -1 && _trainingExamples[i][state] == '"')
-                            {
-                                // Remember the data pointer position for the first quote input.
-                                startingDataPointer = _bf.m_CurrentDataPointer;
-                            }
-
-                            // Store data in different memory positions, so that function can access the data.
-                            memoryHash.Add(_bf.m_CurrentDataPointer);
-
                             // Send input.
                             return (byte)_trainingExamples[i][state++];
                         }
@@ -126,29 +114,9 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
-                        // We want the function to do the printing, so apply a penalty if the print comes from the main program.
-                        if (!_bf.IsInsideFunction)
-                        {
-                            penalty += 50;
-                        }
-
                         _console.Append((char)b);
-                    },
-                    (function) =>
-                    {
-                        if (startingDataPointer != -1 && function == 'b')
-                        {
-                            // The function requires the starting memory pointer to be at the first quote of input for "test". The function will then strip the quotes.
-                            //// Apply a penalty if the function is called and the memory pointer is anywhere else.
-                            //penalty += Math.Abs(startingDataPointer - _bf.m_CurrentDataPointer) * 5;
-                            // Give a bonus for calling the function at the correct memory location.
-                            countBonus += 100 * ((startingDataPointer - Math.Abs(_bf.m_CurrentDataPointer - startingDataPointer)) / startingDataPointer);
-                        }
                     });
                     _bf.Run(_maxIterationCount);
-
-                    // Give a bonus for using multiple memory registers, supporting diversity.
-                    countBonus += memoryHash.Count * 5;
                 }
                 catch
                 {
@@ -174,12 +142,6 @@ namespace AIProgrammer.Fitness.Concrete
 
                 // Check for solution.
                 IsFitnessAchieved();
-
-                // Bonus for executing functions.
-                if (!string.IsNullOrEmpty(_appendFunctions) && _bf.m_ExecutedFunctions.ContainsKey('b'))
-                {
-                    countBonus += 100;
-                }
 
                 // Bonus for less operations to optimize the code.
                 countBonus += ((_maxIterationCount - _bf.m_Ticks) / 1000.0);
