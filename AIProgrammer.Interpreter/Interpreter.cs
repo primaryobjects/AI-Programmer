@@ -109,7 +109,7 @@ namespace AIProgrammer
         /// <summary>
         /// The function "call stack".
         /// </summary>
-        public readonly Stack<FunctionCallObj> m_FunctionCallStack = new Stack<FunctionCallObj>();
+        private readonly Stack<FunctionCallObj> m_FunctionCallStack = new Stack<FunctionCallObj>();
 
         /// <summary>
         /// Pointer to the current call stack (m_FunctionCallStack or m_CallStack).
@@ -169,6 +169,16 @@ namespace AIProgrammer
         public Dictionary<char, int> m_ExecutedFunctions = new Dictionary<char, int>();
 
         /// <summary>
+        /// True if a function is currently running. False if the main program is running.
+        /// </summary>
+        public bool IsInsideFunction { get { return m_FunctionCallStack.Count > 0; } }
+
+        /// <summary>
+        /// The name of the currently executing function or null.
+        /// </summary>
+        public char? m_CurrentFunction { get { if (IsInsideFunction) return m_FunctionCallStack.Peek().Instruction; else return null; } }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="programCode"></param>
@@ -203,7 +213,7 @@ namespace AIProgrammer
             this.m_InstructionSet.Add('.', () => { if (!m_ExitLoop) this.m_Output(this.m_Memory[this.m_DataPointer]); });
 
             // Prompt for input. If inside a function, pull input from parent memory, using the current FunctionInputPointer. Each call for input advances the parent memory cell that gets read from, allowing the passing of multiple values as input to a function.
-            this.m_InstructionSet.Add(',', () => { if (!m_ExitLoop) m_Memory[this.m_DataPointer] = m_FunctionCallStack.Count == 0 ? this.m_Input() : this.m_Memory[this.m_FunctionInputPointer++]; });
+            this.m_InstructionSet.Add(',', () => { if (!m_ExitLoop) m_Memory[this.m_DataPointer] = IsInsideFunction ? this.m_Memory[this.m_FunctionInputPointer++] : this.m_Input(); });
 
             this.m_InstructionSet.Add('[', () =>
             {
@@ -260,7 +270,7 @@ namespace AIProgrammer
             this.m_InstructionSet.Add('*', () => { if (!m_ExitLoop) this.m_ReturnValue = this.m_Memory[this.m_DataPointer]; });
             this.m_InstructionSet.Add('@', () => 
             {
-                if (m_FunctionCallStack.Count > 0)
+                if (IsInsideFunction)
                 {
                     // Exit function.
                     var temp = m_FunctionCallStack.Pop();
@@ -302,7 +312,7 @@ namespace AIProgrammer
                 {
                     // If we're inside a function, use the function's own global storage (separate from the main program).
                     // However, if this is the last storage command in the function code, then use the main/calling-function storage, to allow returning a value.
-                    if (m_FunctionCallStack.Count > 0 && this.m_Source[m_InstructionPointer + 1] == '@')
+                    if (IsInsideFunction && this.m_Source[m_InstructionPointer + 1] == '@')
                     {
                         // Set function return value.
                         this.m_ReturnValue = this.m_Memory[this.m_DataPointer];
@@ -329,7 +339,7 @@ namespace AIProgrammer
                     if (!m_ExitLoop)
                     {
                         // Record a list of executed function names from the main program (not a function calling another function).
-                        if (m_FunctionCallStack.Count == 0)
+                        if (!IsInsideFunction)
                         {
                             if (m_ExecutedFunctions.ContainsKey(instruction))
                             {
@@ -425,7 +435,7 @@ namespace AIProgrammer
                 // Have we exceeded the max instruction count?
                 if (maxInstructions > 0 && m_Ticks >= maxInstructions)
                 {
-                    if (m_FunctionCallStack.Count > 0)
+                    if (IsInsideFunction)
                     {
                         // We're inside a function, but ran out of instructions. Exit the function, but continue.
                         if (this.m_InstructionSet.TryGetValue('@', out action))

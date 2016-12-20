@@ -91,7 +91,7 @@ namespace AIProgrammer.Fitness.Concrete
                         _console.Append((char)b);
 
                         // We want the function to do the printing (at least for the first case), so apply a penalty if the print comes from the main program. {"a":"boy"}
-                        if (!string.IsNullOrEmpty(_appendFunctions) && _console.Length >= 7 && _console.Length <= 9 && (_bf.m_FunctionCallStack.Count == 0 || _bf.m_FunctionCallStack.Peek().Instruction != 'e'))
+                        if (!string.IsNullOrEmpty(_appendFunctions) && _console.Length >= 7 && _console.Length <= 9 && (!_bf.IsInsideFunction || _bf.m_CurrentFunction != 'e'))
                         {
                             penalty += 150;
                         }

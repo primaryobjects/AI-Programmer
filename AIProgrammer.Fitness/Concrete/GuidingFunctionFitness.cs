@@ -84,7 +84,7 @@ namespace AIProgrammer.Fitness.Concrete
                     (b) =>
                     {
                         // We want the function to do the printing, so apply a penalty if the print comes from the main program.
-                        if (!string.IsNullOrEmpty(_appendFunctions) && _bf.m_FunctionCallStack.Count == 0)
+                        if (!string.IsNullOrEmpty(_appendFunctions) && !_bf.IsInsideFunction)
                         {
                             penalty += 100;
                         }
