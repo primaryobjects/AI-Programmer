@@ -20,18 +20,21 @@ namespace AIProgrammer
     /// ] 	Jump backward to the matching [ unless the byte at the pointer is zero.
     /// 
     /// Extended commands, included in BrainPlus.
-    /// @   Exits the program or if inside a function, return to last position in main program and restore state.
+    /// @   Exits the program or if inside a function, return to prior position in main program and restore state.
     /// $   Overwrites the byte in storage with the byte at the pointer.
     /// !   Overwrites the byte at the pointer with the byte in storage.
     /// a,b Call function a - z.
     /// 0-F Sets the value of the current memory pointer to a multiple of 16.
+    /// *   Sets the return value of a function to the value at the current memory pointer; parent storage will get return value.
     /// </summary>
     public class Interpreter
     {
+        #region Private Members
+
         /// <summary>
         /// Object used to swap state for a function call. This data is restored when the function terminates.
         /// </summary>
-        public class FunctionCallObj
+        private class FunctionCallObj
         {
             public int InstructionPointer { get; set; }
             public int DataPointer { get; set; }
@@ -58,8 +61,7 @@ namespace AIProgrammer
         /// <summary>
         /// The instruction set
         /// </summary>
-        private readonly IDictionary<char, Action> m_InstructionSet =
-            new Dictionary<char, Action>();
+        private readonly IDictionary<char, Action> m_InstructionSet = new Dictionary<char, Action>();
 
         /// <summary>
         /// The memory of the program
@@ -143,6 +145,10 @@ namespace AIProgrammer
         /// </summary>
         private InterpreterOptions m_Options = new InterpreterOptions();
 
+        #endregion
+
+        #region Public Members
+
         /// <summary>
         /// Number of instructions executed.
         /// </summary>
@@ -177,6 +183,8 @@ namespace AIProgrammer
         /// The name of the currently executing function or null.
         /// </summary>
         public char? m_CurrentFunction { get { if (IsInsideFunction) return m_FunctionCallStack.Peek().Instruction; else return null; } }
+
+        #endregion
 
         /// <summary>
         /// Constructor
