@@ -15,18 +15,57 @@ namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
     /// Outputs value 0 if the input is a quote, and a positive value otherwise. Intended to be used as a function, where the last output is the return value.
+    /// To use the final program, replace all occurrences of . with *
+    /// This prevents outputting the result and instead sets the result as the function return value (storage to parent).
+    /// To test the solution, you can use the following stub: ,a!.@generated_code_here
     /// </summary>
     public class FindQuoteFitness : FitnessBase
     {
-        private static char[] _trainingExamples = "abcdefg123 \"\"\"\"\"\"\"\"\"\"\"".ToCharArray();
+        private static char[] _trainingExamples = "abcdts123 \"".ToCharArray();
+
+        #region Settings
+
+        public override int? GenomeSize
+        {
+            get
+            {
+                return 75;
+            }
+        }
+
+        public override int? MaxGenomeSize
+        {
+            get
+            {
+                return 100;
+            }
+        }
+
+        public override int? ExpandAmount
+        {
+            get
+            {
+                return 2;
+            }
+        }
+
+        public override int? ExpandRate
+        {
+            get
+            {
+                return 2500;
+            }
+        }
+
+        #endregion
 
         public FindQuoteFitness(GA ga, int maxIterationCount, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
         {
             if (_targetFitness == 0)
             {
-                _targetFitness = _trainingExamples.Length * 256;
-                //_targetFitness += _trainingExamples.Length * 10; // length
+                _targetFitness = (_trainingExamples.Length - 1) * 256; // -1 to not include the quote, as we'll add that next.
+                _targetFitness *= 2; // Include a " for each non-quote to balance training.
             }
         }
 
@@ -63,6 +102,12 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
+                        if (state < 1)
+                        {
+                            // Not ready for output.
+                            penalty += 10;
+                        }
+
                         result = b;
                         _console.Append(b);
                     });
@@ -86,8 +131,11 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                     if (expectedValue == 0)
                     {
-                        // We expect the value to be 0.
-                        Fitness += 256 - Math.Abs(result - expectedValue);
+                        // This is a quote, so we expect the value to be 0.
+                        double score = 256 - Math.Abs(result - expectedValue);
+
+                        // Multiply this result to balance training against non-quotes.
+                        Fitness += score * (_trainingExamples.Length - 1);
                     }
                     else if (result != 0)
                     {
@@ -96,8 +144,8 @@ namespace AIProgrammer.Fitness.Concrete
                     }
                 }
 
-                // Length bonus (percentage of 10).
-                countBonus += 10 * ((1 - Math.Abs(_console.Length - 1)) / 1);
+                // Length bonus (percentage of 100).
+                countBonus += 100 * ((1 - Math.Abs(_console.Length - 1)) / 1);
 
                 // Make the AI wait until a solution is found without the penalty.
                 Fitness -= penalty;
@@ -106,7 +154,7 @@ namespace AIProgrammer.Fitness.Concrete
                 IsFitnessAchieved();
 
                 // Bonus for less operations to optimize the code.
-                countBonus += ((_maxIterationCount - _bf.m_Ticks) / 1000.0);
+                countBonus += ((_maxIterationCount - _bf.m_Ticks) / 20.0);
 
                 Ticks += _bf.m_Ticks;
             }

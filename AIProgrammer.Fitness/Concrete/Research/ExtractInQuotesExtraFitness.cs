@@ -11,29 +11,30 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace AIProgrammer.Fitness.Concrete
+namespace AIProgrammer.Fitness.Concrete.Research
 {
     /// <summary>
-    /// Outputs the text inside quotes.
+    /// Outputs the text inside quotes, with additional text in front of it.
     /// </summary>
-    public class ExtractInQuotesFitness : FitnessBase
+    public class ExtractInQuotesExtraFitness : FitnessBase
     {
-        private static string[] _trainingExamples = { "\"inside\"", "\"test\"", "\"foresting\"" };
+        private static string[] _trainingExamples = { "dot \"inside\"", "milk \"test\"", "final \"foresting\"" };
         private static string[] _trainingResults = new string[] { "inside", "test", "foresting" };
 
         #region Settings
 
         /// <summary>
-        /// Previously generated BrainPlus code for FindQuoteFitness. The function returns 0 if the current memory value is a quote and a positive value otherwise.
+        /// Previously generated BrainPlus code for FindQuoteFitness.
+        /// The first function returns 0 (to storage) if the current memory value is a quote and a positive value otherwise.
+        /// The second function removes the first and last character from a string.
         /// Note, the function was not actually used in the solution.
         /// Another potential useful function: removing first and last character from a string (starts at memory location 0): +>!+!>++>,>$[...+.!,.<>..<]$,>$-,[<.>>,]@
-        /// Usage in main program: _appendCode = ExtractInQuotesFitness.Function
         /// </summary>
         public override string AppendCode
         {
             get
             {
-                return ",$+*+[[$---][!][]+>+[$<$>+,>,+-*++$+!<><>$-<*<>>,],<!!s++4+$*!+*+$-+$-+<!]+*>+<!**<*-<*>**!!<,,,![[,@";
+                return "!$$,++[[$+-+]->$+[*[+[+*$*+[++*++[+[>]$!+[$+[>[+!*-*>,**-,,$>*[,**-,]!-+]],]*],-!$<]>@-+,>,<,[$,>+-.!<]<][!+[<[[+$+[[+<[[>$+[[-+$,->!>>$<$[+-,>6,$.-><-[!-[$>,+,,[,!+>!,,[$![!5@";
             }
         }
 
@@ -41,7 +42,7 @@ namespace AIProgrammer.Fitness.Concrete
         {
             get
             {
-                return 5;
+                return 50;
             }
         }
 
@@ -71,7 +72,7 @@ namespace AIProgrammer.Fitness.Concrete
 
         #endregion
 
-        public ExtractInQuotesFitness(GA ga, int maxIterationCount, string appendFunctions = null)
+        public ExtractInQuotesExtraFitness(GA ga, int maxIterationCount, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
         {
             if (_targetFitness == 0)
@@ -79,7 +80,7 @@ namespace AIProgrammer.Fitness.Concrete
                 for (int i = 0; i < _trainingExamples.Length; i++)
                 {
                     _targetFitness += _trainingResults[i].Length * 256;
-                    _targetFitness += 100; // length fitness
+                    _targetFitness += 10; // length fitness
                 }
             }
         }
@@ -96,6 +97,10 @@ namespace AIProgrammer.Fitness.Concrete
                 try
                 {
                     int state = 0;
+                    int startingDataPointer = -1;
+                    HashSet<int> memoryHash = new HashSet<int>();
+                    bool aBonus = false;
+
                     _console.Clear();
 
                     // Run the program.
@@ -103,6 +108,15 @@ namespace AIProgrammer.Fitness.Concrete
                     {
                         if (state < _trainingExamples[i].Length)
                         {
+                            if (startingDataPointer == -1 && _trainingExamples[i][state] == '"')
+                            {
+                                // Remember the data pointer position for the first quote input.
+                                startingDataPointer = _bf.m_CurrentDataPointer;
+                            }
+
+                            // Store data in different memory positions, so that function can access the data.
+                            memoryHash.Add(_bf.m_CurrentDataPointer);
+
                             // Send input.
                             return (byte)_trainingExamples[i][state++];
                         }
@@ -114,9 +128,52 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
+                        // We want the function to do the printing, so apply a bonus if the print comes from a function.
+                        if (_console.Length < _trainingResults[i].Length)
+                        {
+                            if (_bf.IsInsideFunction)
+                            {
+                                countBonus += 50;
+                            }
+                            else
+                            {
+                                penalty += 50;
+                            }
+                        }
+
                         _console.Append((char)b);
+                    },
+                    (function) =>
+                    {
+                        switch (function)
+                        {
+                            case 'a':
+                            {
+                                // Give a bonus for calling the function within a loop.
+                                if (!aBonus && _bf.IsInsideLoop)
+                                {
+                                    countBonus += 25;
+                                    countBonus += (_bf.m_CurrentInstructionPointer + 1 < program.Length) && program[_bf.m_CurrentInstructionPointer + 1] == '!' ? 75 : 0;
+                                    aBonus = true;
+                                }
+                            }
+                            break;
+                            case 'b':
+                            {
+                                if (startingDataPointer != -1)
+                                {
+                                    // The function requires the starting memory pointer to be at the first quote of input for "test". The function will then strip the quotes.
+                                    // Give a bonus for calling the function at the correct memory location.
+                                    countBonus += 100 * ((startingDataPointer - Math.Abs(_bf.m_CurrentDataPointer - startingDataPointer)) / startingDataPointer);
+                                }
+                            }
+                            break;
+                        };
                     });
                     _bf.Run(_maxIterationCount);
+
+                    // Give a bonus for using multiple memory registers, supporting diversity.
+                    countBonus += memoryHash.Count * 25;
                 }
                 catch
                 {
@@ -135,7 +192,7 @@ namespace AIProgrammer.Fitness.Concrete
                 }
 
                 // Length bonus (percentage of 10).
-                Fitness += 100 * ((_trainingResults[i].Length - Math.Abs(_console.Length - _trainingResults[i].Length)) / _trainingResults[i].Length);
+                Fitness += 10 * ((_trainingResults[i].Length - Math.Abs(_console.Length - _trainingResults[i].Length)) / _trainingResults[i].Length);
 
                 // Make the AI wait until a solution is found without the penalty.
                 Fitness -= penalty;
@@ -143,8 +200,11 @@ namespace AIProgrammer.Fitness.Concrete
                 // Check for solution.
                 IsFitnessAchieved();
 
+                // Bonus for executing functions.
+                countBonus += _bf.m_ExecutedFunctions.Count * 100;
+
                 // Bonus for less operations to optimize the code.
-                countBonus += ((_maxIterationCount - _bf.m_Ticks) / 1000.0);
+                countBonus += ((_maxIterationCount - _bf.m_Ticks) / 20.0);
 
                 Ticks += _bf.m_Ticks;
             }

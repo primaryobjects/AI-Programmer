@@ -180,6 +180,11 @@ namespace AIProgrammer
         public bool IsInsideFunction { get { return m_FunctionCallStack.Count > 0; } }
 
         /// <summary>
+        /// True if currently inside a loop []. False otherwise. Note, check IsInsideFunction to tell if this is a loop within a function or the main program.
+        /// </summary>
+        public bool IsInsideLoop { get { return m_CurrentCallStack.Count > 0; } }
+
+        /// <summary>
         /// The name of the currently executing function or null.
         /// </summary>
         public char? m_CurrentFunction { get { if (IsInsideFunction) return m_FunctionCallStack.Peek().Instruction; else return null; } }
