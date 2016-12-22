@@ -15,9 +15,9 @@ namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
     /// Outputs value 0 if the input is a quote, and a positive value otherwise. Intended to be used as a function, where the last output is the return value.
-    /// To use the final program, replace all occurrences of . with *
+    /// To test the solution, you can use the following code: ,a!.@generated_code_here
+    /// When using as a function, replace all occurrences of . with * inside generated_code_here.
     /// This prevents outputting the result and instead sets the result as the function return value (storage to parent).
-    /// To test the solution, you can use the following stub: ,a!.@generated_code_here
     /// </summary>
     public class FindQuoteFitness : FitnessBase
     {
@@ -61,6 +61,7 @@ namespace AIProgrammer.Fitness.Concrete
         {
             get
             {
+                // We want this function to run fast, so limit the max iterations.
                 return 100;
             }
         }
@@ -165,6 +166,7 @@ namespace AIProgrammer.Fitness.Concrete
                 countBonus += ((_maxIterationCount - _bf.m_Ticks) / 20.0);
 
                 Ticks += _bf.m_Ticks;
+                TotalTicks += _bf.m_TotalTicks;
             }
 
             if (_fitness != Double.MaxValue)
