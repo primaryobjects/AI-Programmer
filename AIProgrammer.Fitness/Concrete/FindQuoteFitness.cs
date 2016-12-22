@@ -183,23 +183,14 @@ namespace AIProgrammer.Fitness.Concrete
 
                 try
                 {
-                    int state = 0;
-
                     // Run the program.
                     Interpreter bf = new Interpreter(program, () =>
                     {
-                        if (state++ == 0)
-                        {
-                            // Get input from the user.
-                            Console.WriteLine();
-                            Console.Write(">: ");
-                            byte b = (byte)Console.ReadLine()[0];
-                            return b;
-                        }
-                        else
-                        {
-                            return 0;
-                        }
+                        // Get input from the user.
+                        Console.WriteLine();
+                        Console.Write(">: ");
+                        byte b = (byte)Console.ReadLine()[0];
+                        return b;
                     },
                     (b) =>
                     {
