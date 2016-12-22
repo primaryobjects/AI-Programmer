@@ -150,14 +150,19 @@ namespace AIProgrammer
         #region Public Members
 
         /// <summary>
-        /// Number of instructions executed.
+        /// Number of instructions executed within the main program or the current function.
         /// </summary>
-        public int m_Ticks;
+        public int m_Ticks { get; private set; }
+
+        /// <summary>
+        /// Number of total instructions executed, including within functions.
+        /// </summary>
+        public int m_TotalTicks { get; private set; }
 
         /// <summary>
         /// Flag to stop execution of the program.
         /// </summary>
-        public bool m_Stop;
+        public bool m_Stop { get; set; }
 
         /// <summary>
         /// Read-only access to the current data pointer index in memory.
@@ -410,6 +415,7 @@ namespace AIProgrammer
         public void Run(int maxInstructions = 0)
         {
             m_Ticks = 0;
+            m_TotalTicks = 0;
             m_Stop = false;
 
             if (maxInstructions > 0)
@@ -464,6 +470,7 @@ namespace AIProgrammer
                 }
 
                 m_Ticks++;
+                m_TotalTicks++;
             }
         }
 
@@ -490,6 +497,7 @@ namespace AIProgrammer
                 this.m_InstructionPointer++;
 
                 m_Ticks++;
+                m_TotalTicks++;
             }
         }
 

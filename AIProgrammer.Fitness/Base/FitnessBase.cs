@@ -17,6 +17,7 @@ namespace AIProgrammer.Fitness.Base
         public double Fitness { get; set; } // Fitness used for determining solution fitness (ie., true fitness).
         public double TargetFitness { get { return _targetFitness; } } // Target fitness to achieve solution.
         public int Ticks { get; set; } // Number of instructions executed by the best program.
+        public int TotalTicks { get; set; } // Number of instructions executed by the best program, including functions.
 
         #region Settings
 

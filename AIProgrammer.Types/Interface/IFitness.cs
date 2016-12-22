@@ -27,6 +27,11 @@
         /// </summary>
         int Ticks { get; set; }
 
+        /// <summary>
+        /// Number of instructions executed for the best fitness, including function calls.
+        /// </summary>
+        int TotalTicks { get; set; }
+
         #region Settings
 
         /// <summary>

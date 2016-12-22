@@ -37,6 +37,10 @@ namespace AIProgrammer.Types
         /// </summary>
         public int Ticks = 0;
         /// <summary>
+        /// Number of instructions executed by the best program, including function calls.
+        /// </summary>
+        public int TotalTicks = 0;
+        /// <summary>
         /// Time of last improved evolution.
         /// </summary>
         public DateTime LastChangeDate = DateTime.Now;

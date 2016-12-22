@@ -77,7 +77,7 @@ namespace AIProgrammer
             if (_bestStatus.Iteration++ > 1000)
             {
                 _bestStatus.Iteration = 0;
-                Console.WriteLine("Best Fitness: " + _bestStatus.TrueFitness + "/" + _targetParams.TargetFitness + " " + Math.Round(_bestStatus.TrueFitness / _targetParams.TargetFitness * 100, 2) + "%, Ticks: " + _bestStatus.Ticks + ", Running: " + Math.Round((DateTime.Now - _startTime).TotalMinutes) + "m, Size: " + _genomeSize + ", Best Output: " + _bestStatus.Output + ", Changed: " + _bestStatus.LastChangeDate.ToString() + ", Program: " + _bestStatus.Program);
+                Console.WriteLine("Best Fitness: " + _bestStatus.TrueFitness + "/" + _targetParams.TargetFitness + " " + Math.Round(_bestStatus.TrueFitness / _targetParams.TargetFitness * 100, 2) + "%, Ticks: " + _bestStatus.Ticks + ", Total Ticks: " + _bestStatus.TotalTicks + ", Running: " + Math.Round((DateTime.Now - _startTime).TotalMinutes) + "m, Size: " + _genomeSize + ", Best Output: " + _bestStatus.Output + ", Changed: " + _bestStatus.LastChangeDate.ToString() + ", Program: " + _bestStatus.Program);
 
                 ga.Save("my-genetic-algorithm.dat");
             }
@@ -113,6 +113,7 @@ namespace AIProgrammer
                 _bestStatus.LastChangeDate = DateTime.Now;
                 _bestStatus.Program = myFitness.Program;
                 _bestStatus.Ticks = myFitness.Ticks;
+                _bestStatus.TotalTicks = myFitness.TotalTicks;
             }
 
             return fitness;
@@ -140,6 +141,9 @@ namespace AIProgrammer
             _maxIterationCount = fitness.MaxIterationCount.HasValue ? fitness.MaxIterationCount.Value : _maxIterationCount;
             _expandAmount = fitness.ExpandAmount.HasValue ? fitness.ExpandAmount.Value : _expandAmount;
             _expandRate = fitness.ExpandRate.HasValue ? fitness.ExpandRate.Value : _expandRate;
+
+            // Re-initialize the fitness method for any changed internal values.
+            fitness = GetFitnessMethod();
 
             return fitness;
         }
@@ -187,7 +191,7 @@ namespace AIProgrammer
             // Run the result for the user.
             string result = myFitness.RunProgram(program);
             Console.WriteLine(result);
-
+            
             Console.ReadKey();
         }
 
