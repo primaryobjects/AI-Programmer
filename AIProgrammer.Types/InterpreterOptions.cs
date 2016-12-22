@@ -17,5 +17,9 @@ namespace AIProgrammer.Types
         /// If false (default), input will be read from the current memory data position of the parent. Meaning, if the parent has shifted the memory pointer up 3 slots, the function will begin reading from memory at position 3.
         /// </summary>
         public bool ReadFunctionInputAtMemoryStart { get; set; }
+        /// <summary>
+        /// Custom max iteration counts for functions.
+        /// </summary>
+        public int[] FunctionMaxIterationCounts { get; set; }
     }
 }

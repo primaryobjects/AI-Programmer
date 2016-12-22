@@ -29,7 +29,7 @@ namespace AIProgrammer.Fitness.Concrete
         {
             get
             {
-                return 75;
+                return 25;
             }
         }
 
@@ -54,6 +54,14 @@ namespace AIProgrammer.Fitness.Concrete
             get
             {
                 return 2500;
+            }
+        }
+
+        public override int? MaxIterationCount
+        {
+            get
+            {
+                return 100;
             }
         }
 
@@ -110,7 +118,7 @@ namespace AIProgrammer.Fitness.Concrete
 
                         result = b;
                         _console.Append(b);
-                    });
+                    }, null, new InterpreterOptions() { FunctionMaxIterationCounts = new int[] { 100 } });
                     _bf.Run(_maxIterationCount);
                 }
                 catch
@@ -196,7 +204,7 @@ namespace AIProgrammer.Fitness.Concrete
                     (b) =>
                     {
                         Console.Write(b + " ");
-                    });
+                    }, null, new InterpreterOptions() { FunctionMaxIterationCounts = new int[] { 100 } });
 
                     bf.Run(_maxIterationCount);
                 }

@@ -46,6 +46,7 @@ namespace AIProgrammer
             public char Instruction { get; set; }
             public byte Storage { get; set; }
             public byte? ReturnValue { get; set; }
+            public int MaxIterationCount { get; set; }
         };
 
         /// <summary>
@@ -101,7 +102,7 @@ namespace AIProgrammer
         /// <summary>
         /// The list of functions and their starting instruction index.
         /// </summary>
-        private readonly Dictionary<char, int> m_Functions = new Dictionary<char, int>();
+        private readonly Dictionary<char, KeyValuePair<int, int>> m_Functions = new Dictionary<char, KeyValuePair<int, int>>();
 
         /// <summary>
         /// Identifier for next function. Will serve as the instruction to call this function.
@@ -129,6 +130,11 @@ namespace AIProgrammer
         /// Number of cells available to functions. When a function is executed, an array of cells are allocated in upper-addresses (eg., 1000-1999, 2000-2999, etc.) for usage.
         /// </summary>
         private const int _functionSize = 300;
+
+        /// <summary>
+        /// Max number of iterations for a program or function to run. Can be custom specified within a function using the syntax: @maxit=1234|function_code_here
+        /// </summary>
+        private int m_MaxIterationCount;
 
         /// <summary>
         /// Storage memory value. Usually used to hold return values from function calls.
@@ -286,7 +292,7 @@ namespace AIProgrammer
             this.m_InstructionSet.Add('E', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 224; });
             this.m_InstructionSet.Add('F', () => { if (!m_ExitLoop) this.m_Memory[this.m_DataPointer] = 240; });
             this.m_InstructionSet.Add('*', () => { if (!m_ExitLoop) this.m_ReturnValue = this.m_Memory[this.m_DataPointer]; });
-            this.m_InstructionSet.Add('@', () => 
+            this.m_InstructionSet.Add('@', () =>
             {
                 if (IsInsideFunction)
                 {
@@ -313,6 +319,8 @@ namespace AIProgrammer
                     this.m_Storage = this.m_ReturnValue.HasValue ? this.m_ReturnValue.Value : temp.Storage;
                     // Restore parent return value.
                     this.m_ReturnValue = temp.ReturnValue;
+                    // Restore max iteraction count.
+                    this.m_MaxIterationCount = temp.MaxIterationCount;
                     // Restore the instruction pointer.
                     this.m_InstructionPointer = temp.InstructionPointer;
                     // Restore function input pointer.
@@ -324,7 +332,7 @@ namespace AIProgrammer
                     this.m_Stop = true;
                 }
             });
-            this.m_InstructionSet.Add('$', () => 
+            this.m_InstructionSet.Add('$', () =>
             {
                 if (!m_ExitLoop)
                 {
@@ -376,7 +384,7 @@ namespace AIProgrammer
                         }
 
                         // Store the current instruction pointer and data pointer before we move to the function.
-                        var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, FunctionInputPointer = this.m_FunctionInputPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, ExitLoopInstructionPointer = this.m_ExitLoopInstructionPointer, Ticks = this.m_Ticks, Instruction = instruction, Storage = this.m_Storage, ReturnValue = this.m_ReturnValue };
+                        var functionCallObj = new FunctionCallObj { InstructionPointer = this.m_InstructionPointer, DataPointer = this.m_DataPointer, FunctionInputPointer = this.m_FunctionInputPointer, CallStack = this.m_CurrentCallStack, ExitLoop = this.m_ExitLoop, ExitLoopInstructionPointer = this.m_ExitLoopInstructionPointer, Ticks = this.m_Ticks, Instruction = instruction, Storage = this.m_Storage, ReturnValue = this.m_ReturnValue, MaxIterationCount = this.m_MaxIterationCount };
                         this.m_FunctionCallStack.Push(functionCallObj);
 
                         // Give the function a fresh call stack.
@@ -402,8 +410,11 @@ namespace AIProgrammer
                         // Set ticks to 0.
                         this.m_Ticks = 0;
 
+                        // Set the max iteration count for this function, if one was specified.
+                        this.m_MaxIterationCount = m_Functions[instruction].Value > 0 ? m_Functions[instruction].Value : this.m_MaxIterationCount;
+
                         // Set the instruction pointer to the beginning of the function.
-                        this.m_InstructionPointer = m_Functions[instruction];
+                        this.m_InstructionPointer = m_Functions[instruction].Key;
                     }
                 });
             }
@@ -434,6 +445,8 @@ namespace AIProgrammer
         /// <param name="maxInstructions">Max number of instructions to execute</param>
         private void RunLimited(int maxInstructions)
         {
+            m_MaxIterationCount = maxInstructions;
+
             // Iterate through the whole program source
             while (this.m_InstructionPointer < this.m_Source.Length && !m_Stop)
             {
@@ -452,7 +465,7 @@ namespace AIProgrammer
                 this.m_InstructionPointer++;
 
                 // Have we exceeded the max instruction count?
-                if (maxInstructions > 0 && m_Ticks >= maxInstructions)
+                if (m_MaxIterationCount > 0 && m_Ticks >= m_MaxIterationCount)
                 {
                     if (IsInsideFunction)
                     {
@@ -509,8 +522,11 @@ namespace AIProgrammer
             this.m_InstructionPointer = source.IndexOf('@');
             while (this.m_InstructionPointer > -1 && this.m_InstructionPointer < source.Length - 1 && !m_Stop)
             {
+                // Extract a max iteration count, if specified.
+                int maxFunctionIterationCount = m_Options.FunctionMaxIterationCounts != null && m_Options.FunctionMaxIterationCounts.Length > m_Functions.Count ? m_Options.FunctionMaxIterationCounts[m_Functions.Count] : 0;
+
                 // Store the function.
-                m_Functions.Add(m_NextFunctionCharacter++, this.m_InstructionPointer);
+                m_Functions.Add(m_NextFunctionCharacter++, new KeyValuePair<int, int>(this.m_InstructionPointer, maxFunctionIterationCount));
 
                 this.m_InstructionPointer = source.IndexOf('@', this.m_InstructionPointer + 1);
             }

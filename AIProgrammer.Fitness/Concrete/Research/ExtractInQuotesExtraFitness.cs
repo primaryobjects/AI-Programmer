@@ -34,7 +34,7 @@ namespace AIProgrammer.Fitness.Concrete.Research
         {
             get
             {
-                return "!$$,++[[$+-+]->$+[*[+[+*$*+[++*++[+[>]$!+[$+[>[+!*-*>,**-,,$>*[,**-,]!-+]],]*],-!$<]>@-+,>,<,[$,>+-.!<]<][!+[<[[+$+[[+<[[>$+[[-+$,->!>>$<$[+-,>6,$.-><-[!-[$>,+,,[,!+>!,,[$![!5@";
+                return "A!,+*+>+*+<[[---$*]]>-,[-@-+,>,<,[$,>+-.!<]<][!+[<[[+$+[[+<[[>$+[[-+$,->!>>$<$[+-,>6,$.-><-[!-[$>,+,,[,!+>!,,[$![!5@";
             }
         }
 
@@ -169,7 +169,7 @@ namespace AIProgrammer.Fitness.Concrete.Research
                             }
                             break;
                         };
-                    });
+                    }, new InterpreterOptions() { FunctionMaxIterationCounts = new int[] { 100 } });
                     _bf.Run(_maxIterationCount);
 
                     // Give a bonus for using multiple memory registers, supporting diversity.
@@ -251,7 +251,7 @@ namespace AIProgrammer.Fitness.Concrete.Research
                     (b) =>
                     {
                         _console.Append((char)b);
-                    });
+                    }, null, new InterpreterOptions() { FunctionMaxIterationCounts = new int[] { 100 } });
 
                     bf.Run(_maxIterationCount);
                 }
