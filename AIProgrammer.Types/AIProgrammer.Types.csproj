@@ -39,13 +39,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FunctionInst.cs" />
     <Compile Include="GAParams.cs" />
     <Compile Include="GAStatus.cs" />
     <Compile Include="Genome.cs" />
     <Compile Include="Interface\IFitness.cs" />
     <Compile Include="Interface\IFunction.cs" />
     <Compile Include="Interface\IGeneticAlgorithm.cs" />
-    <Compile Include="InterpreterOptions.cs" />
+    <Compile Include="Function.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TargetParams.cs" />
   </ItemGroup>

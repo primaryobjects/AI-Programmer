@@ -14,12 +14,12 @@ using System.Xml;
 namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
-    /// Outputs the text inside quotes, with additional text in front of it.
+    /// Removes text to the left of the first quote. Example: one "two" three => "two" three
     /// </summary>
-    public class ExtractInQuotesExtraFitness : FitnessBase
+    public class TrimLeftOfQuoteFitness : FitnessBase
     {
-        private static string[] _trainingExamples = { "dot \"inside\"", "mil \"test\"", "fin \"foresting\"" };
-        private static string[] _trainingResults = new string[] { "inside", "test", "foresting" };
+        private static string[] _trainingExamples = { "dot \"inside\" over", "million \"test\" rights", "final \"foresting\" service" };
+        private static string[] _trainingResults = new string[] { "\"inside\" over", "\"test\" rights", "\"foresting\" service" };
 
         #region Settings
 
@@ -72,7 +72,7 @@ namespace AIProgrammer.Fitness.Concrete
 
         #endregion
 
-        public ExtractInQuotesExtraFitness(GA ga, int maxIterationCount, string appendFunctions = null)
+        public TrimLeftOfQuoteFitness(GA ga, int maxIterationCount, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
         {
             if (_targetFitness == 0)

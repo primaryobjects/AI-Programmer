@@ -119,7 +119,7 @@ namespace AIProgrammer.Fitness.Concrete
 
                         result = b;
                         _console.Append(b);
-                    }, null, new InterpreterOptions() { FunctionMaxIterationCounts = new int[] { 100 } });
+                    }, null, new Function[] { new Function() { MaxIterationCount = 100 } });
                     _bf.Run(_maxIterationCount);
                 }
                 catch
@@ -197,7 +197,7 @@ namespace AIProgrammer.Fitness.Concrete
                     (b) =>
                     {
                         Console.Write(b + " ");
-                    }, null, new InterpreterOptions() { FunctionMaxIterationCounts = new int[] { 100 } });
+                    }, null, new Function[] { new Function() { MaxIterationCount = 100 } });
 
                     bf.Run(_maxIterationCount);
                 }

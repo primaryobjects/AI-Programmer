@@ -102,7 +102,7 @@ namespace AIProgrammer
         /// <summary>
         /// The list of functions and their starting instruction index.
         /// </summary>
-        private readonly Dictionary<char, KeyValuePair<int, int>> m_Functions = new Dictionary<char, KeyValuePair<int, int>>();
+        private readonly Dictionary<char, FunctionInst> m_Functions = new Dictionary<char, FunctionInst>();
 
         /// <summary>
         /// Identifier for next function. Will serve as the instruction to call this function.
@@ -147,9 +147,9 @@ namespace AIProgrammer
         private byte? m_ReturnValue;
 
         /// <summary>
-        /// Options for the interpreter.
+        /// Options for function behavior in the interpreter.
         /// </summary>
-        private InterpreterOptions m_Options = new InterpreterOptions();
+        private Function[] m_Options = null;
 
         #endregion
 
@@ -210,7 +210,7 @@ namespace AIProgrammer
         /// <param name="output">Function to call when output command (.) is executed.</param>
         /// <param name="function">Callback handler to notify that a function is being executed: callback(instruction).</param>
         /// <param name="options">Additional interpreter options.</param>
-        public Interpreter(string programCode, Func<byte> input, Action<byte> output, Action<char> function = null, InterpreterOptions options = null)
+        public Interpreter(string programCode, Func<byte> input, Action<byte> output, Action<char> function = null, Function[] options = null)
         {
             // Save the program code
             this.m_Source = programCode.ToCharArray();
@@ -396,10 +396,13 @@ namespace AIProgrammer
                         this.m_Storage = 0;
                         this.m_ReturnValue = null;
 
+                        // Load options for this function.
+                        FunctionInst functionOptions = m_Functions[instruction];
+
                         // Set the function input pointer to the parent's starting memory. Calls for input (,) from within the function will read from parent's memory, each call advances the parent memory cell that gets read from. This allows passing multiple values to a function.
                         // Note, if we set the starting m_FunctionInputPointer to 0, functions will read from the first input position (0).
                         // If we set it to m_DataPointer, functions will read input from the current position in the parent memory (n). This is trickier for the GA to figure out, because it may have to downshift the memory back to 0 before calling the function so that the function gets all input. Setting this to 0 makes it easier for the function to get the input.
-                        this.m_FunctionInputPointer = this.m_Options.ReadFunctionInputAtMemoryStart ? 0 : this.m_DataPointer;
+                        this.m_FunctionInputPointer = functionOptions.ReadInputAtMemoryStart ? 0 : this.m_DataPointer;
 
                         // Set the data pointer to the functions starting memory address.
                         this.m_DataPointer = _functionSize * (instruction - 96); // each function gets a space of 1000 memory slots.
@@ -411,10 +414,10 @@ namespace AIProgrammer
                         this.m_Ticks = 0;
 
                         // Set the max iteration count for this function, if one was specified.
-                        this.m_MaxIterationCount = m_Functions[instruction].Value > 0 ? m_Functions[instruction].Value : this.m_MaxIterationCount;
+                        this.m_MaxIterationCount = functionOptions.MaxIterationCount > 0 ? functionOptions.MaxIterationCount : this.m_MaxIterationCount;
 
                         // Set the instruction pointer to the beginning of the function.
-                        this.m_InstructionPointer = m_Functions[instruction].Key;
+                        this.m_InstructionPointer = functionOptions.InstructionPointer;
                     }
                 });
             }
@@ -522,11 +525,11 @@ namespace AIProgrammer
             this.m_InstructionPointer = source.IndexOf('@');
             while (this.m_InstructionPointer > -1 && this.m_InstructionPointer < source.Length - 1 && !m_Stop)
             {
-                // Extract a max iteration count, if specified.
-                int maxFunctionIterationCount = m_Options.FunctionMaxIterationCounts != null && m_Options.FunctionMaxIterationCounts.Length > m_Functions.Count ? m_Options.FunctionMaxIterationCounts[m_Functions.Count] : 0;
+                // Retrieve any settings for this function.
+                Function functionDetail = m_Options != null && m_Options.Length > m_Functions.Count ? m_Options[m_Functions.Count] : null;
 
                 // Store the function.
-                m_Functions.Add(m_NextFunctionCharacter++, new KeyValuePair<int, int>(this.m_InstructionPointer, maxFunctionIterationCount));
+                m_Functions.Add(m_NextFunctionCharacter++, new FunctionInst(this.m_InstructionPointer, functionDetail));
 
                 this.m_InstructionPointer = source.IndexOf('@', this.m_InstructionPointer + 1);
             }
