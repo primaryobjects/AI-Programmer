@@ -11,14 +11,14 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace AIProgrammer.Fitness.Concrete.Research
+namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
     /// Outputs the text inside quotes, with additional text in front of it.
     /// </summary>
     public class ExtractInQuotesExtraFitness : FitnessBase
     {
-        private static string[] _trainingExamples = { "dot \"inside\"", "milk \"test\"", "final \"foresting\"" };
+        private static string[] _trainingExamples = { "dot \"inside\"", "mil \"test\"", "fin \"foresting\"" };
         private static string[] _trainingResults = new string[] { "inside", "test", "foresting" };
 
         #region Settings
@@ -42,7 +42,7 @@ namespace AIProgrammer.Fitness.Concrete.Research
         {
             get
             {
-                return 50;
+                return 15;
             }
         }
 
@@ -97,9 +97,8 @@ namespace AIProgrammer.Fitness.Concrete.Research
                 try
                 {
                     int state = 0;
-                    int startingDataPointer = -1;
                     HashSet<int> memoryHash = new HashSet<int>();
-                    bool aBonus = false;
+                    int aBonus = 0;
 
                     _console.Clear();
 
@@ -108,12 +107,6 @@ namespace AIProgrammer.Fitness.Concrete.Research
                     {
                         if (state < _trainingExamples[i].Length)
                         {
-                            if (startingDataPointer == -1 && _trainingExamples[i][state] == '"')
-                            {
-                                // Remember the data pointer position for the first quote input.
-                                startingDataPointer = _bf.m_CurrentDataPointer;
-                            }
-
                             // Store data in different memory positions, so that function can access the data.
                             memoryHash.Add(_bf.m_CurrentDataPointer);
 
@@ -128,47 +121,16 @@ namespace AIProgrammer.Fitness.Concrete.Research
                     },
                     (b) =>
                     {
-                        // We want the function to do the printing, so apply a bonus if the print comes from a function.
-                        if (_console.Length < _trainingResults[i].Length)
-                        {
-                            if (_bf.IsInsideFunction)
-                            {
-                                countBonus += 50;
-                            }
-                            else
-                            {
-                                penalty += 50;
-                            }
-                        }
-
                         _console.Append((char)b);
                     },
                     (function) =>
                     {
-                        switch (function)
+                        if (function == 'a' && aBonus < 2 && _bf.IsInsideLoop)
                         {
-                            case 'a':
-                            {
-                                // Give a bonus for calling the function within a loop.
-                                if (!aBonus && _bf.IsInsideLoop)
-                                {
-                                    countBonus += 25;
-                                    countBonus += (_bf.m_CurrentInstructionPointer + 1 < program.Length) && program[_bf.m_CurrentInstructionPointer + 1] == '!' ? 75 : 0;
-                                    aBonus = true;
-                                }
-                            }
-                            break;
-                            case 'b':
-                            {
-                                if (startingDataPointer != -1)
-                                {
-                                    // The function requires the starting memory pointer to be at the first quote of input for "test". The function will then strip the quotes.
-                                    // Give a bonus for calling the function at the correct memory location.
-                                    countBonus += 100 * ((startingDataPointer - Math.Abs(_bf.m_CurrentDataPointer - startingDataPointer)) / startingDataPointer);
-                                }
-                            }
-                            break;
-                        };
+                            countBonus += 50;
+                            countBonus += (_bf.m_CurrentInstructionPointer + 1 < program.Length) && program[_bf.m_CurrentInstructionPointer + 1] == '!' ? 50 : 0;
+                            aBonus++;
+                        }                        
                     }, new InterpreterOptions() { FunctionMaxIterationCounts = new int[] { 100 } });
                     _bf.Run(_maxIterationCount);
 
@@ -200,13 +162,11 @@ namespace AIProgrammer.Fitness.Concrete.Research
                 // Check for solution.
                 IsFitnessAchieved();
 
-                // Bonus for executing functions.
-                countBonus += _bf.m_ExecutedFunctions.Count * 100;
-
                 // Bonus for less operations to optimize the code.
                 countBonus += ((_maxIterationCount - _bf.m_Ticks) / 20.0);
 
                 Ticks += _bf.m_Ticks;
+                TotalTicks += _bf.m_TotalTicks;
             }
 
             if (_fitness != Double.MaxValue)
