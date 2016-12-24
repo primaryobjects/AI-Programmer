@@ -18,7 +18,7 @@ namespace AIProgrammer.Fitness.Concrete
     /// </summary>
     public class TrimLeftOfQuoteFitness : FitnessBase
     {
-        private static string[] _trainingExamples = { "dot \"inside\" over", "million \"test\" rights", "final \"foresting\" service" };
+        private static string[] _trainingExamples = { "a \"inside\" over", "xy \"test\" rights", "ca6 \"foresting\" service" };
         private static string[] _trainingResults = new string[] { "\"inside\" over", "\"test\" rights", "\"foresting\" service" };
 
         #region Settings
