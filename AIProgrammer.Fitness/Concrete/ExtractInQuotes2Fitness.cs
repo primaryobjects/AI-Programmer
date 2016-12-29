@@ -14,12 +14,12 @@ using System.Xml;
 namespace AIProgrammer.Fitness.Concrete
 {
     /// <summary>
-    /// Outputs the text inside quotes, with additional text in front of it.
+    /// Outputs the text inside quotes, with additional text before and after.
     /// </summary>
-    public class ExtractInQuotesExtraFitness : FitnessBase
+    public class ExtractInQuotes2Fitness : FitnessBase
     {
-        private static string[] _trainingExamples = { "dot \"inside\"", "mil \"test\"", "fin \"foresting\"" };
-        private static string[] _trainingResults = new string[] { "inside", "test", "foresting" };
+        private static string[] _trainingExamples = { "alice \"inside\" over", "xy \"test\" rights", "hopping \"foresting\" bat", "more \"steady\" working" };
+        private static string[] _trainingResults = new string[] { "inside", "test", "foresting", "steady" };
 
         #region Settings
 
@@ -72,7 +72,7 @@ namespace AIProgrammer.Fitness.Concrete
 
         #endregion
 
-        public ExtractInQuotesExtraFitness(GA ga, int maxIterationCount, string appendFunctions = null)
+        public ExtractInQuotes2Fitness(GA ga, int maxIterationCount, string appendFunctions = null)
             : base(ga, maxIterationCount, appendFunctions)
         {
             if (_targetFitness == 0)
@@ -81,6 +81,7 @@ namespace AIProgrammer.Fitness.Concrete
                 {
                     _targetFitness += _trainingResults[i].Length * 256;
                     _targetFitness += 10; // length fitness
+                    _targetFitness += 10 * _trainingResults[i].Length;
                 }
             }
         }
@@ -97,9 +98,9 @@ namespace AIProgrammer.Fitness.Concrete
                 try
                 {
                     int state = 0;
-                    HashSet<int> memoryHash = new HashSet<int>();
+                    //HashSet<int> memoryHash = new HashSet<int>();
                     int aBonus = 0;
-
+                    int quoteCount = 0;
                     _console.Clear();
 
                     // Run the program.
@@ -108,7 +109,11 @@ namespace AIProgrammer.Fitness.Concrete
                         if (state < _trainingExamples[i].Length)
                         {
                             // Store data in different memory positions, so that function can access the data.
-                            memoryHash.Add(_bf.m_CurrentDataPointer);
+                            //memoryHash.Add(_bf.m_CurrentDataPointer);
+                            if (_trainingExamples[i][state] == '"')
+                            {
+                                quoteCount++;
+                            }
 
                             // Send input.
                             return (byte)_trainingExamples[i][state++];
@@ -121,21 +126,27 @@ namespace AIProgrammer.Fitness.Concrete
                     },
                     (b) =>
                     {
+                        if (_console.Length < _trainingResults[i].Length && quoteCount == 1)
+                        {
+                            // Only output whats in the quotes.
+                            Fitness += 10;
+                        }
+
                         _console.Append((char)b);
                     },
                     (function) =>
                     {
                         if (function == 'a' && aBonus < 2 && _bf.IsInsideLoop)
                         {
-                            countBonus += 50;
-                            countBonus += (_bf.m_CurrentInstructionPointer + 1 < program.Length) && program[_bf.m_CurrentInstructionPointer + 1] == '!' ? 50 : 0;
+                            countBonus += 25;
+                            countBonus += (_bf.m_CurrentInstructionPointer + 1 < program.Length) && program[_bf.m_CurrentInstructionPointer + 1] == '!' ? 25 : 0;
                             aBonus++;
-                        }                        
+                        }
                     }, new Function[] { new Function() { MaxIterationCount = 100 } });
                     _bf.Run(_maxIterationCount);
 
                     // Give a bonus for using multiple memory registers, supporting diversity.
-                    countBonus += memoryHash.Count * 25;
+                    //countBonus += memoryHash.Count * 25;
                 }
                 catch
                 {
@@ -163,7 +174,7 @@ namespace AIProgrammer.Fitness.Concrete
                 IsFitnessAchieved();
 
                 // Bonus for less operations to optimize the code.
-                countBonus += ((_maxIterationCount - _bf.m_Ticks) / 20.0);
+                countBonus += ((_maxIterationCount - _bf.m_Ticks) / 1000.0);
 
                 Ticks += _bf.m_Ticks;
                 TotalTicks += _bf.m_TotalTicks;

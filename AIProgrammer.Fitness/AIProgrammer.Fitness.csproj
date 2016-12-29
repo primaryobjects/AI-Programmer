@@ -55,7 +55,7 @@
     <Compile Include="Concrete\CsvSplitFitness.cs" />
     <Compile Include="Concrete\GuidingFunctionFitness.cs" />
     <Compile Include="Concrete\TrimLeftOfQuoteFitness.cs" />
-    <Compile Include="Concrete\Research\ExtractInQuotesExtraFitness.cs" />
+    <Compile Include="Concrete\ExtractInQuotes2Fitness.cs" />
     <Compile Include="Concrete\XmlToJsonFitness.cs" />
     <Compile Include="Concrete\WarningCountdownFitness.cs" />
     <Compile Include="Concrete\BottlesOfBeerFitness.cs" />
