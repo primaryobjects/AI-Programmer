@@ -51,7 +51,10 @@ namespace AIProgrammer.Functions.Concrete
             Dictionary<string, string> terms = new Dictionary<string, string>();
             foreach (string part in parts)
             {
-                terms[part] = part;
+                if (!string.IsNullOrEmpty(part))
+                {
+                    terms[part] = part;
+                }
             }
 
             foreach (string term in terms.Values)
