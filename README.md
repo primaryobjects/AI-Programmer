@@ -152,7 +152,6 @@ Experiment and have fun!
 Kory Becker
 http://www.primaryobjects.com/kory-becker
 
-Read @ Primary Objects  
 Using Artificial Intelligence to Write Self-Modifying/Improving Programs  
 http://www.primaryobjects.com/CMS/Article149
 
@@ -162,8 +161,8 @@ http://www.primaryobjects.com/CMS/Article150
 Self-Programming Artificial Intelligence Learns to Use Functions  
 http://www.primaryobjects.com/CMS/Article163
 
-Reseach Paper<br>
-[BF-Programmer: A Counterintuitive Approach to Autonomously Building Simplistic Programs Using Genetic Algorithms](https://drive.google.com/open?id=0B1ZVyY5eRQNibTl0Q3NIcVV4VlU)
+BF-Programmer: A Counterintuitive Approach to Autonomously Building Simplistic Programs Using Genetic Algorithms
+https://drive.google.com/open?id=0B1ZVyY5eRQNibTl0Q3NIcVV4VlU
 
 View @ GitHub
 https://github.com/primaryobjects/ai-programmer
