@@ -160,7 +160,7 @@ http://www.primaryobjects.com/kory-becker
 
 [Self-Programming Artificial Intelligence Learns to Use Functions](http://www.primaryobjects.com/CMS/Article163)
 
-[BF-Programmer: A Counterintuitive Approach to Autonomously Building Simplistic Programs Using Genetic Algorithms](https://drive.google.com/open?id=0B1ZVyY5eRQNibTl0Q3NIcVV4VlU)
+[BF-Programmer: A Counterintuitive Approach to Autonomously Building Simplistic Programs Using Genetic Algorithms](http://www.primaryobjects.com/bf-programmer-2017.pdf)
 
 View @ GitHub
 https://github.com/primaryobjects/ai-programmer
