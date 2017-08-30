@@ -5,13 +5,13 @@ Read the full article [Using Artificial Intelligence to Write Self-Modifying/Imp
 
 Read the research paper [BF-Programmer: A Counterintuitive Approach to Autonomously Building Simplistic Programs Using Genetic Algorithms](http://www.primaryobjects.com/bf-programmer-2017.pdf "BF-Programmer: A Counterintuitive Approach to Autonomously Building Simplistic Programs Using Genetic Algorithms").
 
-AI-Programmer is an experiment with using artificial intelligence and genetic algorithms to automatically generate programs in the Brainf**k programming language. Successfully created [programs](https://github.com/primaryobjects/AI-Programmer/tree/master/Results) by the AI include: hello world, hello <name>, addition, subtraction, reversing a string, fibonnaci sequence, 99 bottles of beer on the wall, and more. It's getting smarter. In short, it's an AI genetic algorithm implementation with self modifying code.
+AI-Programmer is an experiment with using artificial intelligence and genetic algorithms to automatically generate programs. Successfully created [programs](https://github.com/primaryobjects/AI-Programmer/tree/master/Results) by the AI include: hello world, hello <name>, addition, subtraction, reversing a string, fibonnaci sequence, 99 bottles of beer on the wall, and more. It's getting smarter. In short, it's an AI genetic algorithm implementation with self modifying code.
 
 ## Motivation
 
 Is it possible for a computer to write its own programs? Need a word processor? Let the computer create one for you. Need a screen capture tool? Let the computer create one for you. Take it a step further, and let the computer create programs that simplify your life, that you didn't even know you needed!
 
-This is the idea behind the AI-Programmer experiment. The goal is to ultimately create a computer program that can write its own computer programs to solve specific computational problems. While the capability of a computer deciding what type of program to write is beyond our current means, we can still have a computer generate programs to solve very specific tasks, such as outputting the text, "Hello World". First, we need to choose a target programming language. For this experiment, we'll choose [Brainfuck](http://en.wikipedia.org/wiki/Brainfuck) (BF).
+This is the idea behind the AI-Programmer experiment. The goal is to ultimately create a computer program that can write its own computer programs to solve specific computational problems. While the capability of a computer deciding what type of program to write is beyond our current means, we can still have a computer generate programs to solve very specific tasks, such as outputting the text, "Hello World". AI Programmer uses an esoteric [programming language](http://en.wikipedia.org/wiki/Brainfuck) for generating software programs.
 
 ## Details
 
@@ -137,7 +137,7 @@ Set the App.config to use BrainPlus, so the AI has access to sub-routine instruc
 
 ```
 <appSettings>
-	<add key="BrainfuckVersion" value="2"/> <!-- 1 = Brainfuck Classic, 2 = BrainPlus (Brainfuck Extended Type 3, Functions, Faster) -->
+	<add key="BrainfuckVersion" value="2"/> <!-- 1 = BF Classic, 2 = BrainPlus (BF Extended Type 3, Functions, Faster) -->
 </appSettings>
 ```
 
