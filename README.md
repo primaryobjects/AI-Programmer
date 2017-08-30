@@ -11,7 +11,7 @@ AI-Programmer is an experiment with using artificial intelligence and genetic al
 
 Is it possible for a computer to write its own programs? Need a word processor? Let the computer create one for you. Need a screen capture tool? Let the computer create one for you. Take it a step further, and let the computer create programs that simplify your life, that you didn't even know you needed!
 
-This is the idea behind the AI-Programmer experiment. The goal is to ultimately create a computer program that can write its own computer programs to solve specific computational problems. While the capability of a computer deciding what type of program to write is beyond our current means, we can still have a computer generate programs to solve very specific tasks, such as outputting the text, "Hello World". AI Programmer uses an esoteric [programming language](http://en.wikipedia.org/wiki/Brainfuck) for generating software programs.
+This is the idea behind the AI-Programmer experiment. The goal is to ultimately create a computer program that can write its own computer programs to solve specific computational problems. While the capability of a computer deciding what type of program to write is beyond our current means, we can still have a computer generate programs to solve very specific tasks, such as outputting the text, "Hello World". AI Programmer uses an esoteric programming language for generating software programs.
 
 ## Details
 
