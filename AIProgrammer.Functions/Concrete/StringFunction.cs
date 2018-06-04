@@ -19,12 +19,14 @@ namespace AIProgrammer.Functions.Concrete
         private double _mutationRate;
         private int _genomeSize;
         private GAFunction _fitnessFunc;
+        private Action<string, object> _onStepComplete;
         private OnGeneration _generationFunc;
         private TargetParams _targetParams;
 
-        public StringFunction(Func<IFitness> getFitnessMethod, GAStatus bestStatus, GAFunction fitnessFunc, OnGeneration generationFunc, double crossoverRate, double mutationRate, int genomeSize, TargetParams targetParams)
+        public StringFunction(Func<IFitness> getFitnessMethod, Action<string, object> onStepComplete, GAStatus bestStatus, GAFunction fitnessFunc, OnGeneration generationFunc, double crossoverRate, double mutationRate, int genomeSize, TargetParams targetParams)
         {
             _getFitnessFunc = getFitnessMethod;
+            _onStepComplete = onStepComplete;
             _bestStatus = bestStatus;
             _crossoverRate = crossoverRate;
             _mutationRate = mutationRate;
@@ -79,6 +81,9 @@ namespace AIProgrammer.Functions.Concrete
                 _bestStatus.LastChangeDate = DateTime.Now;
                 _bestStatus.Program = "";
                 _bestStatus.Ticks = 0;
+
+                // Notify parent of progress.
+                _onStepComplete(appendCode, term);
             }
 
             // Restore target string.

@@ -44,10 +44,11 @@ namespace AIProgrammer
         private static int _maxIterationCount = 5000; // Max iterations a program may run before being killed (prevents infinite loops).
         private static int _expandAmount = 0; // The max genome size will expand by this amount, every _expandRate iterations (may help learning). Set to 0 to disable.
         private static int _expandRate = 5000; // The max genome size will expand by _expandAmount, at this interval of generations.
+        private static int _originalGenomeSize = _genomeSize;
 
         #endregion
 
-        private static IFunction _functionGenerator = null; //new StringFunction(() => GetFitnessMethod(), _bestStatus, fitnessFunction, OnGeneration, _crossoverRate, _mutationRate, _genomeSize, _targetParams); /* Functions require setting BrainfuckVersion=2 in App.config */
+        private static IFunction _functionGenerator = null; //new StringFunction(() => GetFitnessMethod(), (program, param) => OnFunctionStepComplete(program, param), _bestStatus, fitnessFunction, OnGeneration, _crossoverRate, _mutationRate, _genomeSize, _targetParams); /* Functions require setting BrainfuckVersion=2 in App.config */
 
         /// <summary>
         /// Selects the type of fitness algorithm to use (Hello World solutions, Calculation solutions, etc).
@@ -67,6 +68,24 @@ namespace AIProgrammer
             return new StringStrictFitness(_ga, _maxIterationCount, _targetParams.TargetString, _appendCode);
         }
 
+        /// <summary>
+        /// Callback handler for each time a function completes solving a step of its process. For example, solving a word within a sentence, etc.
+        /// </summary>
+        /// <param name="program">Complete append code generated so far. This can be set as the value for _appendCode to generate programs.</param>
+        /// <param name="param">Optional parameter supplied by Function to indicate what has been solved (i.e., the term, sentence, numeric value, etc).</param>
+        private static void OnFunctionStepComplete(string program, object param)
+        {
+            // Reset genome size back to its original value for subsequent solving steps.
+            _genomeSize = _originalGenomeSize;
+            _ga.GAParams.GenomeSize = _genomeSize;
+
+            // Reset timer.
+            _startTime = DateTime.Now;
+
+            // Display generated code so far.
+            Console.WriteLine(param.ToString() + "\n" + program);
+        }
+
         #region Worker Methods
 
         /// <summary>
@@ -77,7 +96,7 @@ namespace AIProgrammer
             if (_bestStatus.Iteration++ > 1000)
             {
                 _bestStatus.Iteration = 0;
-                Console.WriteLine("Best Fitness: " + _bestStatus.TrueFitness + "/" + _targetParams.TargetFitness + " " + Math.Round(_bestStatus.TrueFitness / _targetParams.TargetFitness * 100, 2) + "%, Ticks: " + _bestStatus.Ticks + ", Total Ticks: " + _bestStatus.TotalTicks + ", Running: " + Math.Round((DateTime.Now - _startTime).TotalMinutes) + "m, Size: " + _genomeSize + ", Best Output: " + _bestStatus.Output + ", Changed: " + _bestStatus.LastChangeDate.ToString() + ", Program: " + _bestStatus.Program);
+                Console.WriteLine("Best Fitness: " + _bestStatus.TrueFitness + "/" + _targetParams.TargetFitness + " " + Math.Round(_bestStatus.TrueFitness / _targetParams.TargetFitness * 100, 2) + "%, Ticks: " + _bestStatus.Ticks + ", Total Ticks: " + _bestStatus.TotalTicks + ", Running: " + Math.Floor((DateTime.Now - _startTime).TotalSeconds / 60) + "m " + Math.Round(((DateTime.Now - _startTime).TotalSeconds % 60)) + "s, Size: " + _genomeSize + ", Best Output: " + _bestStatus.Output + ", Changed: " + _bestStatus.LastChangeDate.ToString() + ", Program: " + _bestStatus.Program);
 
                 ga.Save("my-genetic-algorithm.dat");
             }
