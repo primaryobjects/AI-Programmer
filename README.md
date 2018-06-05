@@ -167,4 +167,4 @@ https://github.com/primaryobjects/ai-programmer
 
 ## Copyright
 
-Copyright (c) 2017 Kory Becker http://primaryobjects.com/kory-becker
+Copyright (c) 2018 Kory Becker http://primaryobjects.com/kory-becker
