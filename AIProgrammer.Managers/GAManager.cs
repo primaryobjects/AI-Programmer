@@ -27,8 +27,15 @@ namespace AIProgrammer.Managers
                     setupFunc();
                 }
 
-                // Delete any existing dat file.
-                File.Delete(Directory.GetCurrentDirectory() + "\\my-genetic-algorithm.dat");
+                try
+                {
+                    // Delete any existing dat file.
+                    File.Delete(Directory.GetCurrentDirectory() + "\\my-genetic-algorithm.dat");
+                }
+                catch (Exception excep)
+                {
+                    Console.WriteLine("Unable to delete " + Directory.GetCurrentDirectory() + "\\my-genetic-algorithm.dat\n" + excep.Message);
+                }
 
                 // Start a new genetic algorithm.
                 ga.GAParams.Elitism = true;
