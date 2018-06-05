@@ -267,5 +267,21 @@ namespace AIProgrammer.Managers
 
             return count;
         }
+
+        /// <summary>
+        /// Returns a string alphabet functions to be used within appendCode.
+        /// </summary>
+        /// <param name="to">Return alphabet functions from a through "to" inclusive.</param>
+        /// <returns>string</returns>
+        public static string GetAlphabet(char to = 'z')
+        {
+            string result = "";
+
+            string[] parts = AlphabetFunctions.Split("@".ToCharArray());
+            int index = to - 'a';
+            result = string.Join("@", parts.Take(index + 1)) + "@";
+
+            return result;
+        }
     }
 }
