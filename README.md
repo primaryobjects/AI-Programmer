@@ -3,7 +3,9 @@ AI-Programmer
 
 Read the full article [Using Artificial Intelligence to Write Self-Modifying/Improving Programs](http://www.primaryobjects.com/2013/01/27/using-artificial-intelligence-to-write-self-modifying-improving-programs/)
 
-Read the research paper [BF-Programmer: A Counterintuitive Approach to Autonomously Building Simplistic Programs Using Genetic Algorithms](http://www.primaryobjects.com/bf-programmer-2017.pdf "BF-Programmer: A Counterintuitive Approach to Autonomously Building Simplistic Programs Using Genetic Algorithms").
+Read the research paper [AI Programmer: Autonomously Creating
+Software Programs Using Genetic Algorithms](https://arxiv.org/pdf/1709.05703.pdf "AI Programmer: Autonomously Creating
+Software Programs Using Genetic Algorithms").
 
 AI-Programmer is an experiment with using artificial intelligence and genetic algorithms to automatically generate programs. Successfully created [programs](https://github.com/primaryobjects/AI-Programmer/tree/master/Results) by the AI include: hello world, hello <name>, addition, subtraction, reversing a string, fibonnaci sequence, 99 bottles of beer on the wall, and more. It's getting smarter. In short, it's an AI genetic algorithm implementation with self modifying code.
 
