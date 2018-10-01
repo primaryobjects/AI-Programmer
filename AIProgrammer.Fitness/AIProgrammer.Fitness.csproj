@@ -54,6 +54,7 @@
     <Compile Include="Concrete\LogicalAndFitness.cs" />
     <Compile Include="Concrete\CsvSplitFitness.cs" />
     <Compile Include="Concrete\GuidingFunctionFitness.cs" />
+    <Compile Include="Concrete\StringLengthFitness.cs" />
     <Compile Include="Concrete\TrimLeftOfQuoteFitness.cs" />
     <Compile Include="Concrete\ExtractInQuotes2Fitness.cs" />
     <Compile Include="Concrete\XmlToJsonFitness.cs" />
@@ -75,7 +76,6 @@
     <Compile Include="Concrete\StringStrictFitness.cs" />
     <Compile Include="Concrete\SubtractFitness.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StringLengthFitness.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AIProgrammer.GA\AIProgrammer.GeneticAlgorithm.csproj">
