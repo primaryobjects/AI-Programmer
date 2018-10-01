@@ -67,7 +67,6 @@ namespace AIProgrammer.Fitness.Concrete
 
                 // Assign target fitness.
                 _targetFitness = _trainingExamples.Length * 256;
-                //_targetFitness += _trainingExamples.Length * 10; // bonus for matching exact length of output
             }
         }
 
@@ -132,9 +131,6 @@ namespace AIProgrammer.Fitness.Concrete
 
                 // Check for solution.
                 IsFitnessAchieved();
-
-                // Length bonus (percentage of 100).
-                //Fitness += 10;// * ((1 - Math.Abs(_console.Length - 1)) / 1);
 
                 // Bonus for less operations to optimize the code.
                 countBonus += ((_maxIterationCount - _bf.m_Ticks) / 1000.0);
