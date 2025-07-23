@@ -1,0 +1,55 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build",
+			"type": "shell",
+			"command": "/usr/local/share/dotnet/dotnet",
+			"args": [
+				"build",
+				"AIProgrammer.sln"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"PATH": "/usr/local/share/dotnet:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+					"DOTNET_ROOT": "/usr/local/share/dotnet",
+					"DOTNET_CLI_TELEMETRY_OPTOUT": "1"
+				}
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "run",
+			"type": "shell",
+			"command": "/usr/local/share/dotnet/dotnet",
+			"args": [
+				"run",
+				"--project",
+				"AIProgrammer"
+			],
+			"group": "build",
+			"dependsOn": "build",
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"PATH": "/usr/local/share/dotnet:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+					"DOTNET_ROOT": "/usr/local/share/dotnet",
+					"DOTNET_CLI_TELEMETRY_OPTOUT": "1"
+				}
+			}
+		}
+	]
+}

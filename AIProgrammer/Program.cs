@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AIProgrammer.GeneticAlgorithm;
+﻿using AIProgrammer.GeneticAlgorithm;
 using AIProgrammer.Repository.Interface;
 using AIProgrammer.Repository.Concrete;
 using AIProgrammer.Types;
@@ -204,8 +199,8 @@ namespace AIProgrammer
             Console.WriteLine(program);
             Console.WriteLine();
 
-            // Compile to executable.
-            BrainPlus.Compile(program, "output.exe", myFitness);
+            // Compile to executable. (not compatible on Mac)
+            //BrainPlus.Compile(program, "output.exe", myFitness);
 
             // Run the result for the user.
             string result = myFitness.RunProgram(program);

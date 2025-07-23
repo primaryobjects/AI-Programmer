@@ -10,3 +10,6 @@
 *.xml
 Debug/
 Release/
+*.nuget.*
+project.assets.json
+.DS_Store

@@ -1,0 +1,59 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run App (same as task)",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}",
+            "preLaunchTask": "run",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/AIProgrammer/bin/Debug/net9.0/AIProgrammer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "externalConsole": false,
+            "internalConsoleOptions": "openOnSessionStart",
+            "requireExactSource": false,
+            "justMyCode": true,
+            "enableStepFiltering": true,
+            "suppressJITOptimizations": true
+        },
+        {
+            "name": ".NET Core Launch (no pre-build)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/AIProgrammer/bin/Debug/net9.0/AIProgrammer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+
+            "externalConsole": false,
+            "requireExactSource": false
+        },
+        {
+            "name": ".NET Core Launch (external terminal)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/AIProgrammer/bin/Debug/net9.0/AIProgrammer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "externalTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}

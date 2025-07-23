@@ -1,0 +1,29 @@
+{
+    "dotnet.preferCSharpExtension": true,
+    "terminal.integrated.env.osx": {
+        "PATH": "/usr/local/share/dotnet:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${env:PATH}",
+        "DOTNET_ROOT": "/usr/local/share/dotnet"
+    },
+    "terminal.integrated.defaultProfile.osx": "zsh",
+    "terminal.integrated.profiles.osx": {
+        "zsh": {
+            "path": "/bin/zsh",
+            "args": ["-l"],
+            "env": {
+                "PATH": "/usr/local/share/dotnet:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${env:PATH}",
+                "DOTNET_ROOT": "/usr/local/share/dotnet"
+            }
+        }
+    },
+    "omnisharp.dotNetCliPaths": [
+        "/usr/local/share/dotnet/dotnet"
+    ],
+    "omnisharp.useGlobalMono": "never",
+    "omnisharp.useModernNet": true,
+    "csharp.debug.console": "integratedTerminal",
+    "csharp.semanticHighlighting.enabled": true,
+    "dotnet.server.useOmnisharp": false,
+    "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+    "omnisharp.enableEditorConfigSupport": true,
+    "dotnet.server.waitForDebugger": false
+}

@@ -1,94 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{632DBA3A-BAF8-458F-9C3D-DDFACCBEAD8E}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AIProgrammer</RootNamespace>
-    <AssemblyName>AIProgrammer</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\AIProgrammer.Database\AIProgrammer.Database.csproj" />
+    <ProjectReference Include="..\AIProgrammer.GA\AIProgrammer.GeneticAlgorithm.csproj" />
+    <ProjectReference Include="..\AIProgrammer.Interpreter\AIProgrammer.Interpreter.csproj" />
+    <ProjectReference Include="..\AIProgrammer.Repository\AIProgrammer.Repository.csproj" />
+    <ProjectReference Include="..\AIProgrammer.Types\AIProgrammer.Types.csproj" />
+    <ProjectReference Include="..\AIProgrammer.Compiler\AIProgrammer.Compiler.csproj" />
+    <ProjectReference Include="..\AIProgrammer.Fitness\AIProgrammer.Fitness.csproj" />
+    <ProjectReference Include="..\AIProgrammer.Managers\AIProgrammer.Managers.csproj" />
+    <ProjectReference Include="..\AIProgrammer.Functions\AIProgrammer.Functions.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AIProgrammer.Compiler\AIProgrammer.Compiler.csproj">
-      <Project>{5f99b6a4-5cb2-432b-8018-e2edfbb957f7}</Project>
-      <Name>AIProgrammer.Compiler</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AIProgrammer.Fitness\AIProgrammer.Fitness.csproj">
-      <Project>{2fa2525f-4faa-45a6-8268-4d561f7c46f9}</Project>
-      <Name>AIProgrammer.Fitness</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AIProgrammer.Functions\AIProgrammer.Functions.csproj">
-      <Project>{d1ce7f4d-5142-4fc9-a35b-89f0edaa2936}</Project>
-      <Name>AIProgrammer.Functions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AIProgrammer.GA\AIProgrammer.GeneticAlgorithm.csproj">
-      <Project>{8ec97de8-ddfd-437a-b216-91db8d1a3487}</Project>
-      <Name>AIProgrammer.GeneticAlgorithm</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AIProgrammer.Interpreter\AIProgrammer.Interpreter.csproj">
-      <Project>{4f4f1800-be33-4d38-ad95-6835644c076e}</Project>
-      <Name>AIProgrammer.Interpreter</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AIProgrammer.Managers\AIProgrammer.Managers.csproj">
-      <Project>{06d57f9c-a784-433f-8ff3-0728fecf6f5c}</Project>
-      <Name>AIProgrammer.Managers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AIProgrammer.Repository\AIProgrammer.Repository.csproj">
-      <Project>{bd558a71-1699-440f-9876-19322e658e88}</Project>
-      <Name>AIProgrammer.Repository</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AIProgrammer.Types\AIProgrammer.Types.csproj">
-      <Project>{7bcc43b1-33a8-44c8-8f4d-752d89672180}</Project>
-      <Name>AIProgrammer.Types</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

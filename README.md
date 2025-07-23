@@ -151,6 +151,44 @@ private static int _genomeSize = 50;
 
 Experiment and have fun!
 
+## Running on macOS with VS Code
+
+This project has been updated to run on macOS with VS Code using .NET 9.0. 
+
+### Prerequisites
+
+- .NET 9.0 SDK or later
+- VS Code with C# extension
+
+### Building and Running
+
+1. **Build the solution:**
+   ```bash
+   dotnet build AI-Programmer.sln
+   ```
+
+2. **Run the application:**
+   ```bash
+   dotnet run --project AIProgrammer/AIProgrammer.csproj
+   ```
+
+3. **Using VS Code:**
+   - Open the project folder in VS Code.
+   - Run using the VS Code debugger (F5). *Ensure you have the C# extension installed.*
+   - Optionally, use `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and select "Tasks: Run Build Task" to build.
+
+### Project Structure
+
+The solution has been modernized to use SDK-style project files and .NET 9.0. All dependencies have been updated to use NuGet packages instead of local assemblies.
+
+**Note:** The dynamic compilation feature (BrainPlus compiler) may not work on all platforms due to .NET Core limitations with `CSharpCodeProvider`. The genetic algorithm itself works perfectly and will evolve programs successfully. On Mac, you can comment out the line in Program.cs that initializes the BrainPlus compiler if you encounter issues:
+
+```csharp
+// BrainPlus.Compile(program, "output.exe", myFitness);
+```
+
+---
+
 ## Author
 
 Kory Becker
