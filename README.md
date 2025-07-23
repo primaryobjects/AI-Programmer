@@ -104,6 +104,13 @@ More complex programs could likely be generated while using faster PCs. Next ste
 
 ## Quick-Start Guide to Using the Code
 
+Compatible with both Visual Studio and VS Code.
+
+- Clone the `master` branch and open with [Visual Studio](https://visualstudio.microsoft.com/vs/community/).
+- Clone the [vscode-net90](https://github.com/primaryobjects/AI-Programmer/tree/vscode-net90) branch and open with VS Code and .NET 9.0.
+
+### Using the Code
+
 By default, the code is configured to use the Classic instruction set and to write a program to output a string. To change the string that is generated, simply expand the "Private Variables" section and change the text for TargetString to your desired value.
 
 ```
